@@ -2,10 +2,10 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 70000
+  steps: 170000
   rate: 0
   test_interval: 10
-  output: rbdl_nmpc_ac_tc_seq_squat_fb_sl_fa
+  output: rbdl_nmpc_ac_tc_seq_squat_fb_sl_fa_delta0
   environment: 
     type: environment/sandbox
     model: 
@@ -14,10 +14,10 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_fb_sl.lua
+        file: leo_fb_sl_fa.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      target_dof: 4
+      target_dof: 3
       animation: nope
       lower_height: 0.28
       upper_height: 0.35
@@ -44,7 +44,7 @@ experiment:
       type: agent/td
       policy: 
         type: mapping/policy/action
-        sigma: [0.1, 0.1, 0.1]
+        sigma: [ 3, 3, 3 ]
         output_min: experiment/environment/task/action_min
         output_max: experiment/environment/task/action_max
         projector: 
@@ -74,7 +74,7 @@ experiment:
         gamma: 0.9962
         lambda: 0.8582
         update_method: proportional
-        step_limit: [  ]
+        step_limit: []
         critic_projector: 
           type: projector/pre/peaked
           peaking: experiment/agent/agent2/policy/projector/peaking
@@ -99,8 +99,10 @@ experiment:
           type: trace/enumerated/replacing
         actor_projector: experiment/agent/agent2/policy/projector
         actor_representation: experiment/agent/agent2/policy/representation
+    output_min: experiment/environment/task/action_min
+    output_max: experiment/environment/task/action_max
   test_agent: 
-    type: agent/master/sequential/additive
+    type: agent/master/sequential
     agent1: experiment/agent/agent1
     agent2: 
       type: agent/fixed

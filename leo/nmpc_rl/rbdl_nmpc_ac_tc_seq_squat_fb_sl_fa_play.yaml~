@@ -14,10 +14,10 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_fb_sl_fa.lua
+        file: leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      target_dof: 3
+      target_dof: 4
       animation: immediate
       lower_height: 0.28
       upper_height: 0.35
@@ -113,5 +113,5 @@ experiment:
         representation: experiment/agent/agent2/policy/representation
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  load_file: rbdl_nmpc_ac_tc_seq_squat_fb_sl_fa_delta0-run0
+  load_file: rbdl_nmpc_ac_tc_seq_squat_fb_sl_fa-run0
   save_every: never

@@ -1,11 +1,11 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 10
-  steps: 0
+  trials: 0
+  steps: 170000
   rate: 0
-  test_interval: -1
-  output: rbdl_nmpc_ac_tc_seq_squat_fb_sl_fa_play
+  test_interval: 10
+  output: rbdl_nmpc_ac_tc_seq_squat_fb_sl_fa
   environment: 
     type: environment/sandbox
     model: 
@@ -14,11 +14,11 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_fb_sl_fa.lua
+        file: leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      target_dof: 3
-      animation: immediate
+      target_dof: 4
+      animation: nope
       lower_height: 0.28
       upper_height: 0.35
     task: 
@@ -113,5 +113,4 @@ experiment:
         representation: experiment/agent/agent2/policy/representation
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  load_file: rbdl_nmpc_ac_tc_seq_squat_fb_sl_fa_delta0-run0
-  save_every: never
+  save_every: run
