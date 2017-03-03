@@ -21,7 +21,7 @@ def main():
     if args.cores:
         args.cores = min(multiprocessing.cpu_count(), args.cores)
     else:
-        args.cores = min(multiprocessing.cpu_count(), 12)
+        args.cores = min(multiprocessing.cpu_count(), 32)
     print 'Using {} cores.'.format(args.cores)
 
     prepare_multiprocessing()
@@ -42,7 +42,7 @@ def rl_run_param(args, list_of_cfgs, runs, params):
     """Playing RL on a slope of x.xxx which were learnt for slope 0.004"""
     list_of_new_cfgs = []
 
-    loc = "../tmp"
+    loc = "tmp"
     if not os.path.exists(loc):
         os.makedirs(loc)
 
@@ -70,7 +70,7 @@ def rl_run_param(args, list_of_cfgs, runs, params):
 
     #print list_of_new_cfgs
 
-    #do_multiprocessing_pool(args, list_of_new_cfgs)
+    do_multiprocessing_pool(args, list_of_new_cfgs)
 
 ######################################################################################
 def mp_run(cfg):
@@ -126,7 +126,7 @@ def prepare_multiprocessing():
 def read_cfg(cfg):
     """Read configuration file"""
     # check if file exists  
-    yfile = '../../qt-build/cfg/%s' % cfg
+    yfile = '../qt-build/cfg/%s' % cfg
     if os.path.isfile(yfile) == False:
         print 'File %s not found' % yfile
         sys.exit()
