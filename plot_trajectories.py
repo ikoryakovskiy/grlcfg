@@ -32,6 +32,7 @@ def main():
     f, axarr = plt.subplots(8, sharex=True)
     for i in ELeoJoint:
       axarr[i.value].plot(ts, xs[:, i.value])
+      axarr[i.value].plot(ts, np.repeat(np.average(xs[:, i.value]), len(ts)))
       aname = str(i).rsplit('.', 1)[-1]
       axarr[i.value].set_ylabel(aname)
     axarr[0].set_title('pos-'+bn)
