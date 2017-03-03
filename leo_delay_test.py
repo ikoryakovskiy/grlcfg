@@ -31,26 +31,25 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = 2
+    runs = 10
     p = np.linspace(0.000, 0.010, 2)
 
     # Main
-    rl_run(args, ["../../qt-build/cfg/leo/leosim_dsarsa_walk_egreedy.yaml"], range(runs), p)
+    rl_run_param(args, ["leo/leosim_dsarsa_walk_egreedy.yaml"], range(runs), p)
 
 ######################################################################################
 def rl_run_param(args, list_of_cfgs, runs, params):
     """Playing RL on a slope of x.xxx which were learnt for slope 0.004"""
     list_of_new_cfgs = []
 
-    loc = "tmp"
-    if not os.path.exists(loc)
+    loc = "../tmp"
+    if not os.path.exists(loc):
         os.makedirs(loc)
 
     for cfg in list_of_cfgs:
         conf = read_cfg(cfg)
 
         # after reading cfg can do anything with the name
-        cfg.replace("../../qt-build/cfg/", "")
         fname, fext = os.path.splitext( cfg.replace("/", "_") )
 
         for p in params:
@@ -85,7 +84,7 @@ def mp_run(cfg):
     # wait for the specified number of seconds
     #print 'floor {0}'.format(math.floor(wait / multiprocessing.cpu_count()))
     #wait = wait % multiprocessing.cpu_count() + (1.0/proc_per_processor.value) * math.floor(wait / multiprocessing.cpu_count())
-    print 'wait {0}'.format(wait)
+    #print 'wait {0}'.format(wait)
     sleep(wait)
     print 'wait finished {0}'.format(wait)
     # Run the experiment
@@ -127,7 +126,7 @@ def prepare_multiprocessing():
 def read_cfg(cfg):
     """Read configuration file"""
     # check if file exists  
-    yfile = '../src/grl/cfg/%s' % cfg
+    yfile = '../../qt-build/cfg/%s' % cfg
     if os.path.isfile(yfile) == False:
         print 'File %s not found' % yfile
         sys.exit()
