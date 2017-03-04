@@ -20,7 +20,7 @@ experiment:
     actuate: hipright, hipleft, stanceknee
     sub_transition_type: 
       type: signal/vector
-    measurement_noise: 0
+    measurement_noise: 0.035
   agent: 
     type: agent/delayed_td
     policy: 
