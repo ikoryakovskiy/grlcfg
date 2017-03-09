@@ -32,7 +32,7 @@ def main():
 
     # Parameters
     runs = 5
-    p = np.linspace(0.000, 0.003, 4)
+    p = np.linspace(0.001, 0.003, 3)
 
     # Main
     rl_run_param(args, ["leo/leosim_dsarsa_walk_egreedy.yaml"], range(runs), p)
@@ -70,7 +70,7 @@ def rl_run_param(args, list_of_cfgs, runs, params):
 
     #print list_of_new_cfgs
 
-    #do_multiprocessing_pool(args, list_of_new_cfgs)
+    do_multiprocessing_pool(args, list_of_new_cfgs)
 
 ######################################################################################
 def mp_run(cfg):
