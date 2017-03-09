@@ -17,7 +17,7 @@ experiment:
       randomize: 0
       visualize: 1
     observe: torso_boom, hipright, hipleft, kneeright, kneeleft
-    actuate: hipright, hipleft, stanceknee
+    actuate: hipright, hipleft, swingknee
     transition_type: 
       type: signal/vector
     contact_signal: 

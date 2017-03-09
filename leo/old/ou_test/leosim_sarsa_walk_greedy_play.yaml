@@ -17,7 +17,7 @@ experiment:
       randomize: 0
       visualize: 1
     observe: torso_boom, hipright, hipleft, kneeright, kneeleft
-    actuate: hipright, hipleft, stanceknee
+    actuate: hipright, hipleft, swingknee
     observation_dims: experiment/environment/target_env/observation_dims
     action_dims: experiment/environment/target_env/action_dims
     transition_type: 

@@ -17,7 +17,7 @@ experiment:
       randomize: 1
       visualize: 1
     observe: hipleft, hipright, kneeleft, kneeright, torso_boom
-    actuate: hipleft, hipright, stanceknee
+    actuate: hipleft, hipright, swingknee
     sub_transition_type: 
       type: signal/vector
   agent: 

@@ -17,7 +17,7 @@ experiment:
       randomize: 1
       visualize: 1
     observe: torso_boom, hipright, hipleft, kneeright, kneeleft
-    actuate: hipright, hipleft, stanceknee
+    actuate: hipright, hipleft, swingknee
     exporter: 
       type: exporter/csv
       file: leosim_sarsa_walk_pada

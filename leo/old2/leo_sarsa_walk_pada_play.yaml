@@ -22,7 +22,7 @@ experiment:
       target_obs_dims: 20
       target_action_dims: 7
     observe: torso_boom, hipright, hipleft, kneeright, kneeleft
-    actuate: hipright, hipleft, stanceknee
+    actuate: hipright, hipleft, swingknee
     sub_transition_type: 
       type: signal/vector
     pub_ic_signal: 
