@@ -16,8 +16,8 @@ experiment:
       xml: experiment/environment/xml
       randomize: 1
       visualize: 1
-    observe: torso_boom, hipright, hipleft, kneeright, kneeleft
-    actuate: hipright, hipleft, stanceknee
+    observe: hipleft, hipright, kneeleft, kneeright, torso_boom
+    actuate: hipleft, hipright, stanceknee
     exporter: 
       type: exporter/csv
       file: leosim_sarsa_walk_egreedy_play
@@ -40,7 +40,7 @@ experiment:
         tilings: 16
         memory: 33554432
         safe: 1
-        resolution: [0.14, 0.28, 0.28, 0.28, 0.28, 5, 10, 10, 10, 10, 5.33, 5.33, 5.33]
+        resolution: [0.28, 0.28, 0.28, 0.28, 0.14, 10, 10, 10, 10, 5, 5.33, 5.33, 5.33]
         wrapping: []
       representation: 
         type: representation/parameterized/linear
@@ -75,5 +75,5 @@ experiment:
         type: sampler/greedy
         rand_max: 0
     pub_transition_type: experiment/environment/sub_transition_type
-  load_file: c2-2/leo_leosim_dsarsa_walk_egreedy-010-mp0-d0-run0
+  load_file: leo_leosim_dsarsa_walk_egreedy-010-mp0-d0-run0
   save_every: never

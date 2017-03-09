@@ -32,7 +32,7 @@ experiment:
         importer: 
           type: importer/csv
           file: ../src/grl/addons/leo/pid_trajectories/leosim_sarsa_walk_pada_play-test-0-converted
-          headers: time, state0
+          fields: time, state0
           split: no_split
       inputs: 16
       outputs: 7

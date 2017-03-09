@@ -1,0 +1,73 @@
+experiment: 
+  type: experiment/online_learning
+  runs: 1
+  trials: 1
+  steps: 0
+  rate: 0
+  test_interval: 0
+  output: complex_phantom_sarsa_walk
+  environment: 
+    type: environment/leo/phantom
+    importer: 
+      type: importer/csv
+      file: ../src/grl/addons/leo/pid_trajectories/real/complex_leo_pid_walk-test-0
+      fields: time, state0, state1, action, reward, terminal, transition_type, contact
+    exporter: 
+      type: exporter/csv
+      file: complex_phantom_sarsa_walk
+      style: meshup
+      variant: all
+      enabled: 1
+    sub_transition_type: 
+      type: signal/vector
+    pub_ic_signal: 
+      type: signal/vector
+  agent: 
+    type: agent/leo/sym_wrapper
+    agent: 
+      type: agent/leo/td
+      policy: 
+        type: mapping/policy/value/q
+        discretizer: 
+          type: discretizer/uniform
+          min: [-8.56, -8.56, -8.56]
+          max: [8.56, 8.56, 8.56]
+          steps: [7, 7, 7]
+        projector: 
+          type: projector/tile_coding
+          tilings: 16
+          memory: 33554432
+          safe: 1
+          resolution: [0.14, 0.28, 0.28, 0.28, 0.28, 5, 10, 10, 10, 10, 5.33, 5.33, 5.33]
+          wrapping: []
+        representation: 
+          type: representation/parameterized/linear
+          init_min: [0]
+          init_max: [0.01]
+          memory: experiment/agent/agent/policy/projector/memory
+          outputs: 1
+          output_min: []
+          output_max: []
+        sampler: 
+          type: sampler/greedy
+          rand_max: 0
+      predictor: 
+        type: predictor/sarsa
+        alpha: 0.2
+        gamma: 0.9962
+        lambda: 0.8582
+        projector: experiment/agent/agent/policy/projector
+        representation: experiment/agent/agent/policy/representation
+        trace: 
+          type: trace/enumerated/accumulating
+      pub_transition_type: experiment/environment/sub_transition_type
+    sub_ic_signal: experiment/environment/pub_ic_signal
+  test_agent: 
+    type: agent/leo/sym_wrapper
+    agent: 
+      type: agent/leo/fixed
+      policy: experiment/agent/agent/policy
+      pub_transition_type: experiment/environment/sub_transition_type
+    sub_ic_signal: experiment/environment/pub_ic_signal
+  load_file: best_leo_leosim_dsarsa_walk_egreedy-010-mp0-run0
+  save_every: never

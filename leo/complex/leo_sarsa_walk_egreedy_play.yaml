@@ -69,7 +69,7 @@ experiment:
           importer: 
             type: importer/csv
             file: ../src/grl/addons/leo/pid_trajectories/leosim_dsarsa_walk_egreedy_play-test-0-converted
-            headers: time, state0
+            fields: time, state0
             split: no_split
         inputs: 16
         outputs: 7
@@ -135,7 +135,7 @@ experiment:
       type: trigger
       min: []
       max: []
-      delay: 0.6
+      delay: 0.3
     sub_ic_signal: experiment/environment/pub_ic_signal
   test_agent: 
     type: agent/leo/sma
@@ -160,5 +160,5 @@ experiment:
     fc_trigger: experiment/agent/fc_trigger
     starter_trigger: experiment/agent/starter_trigger
     sub_ic_signal: experiment/environment/pub_ic_signal
-  load_file: c2-2/leo_leosim_dsarsa_walk_egreedy-010-mp0-d0-run0
+  load_file: best_leo_leosim_dsarsa_walk_egreedy-010-mp0-run0
   save_every: never
