@@ -5,16 +5,16 @@ experiment:
   steps: 0
   rate: 0
   test_interval: 0
-  output: complex_phantom_sarsa_walk
+  output: phantom_sarsa_walk
   environment: 
     type: environment/leo/phantom
     importer: 
       type: importer/csv
-      file: ../src/grl/addons/leo/pid_trajectories/real/complex_leo_pid_walk-test-0
+      file: ../src/grl/addons/leo/pid_trajectories/complex_leosim_walkdynamic-test-0
       fields: time, state0, state1, action, reward, terminal, transition_type, contact
     exporter: 
       type: exporter/csv
-      file: complex_phantom_sarsa_walk
+      file: phantom_sarsa_walk
       style: meshup
       variant: all
       enabled: 1
@@ -24,6 +24,9 @@ experiment:
       type: signal/vector
   agent: 
     type: agent/leo/sym_wrapper
+    sub_ic_signal: experiment/environment/pub_ic_signal
+    action_min: [-8.56, -8.56, -8.56, -8.56, -8.56, -8.56, -8.56]
+    action_max: [8.56, 8.56, 8.56, 8.56, 8.56, 8.56, 8.56]
     agent: 
       type: agent/leo/td
       policy: 
@@ -38,7 +41,7 @@ experiment:
           tilings: 16
           memory: 33554432
           safe: 1
-          resolution: [0.14, 0.28, 0.28, 0.28, 0.28, 5, 10, 10, 10, 10, 5.33, 5.33, 5.33]
+          resolution: [0.28, 0.28, 0.28, 0.28, 0.14, 10, 10, 10, 10, 5, 5.33, 5.33, 5.33]
           wrapping: []
         representation: 
           type: representation/parameterized/linear
@@ -61,13 +64,14 @@ experiment:
         trace: 
           type: trace/enumerated/accumulating
       pub_transition_type: experiment/environment/sub_transition_type
-    sub_ic_signal: experiment/environment/pub_ic_signal
   test_agent: 
     type: agent/leo/sym_wrapper
+    sub_ic_signal: experiment/environment/pub_ic_signal
+    action_min: experiment/agent/action_min
+    action_max: experiment/agent/action_max
     agent: 
       type: agent/leo/fixed
       policy: experiment/agent/agent/policy
       pub_transition_type: experiment/environment/sub_transition_type
-    sub_ic_signal: experiment/environment/pub_ic_signal
-  load_file: best_leo_leosim_dsarsa_walk_egreedy-010-mp0-run0
+  load_file: leo_leosim_dsarsa_walk_egreedy-cf000-mp1-run0
   save_every: never
