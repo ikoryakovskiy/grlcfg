@@ -1,26 +1,30 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 1
+  trials: 0
   steps: 0
-  rate: 10
+  rate: 0
   test_interval: 0
-  output: complex_leosim_walkdynamic
+  output: complex_leo_pid_walk
   environment: 
     type: environment/leo_walk
     behavior: 
       type: behavior/leo_walk
     xml: ../../leo/cfg/xm430_210_vc_leo_walk_real.xml
     target_env: 
-      type: environment/ode
-      xml: experiment/environment/xml
-      randomize: 0
-      visualize: 1
-    observe: hipleft, hipright, kneeleft, kneeright, ankleleft, ankleright, shoulder, torso_boom
-    actuate: hipleft, hipright, kneeleft, kneeright, ankleleft, ankleright, shoulder
+      type: environment/communicator
+      communicator: 
+        type: communicator/zeromq/request_reply
+        role: ZMQ_REP
+        sync: tcp://192.168.1.10:5560
+        addr: tcp://*:5561
+      target_obs_dims: 20
+      target_action_dims: 7
+    observe: torso_boom, shoulder, hipright, hipleft, kneeright, kneeleft, ankleright, ankleleft
+    actuate: shoulder, hipright, hipleft, kneeright, kneeleft, ankleright, ankleleft
     exporter: 
       type: exporter/csv
-      file: complex_leosim_walkdynamic
+      file: complex_leo_pid_walk
       style: meshup
       variant: all
       enabled: 1
@@ -28,7 +32,6 @@ experiment:
       type: signal/vector
     pub_ic_signal: 
       type: signal/vector
-    measurement_noise: 0
   agent: 
     type: agent/leo/sma
     sub_ic_signal: experiment/environment/pub_ic_signal
@@ -61,10 +64,24 @@ experiment:
         action_max: experiment/environment/action_max
       pub_transition_type: experiment/environment/sub_transition_type
     agent_main: 
-      type: agent/leo/walkdynamic
-      sub_ic_signal: experiment/environment/pub_ic_signal
-      action_min: experiment/environment/action_min
-      action_max: experiment/environment/action_max
+      type: agent/leo/fixed
+      policy: 
+        type: mapping/policy/parameterized/pidt
+        trajectory: 
+          type: mapping/timeline
+          importer: 
+            type: importer/csv
+            file: ../src/grl/addons/leo/pid_trajectories/complex_leosim_walkdynamic-test-0-converted
+            fields: time, state0
+        inputs: 16
+        outputs: 7
+        p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        i: []
+        d: []
+        il: []
+        action_min: experiment/environment/action_min
+        action_max: experiment/environment/action_max
+      pub_transition_type: experiment/environment/sub_transition_type
     upright_trigger: 
       type: trigger
       min: [-0.3, -0.3, -0.6, -0.6, -3.14, -3.14, -100000, -0.2, -0.1, -0.1, -0.1, -0.1, -0.1, -0.1, -0.1, -0.1]
@@ -74,6 +91,6 @@ experiment:
       type: trigger
       min: [0.9]
       max: [1.1]
-      delay: 0.6
+      delay: 5
   test_agent: experiment/agent
   save_every: never

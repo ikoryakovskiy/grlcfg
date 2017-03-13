@@ -1,11 +1,11 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 1
+  trials: 0
   steps: 0
   rate: 10
   test_interval: 0
-  output: complex_leosim_walkdynamic
+  output: complex_leosim_pid_walk
   environment: 
     type: environment/leo_walk
     behavior: 
@@ -20,7 +20,7 @@ experiment:
     actuate: hipleft, hipright, kneeleft, kneeright, ankleleft, ankleright, shoulder
     exporter: 
       type: exporter/csv
-      file: complex_leosim_walkdynamic
+      file: complex_leosim_pid_walk
       style: meshup
       variant: all
       enabled: 1
@@ -61,10 +61,24 @@ experiment:
         action_max: experiment/environment/action_max
       pub_transition_type: experiment/environment/sub_transition_type
     agent_main: 
-      type: agent/leo/walkdynamic
-      sub_ic_signal: experiment/environment/pub_ic_signal
-      action_min: experiment/environment/action_min
-      action_max: experiment/environment/action_max
+      type: agent/leo/fixed
+      policy: 
+        type: mapping/policy/parameterized/pidt
+        trajectory: 
+          type: mapping/timeline
+          importer: 
+            type: importer/csv
+            file: ../src/grl/addons/leo/pid_trajectories/complex_leosim_walkdynamic-test-0-converted
+            fields: time, state0
+        inputs: 16
+        outputs: 7
+        p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        i: []
+        d: []
+        il: []
+        action_min: experiment/environment/action_min
+        action_max: experiment/environment/action_max
+      pub_transition_type: experiment/environment/sub_transition_type
     upright_trigger: 
       type: trigger
       min: [-0.3, -0.3, -0.6, -0.6, -3.14, -3.14, -100000, -0.2, -0.1, -0.1, -0.1, -0.1, -0.1, -0.1, -0.1, -0.1]
