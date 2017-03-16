@@ -3,19 +3,23 @@ experiment:
   runs: 1
   trials: 0
   steps: 0
-  rate: 30
+  rate: 0
   test_interval: 0
-  output: leosim_pid_torso_0
+  output: leo_pid_torso_0
   environment: 
     type: environment/leo_walk
     behavior: 
       type: behavior/leo_walk
-    xml: ../../leo/cfg/xm430_210_vc_leo_torso_0.xml
+    xml: ../../leo/cfg/xm430_210_vc_leo_walk_real.xml
     target_env: 
-      type: environment/ode
-      xml: experiment/environment/xml
-      randomize: 0
-      visualize: 1
+      type: environment/communicator
+      communicator: 
+        type: communicator/zeromq/request_reply
+        role: ZMQ_REP
+        sync: tcp://192.168.1.10:5560
+        addr: tcp://*:5561
+      target_obs_dims: 20
+      target_action_dims: 7
     observe: hipleft, hipright, kneeleft, kneeright, ankleleft, ankleright, shoulder, torso_boom
     actuate: hipleft, hipright, kneeleft, kneeright, ankleleft, ankleright, shoulder
   agent: 
