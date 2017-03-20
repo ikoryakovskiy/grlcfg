@@ -1,11 +1,11 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 0
-  steps: 500000
-  rate: 0
-  test_interval: 10
-  output: pendulum_sarsa_tc
+  trials: 10
+  steps: 0
+  rate: 33
+  test_interval: 0
+  output: pendulum_sarsa_tc_play
   environment: 
     type: environment/modeled
     model: 
@@ -68,7 +68,8 @@ experiment:
       sampler: 
         type: sampler/greedy
         rand_max: 0
-  save_every: run
+  load_file: pendulum_sarsa_tc-run0
+  save_every: never
 visualizer: 
   type: visualizer/glut
 visualization: 
@@ -80,3 +81,6 @@ visualization:
   savepoints: 1048576
   projection: mean
   policy: experiment/test_agent/policy
+vis2: 
+  type: visualization/pendulum
+  state: experiment/environment/state
