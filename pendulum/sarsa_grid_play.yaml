@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 10
+  trials: 1
   steps: 0
   rate: 33
   test_interval: 0
@@ -14,12 +14,18 @@ experiment:
       integration_steps: 5
       dynamics: 
         type: dynamics/pendulum
-        param: cfg/pendulum/params.txt:0
+        param: -cfg/pendulum/params.txt:0
     task: 
       type: task/pendulum/swingup
       timeout: 2.99
       randomization: 0.01
       wrap_angle: 0
+    exporter: 
+      type: exporter/csv
+      file: pendulum_sarsa_grid_play
+      style: meshup
+      variant: all
+      enabled: 1
   agent: 
     type: agent/td
     policy: 
@@ -68,7 +74,7 @@ experiment:
       sampler: 
         type: sampler/greedy
         rand_max: 0
-  load_file: pendulum_sarsa_grid-run0
+  load_file: cfg_pendulum_sarsa_grid-mean-mp0-run0
   save_every: never
 visualizer: 
   type: visualizer/glut
