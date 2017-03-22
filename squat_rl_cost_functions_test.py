@@ -31,10 +31,11 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = 5
+    runs = 10
     #p = np.linspace(0.000, 0.010, 2)
-    p = 0.0001*np.logspace(0, 4, num=5, base=10.0)
-    p = np.append(0,p)
+    #p = 0.0001*np.logspace(0, 4, num=5, base=10.0)
+    #p = np.append(0,p)
+    p = [0.0010]
     #print(p)
 
     # Main

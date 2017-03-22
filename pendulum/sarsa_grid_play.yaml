@@ -3,7 +3,7 @@ experiment:
   runs: 1
   trials: 1
   steps: 0
-  rate: 33
+  rate: 3
   test_interval: 0
   output: pendulum_sarsa_grid_play
   environment: 
@@ -74,7 +74,7 @@ experiment:
       sampler: 
         type: sampler/greedy
         rand_max: 0
-  load_file: cfg_pendulum_sarsa_grid-mean-mp0-run0
+  load_file: cfg_pendulum_sarsa_grid-it0-mp0-run0
   save_every: never
 visualizer: 
   type: visualizer/glut
