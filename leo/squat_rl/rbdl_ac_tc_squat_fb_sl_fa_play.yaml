@@ -25,7 +25,7 @@ experiment:
       type: task/leo_squatting
       timeout: 10
       randomize: 0
-      weight: 0.0001
+      weight: 0.0010
   agent: 
     type: agent/td
     policy: 

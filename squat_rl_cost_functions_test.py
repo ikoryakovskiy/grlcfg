@@ -35,7 +35,7 @@ def main():
     #p = np.linspace(0.000, 0.010, 2)
     #p = 0.0001*np.logspace(0, 4, num=5, base=10.0)
     #p = np.append(0,p)
-    p = [0.0010]
+    p = [0.0000, 0.0001]
     #print(p)
 
     # Main

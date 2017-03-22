@@ -2,9 +2,9 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 2000000
+  steps: 50000000
   rate: 0
-  test_interval: 10
+  test_interval: 500
   output: rbdl_ac_tc_squat_fb_sl_fa
   environment: 
     type: environment/sandbox
@@ -94,5 +94,4 @@ experiment:
       output_max: experiment/environment/task/action_max
       projector: experiment/agent/policy/projector
       representation: experiment/agent/policy/representation
-  load_file: leo_squat_rl_rbdl_ac_tc_squat_fb_sl_fa-init-00010-mp3
   save_every: run
