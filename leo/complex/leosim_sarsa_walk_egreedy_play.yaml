@@ -171,5 +171,5 @@ experiment:
     feet_on_trigger: experiment/agent/feet_on_trigger
     feet_off_trigger: experiment/agent/feet_off_trigger
     starter_trigger: experiment/agent/starter_trigger
-  load_file: leo_leosim_dsarsa_walk_egreedy-cf002-mp3-run0
+  load_file: leo_walk/leo_leosim_dsarsa_walk_egreedy-cf002-mp3-run0
   save_every: never
