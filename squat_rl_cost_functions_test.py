@@ -33,7 +33,7 @@ def main():
 
     # Parameters
     runs = range(10)
-    weight_nmpc = [1.0]
+    weight_nmpc = [0.0001]
     #weight_nmpc_aux = [1.0, 0.1, 0.0]
     weight_nmpc_aux = [1.0]
     #weight_shaping = [10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.0]
