@@ -8,6 +8,7 @@ import numpy as np
 from time import sleep
 import math
 import argparse
+import itertools
 
 counter = None
 counter_lock = multiprocessing.Lock()
@@ -32,17 +33,18 @@ def main():
 
     # Parameters
     runs = 10
-    #p = np.linspace(0.000, 0.010, 2)
-    #p = 0.0001*np.logspace(0, 4, num=5, base=10.0)
-    #p = np.append(0,p)
-    p = [0.0, 0.1]
-    #print(p)
+    weight_nmpc = [1.0]
+    weight_nmpc_aux = [1.0, 0.1, 0.0]
+    weight_shaping = [10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.0]
+
+    options = []
+    for r in itertools.product(weight_nmpc, weight_nmpc_aux, weight_shaping): options.append(r)
 
     # Main
-    rl_run_param(args, ["leo/squat_rl/rbdl_ac_tc_squat_fb_sl_fa.yaml"], range(runs), p)
+    rl_run_param(args, ["leo/squat_rl/rbdl_ac_tc_squat_fb_sl_fa.yaml"], range(runs), options)
 
 ######################################################################################
-def rl_run_param(args, list_of_cfgs, runs, params):
+def rl_run_param(args, list_of_cfgs, runs, options):
     """Playing RL on a slope of x.xxx which were learnt for slope 0.004"""
     list_of_new_cfgs = []
 
@@ -56,19 +58,22 @@ def rl_run_param(args, list_of_cfgs, runs, params):
         # after reading cfg can do anything with the name
         fname, fext = os.path.splitext( cfg.replace("/", "_") )
 
-        for p in params:
-            str_param = int(round(10000*p))
+        for o in options:
+            a = [int(round(10000*x)) for x in o]
+            str_o = myString = "-".join(map(lambda x : "{:05d}".format(x), a))
+            print "Generating parameters: {}".format(str_o)
 
             for run in runs:
                 # create local filename
-                list_of_new_cfgs.append( "{}/{}-{:05d}-mp{}{}".format(loc, fname, str_param, run, fext) )
+                list_of_new_cfgs.append( "{}/{}-{}-mp{}{}".format(loc, fname, str_o, run, fext) )
 
                 # modify options
-                conf['experiment']['environment']['task']['weight2'] = 0.0001
-                conf['experiment']['environment']['task']['weight2'] = float(p)
-                conf['experiment']['output'] = "{}-{:05d}-mp{}".format(fname, str_param, run)
+                conf['experiment']['environment']['task']['weight_nmpc'] = o[0]
+                conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[1]
+                conf['experiment']['environment']['task']['weight_shaping'] = o[2]
+                conf['experiment']['output'] = "{}-{}-mp{}".format(fname, str_o, run)
                 if "exporter" in conf['experiment']['environment']:
-                  conf['experiment']['environment']['exporter']['file'] = "{}-{:05d}-mp{}".format(fname, str_param, run)
+                  conf['experiment']['environment']['exporter']['file'] = "{}-{}-mp{}".format(fname, str_o, run)
 
                 conf = remove_viz(conf)
                 write_cfg(list_of_new_cfgs[-1], conf)

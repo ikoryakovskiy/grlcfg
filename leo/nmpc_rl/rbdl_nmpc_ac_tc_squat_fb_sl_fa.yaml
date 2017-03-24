@@ -25,8 +25,9 @@ experiment:
       type: task/leo_squatting
       timeout: 10
       randomize: 0
-      weight: 0.0001
-      weight2: 1.0
+      weight_nmpc: 0.0001
+      weight_nmpc_aux: 1.0
+      weight_shaping: 1.1
   agent: 
     type: agent/master/sequential/additive
     agent1: 
@@ -76,7 +77,7 @@ experiment:
         gamma: 0.9962
         lambda: 0.8582
         update_method: proportional
-        step_limit: [  ]
+        step_limit: []
         critic_projector: 
           type: projector/pre/peaked
           peaking: experiment/agent/agent2/policy/projector/peaking

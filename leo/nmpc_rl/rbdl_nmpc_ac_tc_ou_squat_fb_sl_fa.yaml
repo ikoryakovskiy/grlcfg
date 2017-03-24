@@ -5,7 +5,7 @@ experiment:
   steps: 70000
   rate: 0
   test_interval: 10
-  output: rbdl_nmpc_ac_tc_squat_fb_sl_fa
+  output: rbdl_nmpc_ac_tc_ou_squat_fb_sl_fa
   environment: 
     type: environment/sandbox
     model: 
@@ -25,8 +25,15 @@ experiment:
       type: task/leo_squatting
       timeout: 10
       randomize: 0
-      weight: 0.0001
-      weight2: 1.0
+      weight_nmpc: 0.0001
+      weight_nmpc_aux: 1.0
+    exporter: 
+      type: exporter/csv
+      file: rbdl_nmpc_ac_tc_ou_squat_fb_sl_fa
+      fields: time, state, observation, action, reward, terminal
+      style: meshup
+      variant: all
+      enabled: 1
   agent: 
     type: agent/master/sequential/additive
     agent1: 
