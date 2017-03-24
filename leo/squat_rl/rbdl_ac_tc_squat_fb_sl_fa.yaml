@@ -2,9 +2,9 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 2000000
+  steps: 50000000
   rate: 0
-  test_interval: 100
+  test_interval: 500
   output: rbdl_ac_tc_squat_fb_sl_fa
   environment: 
     type: environment/sandbox
