@@ -32,19 +32,22 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = 10
+    runs = range(10)
     weight_nmpc = [1.0]
     weight_nmpc_aux = [1.0, 0.1, 0.0]
     weight_shaping = [10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.0]
 
     options = []
-    for r in itertools.product(weight_nmpc, weight_nmpc_aux, weight_shaping): options.append(r)
+    for r in itertools.product(weight_nmpc, weight_nmpc_aux, weight_shaping, runs): options.append(r)
+    options.append((0, 0, 1, 0)) # shaping only!
+    options.append((0, 0, 1, 1)) # shaping only!
+    options.append((0, 0, 1, 2)) # shaping only!
 
     # Main
-    rl_run_param(args, ["leo/squat_rl/rbdl_ac_tc_squat_fb_sl_fa.yaml"], range(runs), options)
+    rl_run_param(args, ["leo/squat_rl/rbdl_ac_tc_squat_fb_sl_fa.yaml"], options)
 
 ######################################################################################
-def rl_run_param(args, list_of_cfgs, runs, options):
+def rl_run_param(args, list_of_cfgs, options):
     """Playing RL on a slope of x.xxx which were learnt for slope 0.004"""
     list_of_new_cfgs = []
 
@@ -59,24 +62,23 @@ def rl_run_param(args, list_of_cfgs, runs, options):
         fname, fext = os.path.splitext( cfg.replace("/", "_") )
 
         for o in options:
-            a = [int(round(10000*x)) for x in o]
-            str_o = myString = "-".join(map(lambda x : "{:05d}".format(x), a))
+            str_o = "-".join(map(lambda x : "{:05d}".format(int(round(10000*x))), o[:-1]))  # last element in 'o' is reserved for mp
+            str_o += "-mp{}".format(o[-1])
             print "Generating parameters: {}".format(str_o)
 
-            for run in runs:
-                # create local filename
-                list_of_new_cfgs.append( "{}/{}-{}-mp{}{}".format(loc, fname, str_o, run, fext) )
+            # create local filename
+            list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
-                # modify options
-                conf['experiment']['environment']['task']['weight_nmpc'] = o[0]
-                conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[1]
-                conf['experiment']['environment']['task']['weight_shaping'] = o[2]
-                conf['experiment']['output'] = "{}-{}-mp{}".format(fname, str_o, run)
-                if "exporter" in conf['experiment']['environment']:
-                  conf['experiment']['environment']['exporter']['file'] = "{}-{}-mp{}".format(fname, str_o, run)
+            # modify options
+            conf['experiment']['environment']['task']['weight_nmpc'] = o[0]
+            conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[1]
+            conf['experiment']['environment']['task']['weight_shaping'] = o[2]
+            conf['experiment']['output'] = "{}-{}".format(fname, str_o)
+            if "exporter" in conf['experiment']['environment']:
+              conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
 
-                conf = remove_viz(conf)
-                write_cfg(list_of_new_cfgs[-1], conf)
+            conf = remove_viz(conf)
+            write_cfg(list_of_new_cfgs[-1], conf)
 
     #print list_of_new_cfgs
 
