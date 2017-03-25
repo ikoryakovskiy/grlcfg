@@ -37,7 +37,7 @@ def main():
     #weight_nmpc_aux = [1.0, 0.1, 0.0]
     weight_nmpc_aux = [1.0]
     #weight_shaping = [10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.0]
-    weight_shaping = [10.0, 1.0, 0.1, 0.01]
+    weight_shaping = [0.001, 0.0]
 
     options = []
     for r in itertools.product(weight_nmpc, weight_nmpc_aux, weight_shaping, runs): options.append(r)
