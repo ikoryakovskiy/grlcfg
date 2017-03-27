@@ -17,9 +17,9 @@ class OptimizerSA(Annealer):
     # pass extra data (the distance matrix) into the constructor
     def __init__(self, state, targets, tm, ts, tv2):
         self.targets, self.tm, self.ts, self.tv2 = targets, tm, ts, tv2
-        self.Tmax = 2500.0     # Max (starting) temperature
-        self.Tmin = 2.0     # Min (ending) temperature
-        self.steps = 500     # Number of iterations
+        self.Tmax = 100.0     # Max (starting) temperature
+        self.Tmin = 0.001     # Min (ending) temperature
+        self.steps = 100     # Number of iterations
         self.updates = 1      # Number of updates (by default an update prints to stdout)
         super(OptimizerSA, self).__init__(state)  # important! 
         #(i,j,k) = self.idx2ijk(np.prod(self.dim)-1)
@@ -40,7 +40,7 @@ class OptimizerSA(Annealer):
         self.updated_idx = idx
         self.updated_val = self.state[idx]
         self.state[idx] = np.random.normal(self.state[idx], self.ts[idx])
-        (i,j,k) = self.idx2ijk(idx)
+        #(i,j,k) = self.idx2ijk(idx)
         #print("Move: {}: ({},{},{}) {} -> {}".format(idx, i, j, k, self.updated_val, self.state[idx]))
         
     def accepted(self):
@@ -71,7 +71,7 @@ class OptimizerSA(Annealer):
         sm = self.smoothness_delta + self.smoothness
         #print("Smoothness difference {}".format(sm - self.calc_smoothness()))        
         '''
-        '''
+        
         self.conditional_delta = 0;
         t_idxs = np.nonzero(self.targets[:, 2] == k)[0]
         for t_idx in t_idxs:
@@ -81,12 +81,13 @@ class OptimizerSA(Annealer):
             self.conditional_delta += new-old
         cd = self.conditional_delta + self.conditional
         #print("Conditional difference {}".format(cd - self.calc_conditional()))        
-        '''        
-        e = pr #+ 1.0*sm #+ 0.1*cd
+                
+        e = pr + 0.001*sm #+ 0.001*cd
 
         return e
         
     def f_prior(self, a, b, s):
+        #print(np.square(a-b), s, np.square(a-b) / s)
         return np.square(a-b) / s
 
     def f_smoothness(self, a, b):

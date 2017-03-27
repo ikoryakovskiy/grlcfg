@@ -35,7 +35,7 @@ length = np.prod((125, 101, 3))
 offset = 125*101
 
 '''
-with open("2017-03-27T09h20m45s_energy_655773.734523.state", 'rb') as fh:
+with open("2017-03-27T13h55m40s_energy_29298.4387493.state", 'rb') as fh:
     state = pickle.load(fh)
     show_grid_representation(state, (0, 1), (125, 101, 3))
     plt.waitforbuttonpress()
@@ -59,13 +59,12 @@ targets = real_targets(tm, tr, 0.97)
 #print(ts)
 tsx = np.maximum(ts, 0.0000001)
 init_state = np.random.normal(tm, 3*tsx)
-#init_state = np.random.normal(-100*np.ones(tm.shape), 10)
+#show_grid_representation(tm, (0, 1), (125, 101, 3))
 #show_grid_representation(init_state, (0, 1), (125, 101, 3))
 #plt.waitforbuttonpress()
-print("Min {}".format(np.amin(init_state)))
-
-
 print("Initial state", init_state)
+print("Min of the state {}".format(np.amin(init_state)))
+
 optimizer = OptimizerSA(init_state, targets, tm, ts, tv2)
 state, e = optimizer.anneal()
 print("Error {}".format(e))

@@ -27,7 +27,8 @@ experiment:
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1.0
-      weight_shaping: 0
+      weight_shaping: 1.0
+      gamma: 0.95
   agent: 
     type: agent/master/sequential/additive
     agent1: 
@@ -74,8 +75,8 @@ experiment:
         type: predictor/ac/action
         alpha: 0.2
         beta: 0.02
-        gamma: 0.9962
-        lambda: 0.8582
+        gamma: experiment/environment/task/gamma
+        lambda: 0.75
         update_method: proportional
         step_limit: []
         critic_projector: 
