@@ -47,7 +47,7 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     # Main
-    rl_run_param(args, ["leo/squat_rl/rbdl_ac_tc_squat_fb_sl_fa.yaml"], options)
+    rl_run_param(args, ["leo/nmpc_rl/rbdl_nmpc_ac_tc_squat_fb_sl_fa.yaml"], options)
 
 ######################################################################################
 def rl_run_param(args, list_of_cfgs, options):
@@ -75,7 +75,7 @@ def rl_run_param(args, list_of_cfgs, options):
             # modify options
             conf['experiment']['environment']['task']['weight_nmpc'] = o[0]
             conf['experiment']['environment']['task']['weight_shaping'] = o[1]
-            if o[0] == 0:
+            if o[2] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl.lua"
             else:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl_real.lua"
@@ -88,7 +88,7 @@ def rl_run_param(args, list_of_cfgs, options):
 
     #print list_of_new_cfgs
 
-    do_multiprocessing_pool(args, list_of_new_cfgs)
+    #do_multiprocessing_pool(args, list_of_new_cfgs)
 
 ######################################################################################
 def mp_run(cfg):
