@@ -32,7 +32,7 @@ def real_targets(tm, tr, gamma):
   #print(type(tm))
   #print(tm.shape)
   #print (tr)
-  tg = []
+  tg = np.empty((0, 4))
   for record in range(0, tr.shape[0]):
     #print(tr[record, :])
     #print (record)
@@ -58,7 +58,7 @@ def real_targets(tm, tr, gamma):
       raise Exception('Unknown transition')
     #value = tm[int(x0 + dim[0]*xd0 + np.prod(dim)*u0)]
     #print (target-value)
-    tg.append((x0, xd0,target))
+    tg = np.vstack((tg, [x0, xd0, u0, target]))
   return tg
 
   

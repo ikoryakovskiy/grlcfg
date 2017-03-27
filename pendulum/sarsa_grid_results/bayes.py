@@ -8,7 +8,7 @@ from __future__ import division, print_function, absolute_import
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-#import cma
+import pickle
 
 # local
 from anneal import *
@@ -34,6 +34,15 @@ for i in range(0, n):
 length = np.prod((125, 101, 3))
 offset = 125*101
 
+'''
+with open("2017-03-27T09h20m45s_energy_655773.734523.state", 'rb') as fh:
+    state = pickle.load(fh)
+    show_grid_representation(state, (0, 1), (125, 101, 3))
+    plt.waitforbuttonpress()
+    save_grid_representation(state, "policies/cfg_pendulum_sarsa_grid-it1-mp0-run0-_experiment_agent_policy_representation.dat")
+sdfas
+'''
+
 tm = train.mean(0)
 ts = train.std(0)
 tv2 = 2*np.maximum( length * [0.0001], train.var(0))
@@ -44,20 +53,22 @@ csv_data = csv_read(["trajectories/pendulum_sarsa_grid_play-test-0.csv"])
 tr = load_trajectories(csv_data)
 
 targets = real_targets(tm, tr, 0.97)
-#print(targets)
+#targets = np.zeros([1, 4])
+#print("Targets ", targets)
 
-print(ts)
+#print(ts)
 tsx = np.maximum(ts, 0.0000001)
 init_state = np.random.normal(tm, 3*tsx)
 #init_state = np.random.normal(-100*np.ones(tm.shape), 10)
 #show_grid_representation(init_state, (0, 1), (125, 101, 3))
 #plt.waitforbuttonpress()
+print("Min {}".format(np.amin(init_state)))
 
-print (init_state)
+
+print("Initial state", init_state)
 optimizer = OptimizerSA(init_state, targets, tm, ts, tv2)
 state, e = optimizer.anneal()
 print("Error {}".format(e))
-
 
 show_grid_representation(state, (0, 1), (125, 101, 3))
 plt.waitforbuttonpress()

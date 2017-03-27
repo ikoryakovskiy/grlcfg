@@ -27,6 +27,7 @@ experiment:
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1.0
+      weight_shaping: 0
     exporter: 
       type: exporter/csv
       file: rbdl_nmpc_ac_tc_squat_fb_sl_fa_play

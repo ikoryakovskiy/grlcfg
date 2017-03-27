@@ -74,7 +74,7 @@ experiment:
       sampler: 
         type: sampler/greedy
         rand_max: 0
-  load_file: pendulum_sarsa_grid-run0
+  load_file: cfg_pendulum_sarsa_grid-it1-mp0-run0
   save_every: never
 visualizer: 
   type: visualizer/glut

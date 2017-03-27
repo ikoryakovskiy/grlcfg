@@ -181,7 +181,7 @@ class Annealer(object):
             self.update(step, T, E, None, None)
 
         idxs = numpy.nonzero(self.ts)[0]
-        print(idxs)
+        #print(idxs)
 
         # Attempt moves to new states
         while step < self.steps and not self.user_exit:

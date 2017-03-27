@@ -9,6 +9,8 @@ class OptimizerSA(Annealer):
     prior_delta = 0
     smoothness = 0
     smoothness_delta = 0
+    conditional = 0
+    conditional_delta = 0
     updated_idx = 0
     updated_val = 0
 
@@ -27,6 +29,8 @@ class OptimizerSA(Annealer):
         print("Initial prior = {}".format(self.prior))
         self.smoothness = self.calc_smoothness()
         print("Initial smoothness = {}".format(self.smoothness))
+        self.conditional = self.calc_conditional()
+        print("Initial conditional = {}".format(self.conditional))
         self.updated_val = state[self.updated_idx]
 
 
@@ -36,20 +40,24 @@ class OptimizerSA(Annealer):
         self.updated_idx = idx
         self.updated_val = self.state[idx]
         self.state[idx] = np.random.normal(self.state[idx], self.ts[idx])
+        (i,j,k) = self.idx2ijk(idx)
+        #print("Move: {}: ({},{},{}) {} -> {}".format(idx, i, j, k, self.updated_val, self.state[idx]))
         
     def accepted(self):
         self.prior += self.prior_delta
         self.smoothness += self.smoothness_delta
+        self.conditional += self.conditional_delta
 
     def energy(self):
         """Calculates the length of the route."""
         #prior = np.sum(np.divide(np.square(self.state - self.tm), self.tv2))
-        old = self.f_prior(self.tm[self.updated_idx], self.updated_val)
-        new = self.f_prior(self.tm[self.updated_idx], self.state[self.updated_idx])
+        s = self.tv2[self.updated_idx]
+        old = self.f_prior(self.tm[self.updated_idx], self.updated_val, s)
+        new = self.f_prior(self.tm[self.updated_idx], self.state[self.updated_idx], s)
         self.prior_delta = new - old        
         pr = self.prior_delta + self.prior
         #print("Prior difference {}".format(pr - self.calc_prior()))        
-        
+        '''
         (i,j,k) = self.idx2ijk(self.updated_idx)
         self.smoothness_delta = 0;
         for cl in self.click:
@@ -62,20 +70,36 @@ class OptimizerSA(Annealer):
                 self.smoothness_delta += 2*(new-old)
         sm = self.smoothness_delta + self.smoothness
         #print("Smoothness difference {}".format(sm - self.calc_smoothness()))        
-        
-        e = pr + 1.0*sm
+        '''
+        '''
+        self.conditional_delta = 0;
+        t_idxs = np.nonzero(self.targets[:, 2] == k)[0]
+        for t_idx in t_idxs:
+            ti, tj, tk, tq = self.targets[t_idx, :]
+            old = self.f_contitional(self.updated_val, tq, i-ti, j-tj)
+            new = self.f_contitional(self.state[self.updated_idx], tq, i-ti, j-tj)
+            self.conditional_delta += new-old
+        cd = self.conditional_delta + self.conditional
+        #print("Conditional difference {}".format(cd - self.calc_conditional()))        
+        '''        
+        e = pr #+ 1.0*sm #+ 0.1*cd
+
         return e
         
-    def f_prior(self, a, b):
-        return np.square(a-b)
-        
-    def calc_prior(self):
-        prior = np.sum(self.f_prior(self.state, self.tm))
-        return prior
-        
+    def f_prior(self, a, b, s):
+        return np.square(a-b) / s
+
     def f_smoothness(self, a, b):
         return np.minimum(abs(a-b), 20)
-
+        
+    def f_contitional(self, a, b, x, y):
+        s = 2*(x*x+y*y+1)
+        return np.minimum(np.square(a-b), 10000) / s
+        
+    def calc_prior(self):
+        prior = np.sum(self.f_prior(self.state, self.tm, self.tv2))
+        return prior
+        
     def calc_smoothness(self):
         sm = 0
         for k in range(0, self.dim[2]): # for every action
@@ -89,7 +113,25 @@ class OptimizerSA(Annealer):
                             nv = self.state[self.ijk2idx(ni,nj,k)]
                             sm += self.f_smoothness(v, nv)
         return sm
-                            
+
+    def calc_conditional(self):
+        cond = 0
+        for k in range(0, self.dim[2]): # for every action
+            #print("Targets {}".format(self.targets))
+            t_idxs = np.nonzero(self.targets[:, 2] == k)[0]
+            #print("Selected target idx {}".format(t_idxs))
+            for i in range(0, self.dim[0]):
+                for j in range(0, self.dim[1]):
+                    idx = self.ijk2idx(i,j,k)
+                    if self.ts[idx] != 0:
+                        for t_idx in t_idxs:
+                            ti, tj, tk, tq = self.targets[t_idx, :]
+                            v = self.f_contitional(self.state[idx], tq, i-ti, j-tj)
+                            cond += v
+                            #if v > 10:
+                                #print(self.state[idx], tq, i-ti, j-tj, v)
+        return cond
+
     def ijk2idx(self, i, j, k):
         return i + self.dim[0]*j + self.dim[0]*self.dim[1]*k
         
