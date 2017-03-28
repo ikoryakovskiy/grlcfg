@@ -1,5 +1,6 @@
 from anneal import *
 import numpy as np
+from extra import *
 
 class OptimizerSA(Annealer):
     """Test annealer"""
@@ -18,13 +19,14 @@ class OptimizerSA(Annealer):
     def __init__(self, state, targets, tm, ts, tv2):
         self.targets, self.tm, self.ts, self.tv2 = targets, tm, ts, tv2
         self.Tmax = 100.0     # Max (starting) temperature
-        self.Tmin = 0.001     # Min (ending) temperature
-        self.steps = 100     # Number of iterations
+        self.Tmin = 0.0000001     # Min (ending) temperature
+        self.steps = 2000     # Number of iterations
         self.updates = 1      # Number of updates (by default an update prints to stdout)
         super(OptimizerSA, self).__init__(state)  # important! 
-        #(i,j,k) = self.idx2ijk(np.prod(self.dim)-1)
+        #(i,j,k) = idx2ijk(np.prod(self.dim)-1)
         #idx = self.ijk2idx(i,j,k)
         #print("{} {} {} {}".format(idx, i, j ,k))
+        self.num_targets = targets.shape[0]
         self.prior = self.calc_prior()
         print("Initial prior = {}".format(self.prior))
         self.smoothness = self.calc_smoothness()
@@ -40,7 +42,7 @@ class OptimizerSA(Annealer):
         self.updated_idx = idx
         self.updated_val = self.state[idx]
         self.state[idx] = np.random.normal(self.state[idx], self.ts[idx])
-        #(i,j,k) = self.idx2ijk(idx)
+        #(i,j,k) = idx2ijk(idx)
         #print("Move: {}: ({},{},{}) {} -> {}".format(idx, i, j, k, self.updated_val, self.state[idx]))
         
     def accepted(self):
@@ -57,21 +59,20 @@ class OptimizerSA(Annealer):
         self.prior_delta = new - old        
         pr = self.prior_delta + self.prior
         #print("Prior difference {}".format(pr - self.calc_prior()))        
-        '''
-        (i,j,k) = self.idx2ijk(self.updated_idx)
+
+        (i,j,k) = idx2ijk(self.dim, self.updated_idx)
         self.smoothness_delta = 0;
         for cl in self.click:
             ni = i+cl[0]
             nj = j+cl[1]
             if (ni >= 0 and ni < self.dim[0] and nj >= 0 and nj < self.dim[1]):
-                idx = self.ijk2idx(ni,nj,k)
+                idx = ijk2idx(self.dim,ni,nj,k)
                 old = self.f_smoothness(self.state[idx], self.updated_val)
                 new = self.f_smoothness(self.state[idx], self.state[self.updated_idx])
                 self.smoothness_delta += 2*(new-old)
         sm = self.smoothness_delta + self.smoothness
         #print("Smoothness difference {}".format(sm - self.calc_smoothness()))        
         '''
-        
         self.conditional_delta = 0;
         t_idxs = np.nonzero(self.targets[:, 2] == k)[0]
         for t_idx in t_idxs:
@@ -79,10 +80,10 @@ class OptimizerSA(Annealer):
             old = self.f_contitional(self.updated_val, tq, i-ti, j-tj)
             new = self.f_contitional(self.state[self.updated_idx], tq, i-ti, j-tj)
             self.conditional_delta += new-old
-        cd = self.conditional_delta + self.conditional
-        #print("Conditional difference {}".format(cd - self.calc_conditional()))        
-                
-        e = pr + 0.001*sm #+ 0.001*cd
+        cd = self.conditional_delta / self.num_targets + self.conditional
+        #print("Conditional difference {}".format(cd - self.calc_conditional()))  
+        '''
+        e = pr + 0.001*sm #+ 1.0*cd
 
         return e
         
@@ -94,8 +95,7 @@ class OptimizerSA(Annealer):
         return np.minimum(abs(a-b), 20)
         
     def f_contitional(self, a, b, x, y):
-        s = 2*(x*x+y*y+1)
-        return np.minimum(np.square(a-b), 10000) / s
+        return abs(a-b) * np.exp(-(x*x+y*y)/10.0)
         
     def calc_prior(self):
         prior = np.sum(self.f_prior(self.state, self.tm, self.tv2))
@@ -110,10 +110,10 @@ class OptimizerSA(Annealer):
                         ni = i+cl[0]
                         nj = j+cl[1]
                         if (ni >= 0 and ni < self.dim[0] and nj >= 0 and nj < self.dim[1]):
-                            v = self.state[self.ijk2idx(i,j,k)]
-                            nv = self.state[self.ijk2idx(ni,nj,k)]
+                            v = self.state[ijk2idx(self.dim,i,j,k)]
+                            nv = self.state[ijk2idx(self.dim, ni,nj,k)]
                             sm += self.f_smoothness(v, nv)
-        return sm
+        return sm / self.num_targets
 
     def calc_conditional(self):
         cond = 0
@@ -123,25 +123,14 @@ class OptimizerSA(Annealer):
             #print("Selected target idx {}".format(t_idxs))
             for i in range(0, self.dim[0]):
                 for j in range(0, self.dim[1]):
-                    idx = self.ijk2idx(i,j,k)
+                    idx = ijk2idx(self.dim, i,j,k)
                     if self.ts[idx] != 0:
                         for t_idx in t_idxs:
                             ti, tj, tk, tq = self.targets[t_idx, :]
                             v = self.f_contitional(self.state[idx], tq, i-ti, j-tj)
                             cond += v
-                            #if v > 10:
-                                #print(self.state[idx], tq, i-ti, j-tj, v)
-        return cond
-
-    def ijk2idx(self, i, j, k):
-        return i + self.dim[0]*j + self.dim[0]*self.dim[1]*k
-        
-    def idx2ijk(self, li):
-        k = li // (self.dim[0]*self.dim[1])
-        j = (li % (self.dim[0]*self.dim[1])) // self.dim[0]
-        i = (li % (self.dim[0]*self.dim[1])) % self.dim[0]
-        return (i, j, k)
-        
-        
-        
+                            
+                            #if v > 1:
+                            #    print(self.state[idx], tq, i-ti, j-tj, v)
+        return cond   
         

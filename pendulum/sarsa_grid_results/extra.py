@@ -56,9 +56,17 @@ def real_targets(tm, tr, gamma):
       target = r
     else:
       raise Exception('Unknown transition')
-    #value = tm[int(x0 + dim[0]*xd0 + np.prod(dim)*u0)]
-    #print (target-value)
+    value = tm[int(x0 + dim[0]*xd0 + np.prod(dim)*u0)]
+    print(value, " -> ", target)
     tg = np.vstack((tg, [x0, xd0, u0, target]))
+    break
   return tg
 
-  
+def ijk2idx(dim, i, j, k):
+    return i + dim[0]*j + dim[0]*dim[1]*k
+    
+def idx2ijk(dim, li):
+    k = li // (dim[0]*dim[1])
+    j = (li % (dim[0]*dim[1])) // dim[0]
+    i = (li % (dim[0]*dim[1])) %  dim[0]
+    return (i, j, k)

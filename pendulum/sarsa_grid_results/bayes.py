@@ -34,15 +34,6 @@ for i in range(0, n):
 length = np.prod((125, 101, 3))
 offset = 125*101
 
-'''
-with open("2017-03-27T13h55m40s_energy_29298.4387493.state", 'rb') as fh:
-    state = pickle.load(fh)
-    show_grid_representation(state, (0, 1), (125, 101, 3))
-    plt.waitforbuttonpress()
-    save_grid_representation(state, "policies/cfg_pendulum_sarsa_grid-it1-mp0-run0-_experiment_agent_policy_representation.dat")
-sdfas
-'''
-
 tm = train.mean(0)
 ts = train.std(0)
 tv2 = 2*np.maximum( length * [0.0001], train.var(0))
@@ -55,10 +46,11 @@ tr = load_trajectories(csv_data)
 targets = real_targets(tm, tr, 0.97)
 #targets = np.zeros([1, 4])
 #print("Targets ", targets)
+#print(targets.shape[0])
 
 #print(ts)
 tsx = np.maximum(ts, 0.0000001)
-init_state = np.random.normal(tm, 3*tsx)
+init_state = tm#np.random.normal(tm, tsx)
 #show_grid_representation(tm, (0, 1), (125, 101, 3))
 #show_grid_representation(init_state, (0, 1), (125, 101, 3))
 #plt.waitforbuttonpress()
