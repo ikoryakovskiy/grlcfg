@@ -40,7 +40,7 @@ def main():
     # Parameters
     runs = range(10)
     weights = [[0.0001, 0.0], [0.0001, 1.0], [0.0000, 1.0]] # nmpc, shaping
-    model_types = [0, 1]
+    model_types = [0, 1] # 0 -ideal, 1 - real
 
     options = []
     for r in itertools.product(weights, model_types, runs): options.append(r)

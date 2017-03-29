@@ -10,7 +10,9 @@ import matplotlib.pyplot as plt
 import sys
 import pickle
 
+
 # local
+from cmaes import *
 from anneal import *
 from extra import *
 from optimize import *
@@ -40,6 +42,12 @@ tv2 = 2*np.maximum( length * [0.0001], train.var(0))
 
 save_grid_representation(tm, "policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_experiment_agent_policy_representation.dat")
 
+cmaes = CMAES()
+cmaes.evaluate()
+
+a
+
+
 csv_data = csv_read(["trajectories/pendulum_sarsa_grid_play-test-0.csv"])
 tr = load_trajectories(csv_data)
 
@@ -47,6 +55,7 @@ targets = real_targets(tm, tr, 0.97)
 #targets = np.zeros([1, 4])
 #print("Targets ", targets)
 #print(targets.shape[0])
+
 
 #print(ts)
 tsx = np.maximum(ts, 0.0000001)
