@@ -2,7 +2,7 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 70000
+  steps: 350000
   rate: 0
   test_interval: 10
   output: rbdl_nmpc_ac_tc_squat_fb_sl_fa
@@ -11,7 +11,7 @@ experiment:
     model: 
       type: sandbox_model/leo_squatting
       control_step: 0.03
-      integration_steps: 25
+      integration_steps: 5
       dynamics: 
         type: dynamics/rbdl
         file: leo_fb_sl.lua
@@ -28,7 +28,7 @@ experiment:
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1.0
       weight_shaping: 1.0
-      gamma: 0.95
+      gamma: 0
   agent: 
     type: agent/master/sequential/additive
     agent1: 
@@ -48,7 +48,7 @@ experiment:
       type: agent/td
       policy: 
         type: mapping/policy/action
-        sigma: [3, 3, 3]
+        sigma: [1, 1, 1]
         output_min: experiment/environment/task/action_min
         output_max: experiment/environment/task/action_max
         projector: 
@@ -75,8 +75,8 @@ experiment:
         type: predictor/ac/action
         alpha: 0.2
         beta: 0.02
-        gamma: experiment/environment/task/gamma
-        lambda: 0.75
+        gamma: 0.9962
+        lambda: 0.8582
         update_method: proportional
         step_limit: []
         critic_projector: 
