@@ -93,7 +93,7 @@ def rl_run_param(args, list_of_cfgs, options):
 
     #print list_of_new_cfgs
 
-    #do_multiprocessing_pool(args, list_of_new_cfgs)
+    do_multiprocessing_pool(args, list_of_new_cfgs)
 
 ######################################################################################
 def mp_run(cfg):
