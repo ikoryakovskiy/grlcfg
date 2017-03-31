@@ -11,7 +11,7 @@ experiment:
     model: 
       type: sandbox_model/leo_squatting
       control_step: 0.03
-      integration_steps: 5
+      integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
         file: leo_fb_sl.lua
