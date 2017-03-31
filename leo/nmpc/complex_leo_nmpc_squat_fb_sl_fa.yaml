@@ -46,9 +46,10 @@ experiment:
       weight_nmpc_aux: 1
       weight_shaping: 0
       gamma: 0.95
+      continue_after_fall: 1
     exporter: 
       type: exporter/csv
-      file: complex_rbdl_nmpc_squat_fb_sl_fa
+      file: complex_leo_nmpc_squat_fb_sl_fa
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: test
