@@ -39,7 +39,7 @@ def main():
 
     # Parameters
     runs = range(10)
-    weight_nmpc = [1]
+    weight_nmpc = [0.0001]
     weight_nmpc_aux = [1, 0.01, 0]
     weight_shaping = [0, 1]
     #weights = [[0.0001, 0.0], [0.0001, 1.0], [0.0000, 1.0]] # nmpc, shaping
@@ -48,6 +48,7 @@ def main():
     options = []
     for r in itertools.product(weight_nmpc, weight_nmpc_aux, weight_shaping, model_types, runs): options.append(r)
     for r in itertools.product([0], [0], [1], model_types, runs): options.append(r)
+    for r in itertools.product([1], [1], [1], model_types, runs): options.append(r) # testing if inrespective of MUSCOD warnings/errors, RL can learn (e.g. NMPC fails deterministically) 
     options = [flatten(tupl) for tupl in options]
 
     # Main
