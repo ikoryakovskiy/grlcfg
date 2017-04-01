@@ -50,6 +50,10 @@ save_grid_representation(tm, "policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_exp
 cmaes = CMAES(size, dsize)
 
 v = cmaes.optimize(tm)
+
+with open('res.bin', 'wb') as file:
+    file.write(v[0])
+
 q_hat = cmaes.evaluate(v[0])
 
 #q_hat = cmaes.evaluate(0.5*np.ones([dnum, 1]))
