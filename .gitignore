@@ -34,7 +34,6 @@
 *.pyc
 *.c.*
 bayes
-bayes.c
 cython_debug/
 data/
 policies/
