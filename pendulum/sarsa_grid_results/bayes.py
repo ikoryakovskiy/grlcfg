@@ -47,13 +47,11 @@ tv2 = 2*np.maximum( num * [0.0001], train.var(0))
 
 save_grid_representation(tm, "policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_experiment_agent_policy_representation.dat")
 
-
-size  = (2, 2, 3)
 cmaes = CMAES(size, dsize)
 
 q_hat = cmaes.evaluate(np.ones((dnum, 1)))
 
-for i in range(0, 3):
+for i in range(0, 1):
   show_grid_representation(q_hat[offset*i:offset*(i+1)], (0, 1), (size[0], size[1], 1))
   plt.waitforbuttonpress()
 

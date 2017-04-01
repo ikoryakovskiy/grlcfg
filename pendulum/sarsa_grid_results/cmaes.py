@@ -56,25 +56,10 @@ class CMAES(object):
         self.obj = lrepc.rbf_new(csize, ctypes.c_int(self.dnum), clocx, clocy, clocz, ctypes.c_double(sigma))
 
     def evaluate(self, feature):
-        cfeature = feature.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-
-        print("Requested size {}".format(self.num))
-        
-        q = ctypes.POINTER(ctypes.c_double * self.num)()
-        output = lrepc.rbf_evaluate(self.obj, cfeature, ctypes.byref(q))
+        cfeature = feature.ctypes.data_as(ctypes.POINTER(ctypes.c_double))     
+        output = lrepc.rbf_evaluate(self.obj, cfeature)
         
         ArrayType = ctypes.c_double*self.num
         array_pointer = ctypes.cast(output, ctypes.POINTER(ArrayType))
-        print np.frombuffer(array_pointer.contents)
+        return np.frombuffer(array_pointer.contents)
 
-        print "AAAAAA"    
-        print q.contents
-        print "Bbbbbb"  
-       
-        
-        for i in range(6):        
-            print q[i]
-        #print ctypes.c_double(q).value
-        #print (np.ctypeslib.as_array((ctypes.c_double * self.num).from_address(ctypes.addressof(q.contents))))
-        #return (np.ctypeslib.as_array((ctypes.c_double * self.dnum).from_address(ctypes.addressof(q.contents))))
-        

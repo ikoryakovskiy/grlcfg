@@ -44,11 +44,11 @@ class rbf
                        << std::setw(10) << cz_[i] << std::endl;
   */
       
-    double * evaluate( double *f, double *q)
+    double * evaluate( double *f)
     {
       std::cout << "Internal size " << size_[0]*size_[1]*size_[2] << std::endl;
 
-      memset(q, 0, sizeof(double)*size_[0]*size_[1]*size_[2]);
+      memset(q_, 0, sizeof(double)*size_[0]*size_[1]*size_[2]);
 
       for (int z = 0; z < size_[2]; z++)
         for (int y = 0; y < size_[1]; y++)
@@ -63,10 +63,9 @@ class rbf
                 double d = pow(xx - cx_[i], 2) + pow(yy - cy_[i], 2);
                 //std::cout << xx << std::endl;
                 //std::cout << xx << " " << yy << " " << cx_[i] << " " << cy_[i] << " ";
-                q[idx] += exp(- d / (sigma_*sigma_));
+                q_[idx] += exp(- d / (sigma_*sigma_));
               }
-              std::cout << idx << " " << q[idx] << std::endl;
-              q_[idx] = q[idx];
+              //std::cout << idx << " " << q_[idx] << std::endl;
             }
 
       return q_;
@@ -88,5 +87,5 @@ extern "C"
   {
     return new rbf(size, num, cx, cy, cz, sigma); 
   }
-  double *rbf_evaluate(rbf* r, double *f, double *q){ return r->evaluate(f, q); }
+  double *rbf_evaluate(rbf* r, double *f){ return r->evaluate(f); }
 }
