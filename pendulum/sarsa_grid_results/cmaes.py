@@ -8,13 +8,19 @@ import numpy as np
 import ctypes
 from ctypes import cdll
 import itertools
+from numpy import ctypeslib 
 
 lrepc = cdll.LoadLibrary('./librepc.so')
 
 class CMAES(object):
-    def __init__(self):
-        dsize = (2, 2, 3)
-        dnum = np.prod(dsize)
+    dnum = 0
+    #dsize = (0, 0, 0)
+    num = 0
+    
+    def __init__(self, size, dsize):
+        self.dnum = np.prod(dsize)
+        #self.dsize = dsize
+        self.num = np.prod(size)
 
         xlim = [-np.pi, 2*np.pi]
         ylim = [-12*np.pi, 12*np.pi]
@@ -39,15 +45,36 @@ class CMAES(object):
         locz = np.asarray(locz, dtype='float64')
         
         sigma = np.maximum(1.0/np.power(dsize[0], 1.5), 1.0/np.power(dsize[1], 1.5))
-        print(sigma)
+        #print(sigma)
 
         #print (locz)
+        csize = (ctypes.c_int * len(size))(*size)
         clocx = locx.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         clocy = locy.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         clocz = locz.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         #print (np.ctypeslib.as_array((ctypes.c_double * dnum).from_address(ctypes.addressof(clocz.contents))))
-        self.obj = lrepc.rbf_new(dnum, clocx, clocy, clocz, ctypes.c_double(sigma))
+        self.obj = lrepc.rbf_new(csize, ctypes.c_int(self.dnum), clocx, clocy, clocz, ctypes.c_double(sigma))
 
-    def evaluate(self):
-        lrepc.rbf_evaluate(self.obj)
+    def evaluate(self, feature):
+        cfeature = feature.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+
+        print("Requested size {}".format(self.num))
+        
+        q = ctypes.POINTER(ctypes.c_double * self.num)()
+        output = lrepc.rbf_evaluate(self.obj, cfeature, ctypes.byref(q))
+        
+        ArrayType = ctypes.c_double*self.num
+        array_pointer = ctypes.cast(output, ctypes.POINTER(ArrayType))
+        print np.frombuffer(array_pointer.contents)
+
+        print "AAAAAA"    
+        print q.contents
+        print "Bbbbbb"  
+       
+        
+        for i in range(6):        
+            print q[i]
+        #print ctypes.c_double(q).value
+        #print (np.ctypeslib.as_array((ctypes.c_double * self.num).from_address(ctypes.addressof(q.contents))))
+        #return (np.ctypeslib.as_array((ctypes.c_double * self.dnum).from_address(ctypes.addressof(q.contents))))
         

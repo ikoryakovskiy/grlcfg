@@ -23,8 +23,15 @@ from my_rl.gridworld import *
 from my_csv.utils import *
 
 # Import data
-n = 50
-train = np.zeros((n, 125*101*3))
+n = 2
+size  = (125, 101, 3)
+dsize = (2, 2, 3)
+
+offset = size[0]*size[1]
+num = np.prod(size)
+dnum = np.prod(dsize)
+
+train = np.zeros((n, num))
 for i in range(0, n):
   train[i] = load_grid_representation("data/cfg_pendulum_sarsa_grid-{:03d}-mp0-run0-_experiment_agent_policy_representation.dat".format(i))
   #policy = calc_grid_policy(train[i], (0, 1), (125, 101, 3))
@@ -33,17 +40,22 @@ for i in range(0, n):
   #show_grid_representation(train[i], (0, 1), (125, 101, 3))
   #plt.waitforbuttonpress()
 
-length = np.prod((125, 101, 3))
-offset = 125*101
 
 tm = train.mean(0)
 ts = train.std(0)
-tv2 = 2*np.maximum( length * [0.0001], train.var(0))
+tv2 = 2*np.maximum( num * [0.0001], train.var(0))
 
 save_grid_representation(tm, "policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_experiment_agent_policy_representation.dat")
 
-cmaes = CMAES()
-cmaes.evaluate()
+
+size  = (2, 2, 3)
+cmaes = CMAES(size, dsize)
+
+q_hat = cmaes.evaluate(np.ones((dnum, 1)))
+
+for i in range(0, 3):
+  show_grid_representation(q_hat[offset*i:offset*(i+1)], (0, 1), (size[0], size[1], 1))
+  plt.waitforbuttonpress()
 
 a
 
