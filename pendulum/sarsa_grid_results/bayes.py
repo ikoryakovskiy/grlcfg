@@ -25,7 +25,7 @@ from my_csv.utils import *
 # Import data
 n = 2
 size  = (125, 101, 3)
-dsize = (2, 2, 3)
+dsize = (5, 5, 3)
 
 offset = size[0]*size[1]
 num = np.prod(size)
@@ -49,7 +49,10 @@ save_grid_representation(tm, "policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_exp
 
 cmaes = CMAES(size, dsize)
 
-q_hat = cmaes.evaluate(np.ones((dnum, 1)))
+v = cmaes.optimize(tm)
+q_hat = cmaes.evaluate(v[0])
+
+#q_hat = cmaes.evaluate(0.5*np.ones([dnum, 1]))
 
 for i in range(0, 1):
   show_grid_representation(q_hat[offset*i:offset*(i+1)], (0, 1), (size[0], size[1], 1))

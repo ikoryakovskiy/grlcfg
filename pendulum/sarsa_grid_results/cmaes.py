@@ -8,13 +8,12 @@ import numpy as np
 import ctypes
 from ctypes import cdll
 import itertools
-from numpy import ctypeslib 
+import cma
 
 lrepc = cdll.LoadLibrary('./librepc.so')
 
 class CMAES(object):
     dnum = 0
-    #dsize = (0, 0, 0)
     num = 0
     
     def __init__(self, size, dsize):
@@ -44,16 +43,17 @@ class CMAES(object):
         locy = np.asarray(locy, dtype='float64')
         locz = np.asarray(locz, dtype='float64')
         
-        sigma = np.maximum(1.0/np.power(dsize[0], 1.5), 1.0/np.power(dsize[1], 1.5))
-        #print(sigma)
+        sigma = np.maximum(1.0/np.power(2*dsize[0], 0.5), 1.0/np.power(2*dsize[1], 0.5))
+        print(sigma)
 
         #print (locz)
         csize = (ctypes.c_int * len(size))(*size)
+        cdsize = (ctypes.c_int * len(size))(*dsize)
         clocx = locx.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         clocy = locy.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         clocz = locz.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         #print (np.ctypeslib.as_array((ctypes.c_double * dnum).from_address(ctypes.addressof(clocz.contents))))
-        self.obj = lrepc.rbf_new(csize, ctypes.c_int(self.dnum), clocx, clocy, clocz, ctypes.c_double(sigma))
+        self.obj = lrepc.rbf_new(csize, cdsize, ctypes.c_int(self.dnum), clocx, clocy, clocz, ctypes.c_double(sigma))
 
     def evaluate(self, feature):
         cfeature = feature.ctypes.data_as(ctypes.POINTER(ctypes.c_double))     
@@ -62,4 +62,17 @@ class CMAES(object):
         ArrayType = ctypes.c_double*self.num
         array_pointer = ctypes.cast(output, ctypes.POINTER(ArrayType))
         return np.frombuffer(array_pointer.contents)
+        
+    def objective(self, s):
+        #print(s)
+        q_hat = self.evaluate(s)
+        n = np.linalg.norm(self.q - q_hat)
+        #print (n)
+        return n
 
+    def optimize(self, q):
+        self.q = q
+        es = cma.CMAEvolutionStrategy(self.dnum * [0], 1000)
+        es.optimize(self.objective)
+        res = es.result()
+        return res

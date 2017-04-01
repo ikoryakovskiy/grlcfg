@@ -6,7 +6,7 @@
 class rbf
 {
   public:
-    rbf(int *size, int num, double *cx, double *cy, double *cz, double sigma) :
+    rbf(int *size, int* dsize, int num, double *cx, double *cy, double *cz, double sigma) :
         num_(num), sigma_(sigma)
     {
       size_ = new int[3];
@@ -31,8 +31,11 @@ class rbf
           cz_be_en_[z][0] = i;   // first index
       }
 
-      //for (int i = 0; i < 3; i++)
-      //  std::cout << cz_be_en_[i][0] << "  " << cz_be_en_[i][1] << std::endl;
+      for (int i = 0; i < 3; i++)
+      {
+        dsize_[i] = dsize[i];
+        //std::cout << cz_be_en_[i][0] << "  " << cz_be_en_[i][1] << " = " << dsize_[i] << std::endl;
+      }
     }
   
 
@@ -46,7 +49,7 @@ class rbf
       
     double * evaluate( double *f)
     {
-      std::cout << "Internal size " << size_[0]*size_[1]*size_[2] << std::endl;
+      //std::cout << "Internal size " << size_[0]*size_[1]*size_[2] << std::endl;
 
       memset(q_, 0, sizeof(double)*size_[0]*size_[1]*size_[2]);
 
@@ -61,9 +64,10 @@ class rbf
               for (int i = cz_be_en_[z][0]; i <= cz_be_en_[z][1]; i++)
               {
                 double d = pow(xx - cx_[i], 2) + pow(yy - cy_[i], 2);
+                int f_idx = cx_[i] + cy_[i]*dsize_[0] + z*dsize_[0]*dsize_[1];
                 //std::cout << xx << std::endl;
                 //std::cout << xx << " " << yy << " " << cx_[i] << " " << cy_[i] << " ";
-                q_[idx] += exp(- d / (sigma_*sigma_));
+                q_[idx] += f[f_idx] * exp(- d / (sigma_*sigma_));
               }
               //std::cout << idx << " " << q_[idx] << std::endl;
             }
@@ -78,14 +82,15 @@ class rbf
     double *cx_, *cy_, *cz_;
     double sigma_;
     int cz_be_en_[3][2];
+    int dsize_[3];
 };
 
 
 extern "C" 
 {
-  rbf* rbf_new(int *size, int num, double *cx, double *cy, double *cz, double sigma)
+  rbf* rbf_new(int *size, int *dsize,int num, double *cx, double *cy, double *cz, double sigma)
   {
-    return new rbf(size, num, cx, cy, cz, sigma); 
+    return new rbf(size, dsize, num, cx, cy, cz, sigma); 
   }
   double *rbf_evaluate(rbf* r, double *f){ return r->evaluate(f); }
 }
