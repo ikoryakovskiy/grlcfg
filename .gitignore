@@ -28,3 +28,14 @@
 *.exe
 *.out
 *.app
+
+# Python
+*.state
+*.pyc
+*.c.*
+bayes
+bayes.c
+cython_debug/
+data/
+policies/
+trajectories/

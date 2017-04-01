@@ -1,23 +1,44 @@
 #include <iostream>
+#include <iomanip>
 
-int size; 
-double *cx, *cy, *cz;
 
-class Repc{
+class rbf
+{
     public:
+        rbf(int size, double *cx, double *cy, double *cz, double sigma) :
+            size_(size), cx_(cx), cy_(cy), cz_(cz), sigma_(sigma)
+        {
+            cx_ = new double[size_];
+            cy_ = new double[size_];
+            cz_ = new double[size_];
+            for (int i = 0; i < size_; i++)
+            {
+                cx_[i] = cx[i];
+                cy_[i] = cy[i];
+                cz_[i] = cz[i];
+            } 
+        }
+
         void evaluate()
         {
-            std::cout << "Hello " << size << std::endl;
+            std::cout << "Hello " << size_ << " sigma " << sigma_ << std::endl;
+            std::cout << std::fixed << std::setprecision(3) << std::right;
+            for (int i = 0; i < size_; i++)
+                 std::cout << std::setw(10) << cx_[i] << std::setw(10) << cy_[i] << std::setw(10) << cz_[i] << std::endl;
         }
+
+    private:
+        int size_; 
+        double *cx_, *cy_, *cz_;
+        double sigma_;
 };
 
 
-extern "C" {
-    Repc* repc_new(int _size, double *_cx, double *_cy, double *_cz)
+extern "C" 
+{
+    rbf* rbf_new(int size, double *cx, double *cy, double *cz, double sigma)
     {
-        size = _size;
-        cx = _cx; cy = _cy; cz = _cz;
-        return new Repc(); 
+        return new rbf(size, cx, cy, cz, sigma); 
     }
-    void  repc_evaluate(Repc* _r){ _r->evaluate(); }
+    void  rbf_evaluate(rbf* _r){ _r->evaluate(); }
 }
