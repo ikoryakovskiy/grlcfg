@@ -47,7 +47,7 @@ def main():
   # Import data
   n = 50
   size  = (125, 101, 3)
-  dsize = (3, 3, 3)
+  dsize = (4, 4, 3)
   
   offset = size[0]*size[1]
   num = np.prod(size)

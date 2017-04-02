@@ -33,5 +33,7 @@
 *.state
 *.pyc
 *.c.*
+*.bin
 bayes
+bayes.c
 cython_debug/
