@@ -49,33 +49,46 @@ class rbf
       
     double * evaluate( double *f)
     {
+/*
       std::cout << "Internal size " << size_[0]*size_[1]*size_[2] << std::endl;
       for (int i = 0; i < dsize_[0]*dsize_[1]*dsize_[2]; i++)
         std::cout << f[i] << std::endl;
 
+      int z = 0;
+      double xx = 0.75, yy = 0.75;
+      double q = 0;
+      for (int i = cz_be_en_[z][0]; i <= cz_be_en_[z][1]; i++)
+      {
+        std::cout << cx_[i] << " " << cy_[i] << std::endl;
+
+        double dist2 = pow(xx - cx_[i], 2) + pow(yy - cy_[i], 2);
+        int dx = cx_[i]*dsize_[0] - 0.5;
+        int dy = cy_[i]*dsize_[1] - 0.5;
+        std::cout << dx << " " << dy << std::endl;
+        int f_idx = round(dx + dy*dsize_[0] + z*dsize_[0]*dsize_[1]);
+        std::cout << f_idx << " eval as " << f[f_idx] << std::endl;
+        q += f[f_idx] * exp(- dist2 / (sigma_*sigma_));
+      }
+      std::cout << q << std::endl;
+*/
       memset(q_, 0, sizeof(double)*size_[0]*size_[1]*size_[2]);
 
       for (int z = 0; z < size_[2]; z++)
-      {
-        //std::cout << z << std::endl;
         for (int y = 0; y < size_[1]; y++)
           for (int x = 0; x < size_[0]; x++)
             {
               int idx = x + y*size_[0] + z*size_[0]*size_[1];
               double xx = (x+0.5)/size_[0];
               double yy = (y+0.5)/size_[1];
-              //std::cout << idx << " " << q[idx] << std::endl;
               for (int i = cz_be_en_[z][0]; i <= cz_be_en_[z][1]; i++)
               {
-                double d = pow(xx - cx_[i], 2) + pow(yy - cy_[i], 2);
-                int f_idx = cx_[i] + cy_[i]*dsize_[0] + z*dsize_[0]*dsize_[1];
-                //std::cout << xx << std::endl;
-                //std::cout << xx << " " << yy << " " << cx_[i] << " " << cy_[i] << " ";
-                q_[idx] += f[f_idx] * exp(- d / (sigma_*sigma_));
+                double dist2 = pow(xx - cx_[i], 2) + pow(yy - cy_[i], 2);
+                int dx = cx_[i]*dsize_[0] - 0.5;
+                int dy = cy_[i]*dsize_[1] - 0.5;
+                int f_idx = round(dx + dy*dsize_[0] + z*dsize_[0]*dsize_[1]);
+                q_[idx] += f[f_idx] * exp(- dist2 / (sigma_*sigma_));
               }
-              //std::cout << idx << " " << q_[idx] << std::endl;
             }
-      }
 
       return q_;
     }
