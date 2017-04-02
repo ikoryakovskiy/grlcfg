@@ -7,7 +7,7 @@ from __future__ import division, print_function, absolute_import
 #import tensorflow as tf
 import numpy as np
 import matplotlib as mpl
-mpl.use('Agg')
+#mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 import pickle
@@ -50,16 +50,35 @@ tv2 = 2*np.maximum( num * [0.0001], train.var(0))
 
 save_grid_representation(tm, "policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_experiment_agent_policy_representation.dat")
 
+##############################################
+
+size  = (125, 101, 1)
+dsize = (2, 2, 1)
+num = np.prod(size)
+dnum = np.prod(dsize)
+
 cmaes = CMAES(size, dsize)
 
-v = cmaes.optimize(tm)
-q_hat = cmaes.evaluate(v[0])
+tmsc = cmaes.evaluate(np.array([[0, 1, 1, 0]], dtype='float64'))
+tm = np.copy(tmsc)
+show_grid_representation(tm, (0, 1), (size[0], size[1], 1))
+plt.waitforbuttonpress()
 
-#q_hat = cmaes.evaluate(0.5*np.ones([dnum, 1]))
+a
 
-for i in range(0, 1):
-  show_grid_representation(q_hat[offset*i:offset*(i+1)], (0, 1), (size[0], size[1], 1))
-  plt.waitforbuttonpress()
+f_init = cmaes.initial(tm)
+print(f_init)
+
+f = cmaes.optimize(tm, f_init)[0]
+q_hat = cmaes.evaluate(f)
+
+print(f)
+
+#q_hat = cmaes.evaluate(1*np.ones([dnum, 1]))
+
+show_grid_representation(tm[0:offset], (0, 1), (size[0], size[1], 1))
+show_grid_representation(q_hat, (0, 1), (size[0], size[1], 1))
+plt.waitforbuttonpress()
 
 v[0].tofile("result.bin")
 

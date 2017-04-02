@@ -49,11 +49,15 @@ class rbf
       
     double * evaluate( double *f)
     {
-      //std::cout << "Internal size " << size_[0]*size_[1]*size_[2] << std::endl;
+      std::cout << "Internal size " << size_[0]*size_[1]*size_[2] << std::endl;
+      for (int i = 0; i < dsize_[0]*dsize_[1]*dsize_[2]; i++)
+        std::cout << f[i] << std::endl;
 
       memset(q_, 0, sizeof(double)*size_[0]*size_[1]*size_[2]);
 
       for (int z = 0; z < size_[2]; z++)
+      {
+        //std::cout << z << std::endl;
         for (int y = 0; y < size_[1]; y++)
           for (int x = 0; x < size_[0]; x++)
             {
@@ -71,6 +75,7 @@ class rbf
               }
               //std::cout << idx << " " << q_[idx] << std::endl;
             }
+      }
 
       return q_;
     }
