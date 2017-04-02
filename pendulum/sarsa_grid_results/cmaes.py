@@ -101,7 +101,7 @@ class CMAES(object):
         #opts['maxiter'] = 3000
         
         es = cma.CMAEvolutionStrategy(f_init, 1, opts) #self.dnum * [-500]
-        es.optimize(self.objective, 3000, 3000)
+        es.optimize(self.objective, 2500, 2500)
         
         print('termination by', es.stop())
         res = es.result()
