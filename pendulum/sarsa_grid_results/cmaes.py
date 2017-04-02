@@ -18,7 +18,7 @@ class CMAES(object):
     
     def __init__(self, size, dsize):
         if (size[2] != dsize[2]):
-          raise ValueError('Dimensions are not correct')
+          raise ValueError('CMAES::init Dimensions are not correct')
 
         self.num = np.prod(size)
         self.size = size
@@ -47,7 +47,7 @@ class CMAES(object):
         locy = np.asarray(locy, dtype='float64')
         locz = np.asarray(locz, dtype='float64')
         
-        sigma = np.maximum(1.0/np.power(2*dsize[0], 0.5), 1.0/np.power(2*dsize[1], 0.5)) *0.5
+        sigma = np.maximum(1.0/np.power(2*dsize[0], 0.5), 1.0/np.power(2*dsize[1], 0.5))# *0.5
         print(sigma)
 
         #print (locz)
@@ -66,15 +66,23 @@ class CMAES(object):
           idx_i = int(np.round(r[0]*(self.size[0]-1)))
           idx_j = int(np.round(r[1]*(self.size[1]-1)))
           idx_k = int(r[2])
-          idx = int(idx_i + idx_j*self.size[0] + idx_k*self.size[0]*self.size[1])
-          #print (idx)  
+          
+          click_size = 1
+          idx_ii = range(idx_i-click_size, idx_i+click_size+1)
+          idx_jj = range(idx_j-click_size, idx_j+click_size+1)
+          guess = 0
+          for dd in itertools.product(idx_ii, idx_jj): 
+            idx = int(dd[0] + dd[1]*self.size[0] + idx_k*self.size[0]*self.size[1])
+            guess += initial_guess[idx]
+            #print (idx)  
+          guess = guess / ( (2*click_size+1)**2 )
           
           f_idx_i = int(np.round(r[0]*(self.dsize[0]-1)))
           f_idx_j = int(np.round(r[1]*(self.dsize[1]-1)))
           f_idx_k = int(r[2])
           f_idx = int(f_idx_i + f_idx_j*self.dsize[0] + f_idx_k*self.dsize[0]*self.dsize[1])
           #print(f_idx_i, f_idx_j, f_idx_k, f_idx)
-          f_init[f_idx] = initial_guess[idx]
+          f_init[f_idx] = guess
         return f_init
 
     def evaluate(self, feature):
@@ -101,7 +109,7 @@ class CMAES(object):
         #opts['maxiter'] = 3000
         
         es = cma.CMAEvolutionStrategy(f_init, 1, opts) #self.dnum * [-500]
-        es.optimize(self.objective, 2500, 2500)
+        es.optimize(self.objective)#, 5000, 5000)
         
         print('termination by', es.stop())
         res = es.result()

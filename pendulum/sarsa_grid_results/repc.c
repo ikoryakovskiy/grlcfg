@@ -74,7 +74,7 @@ class rbf
 
       for (int z = 0; z < size_[2]; z++)
       {
-        //#pragma omp parallel for collapse(2)
+        #pragma omp parallel for collapse(2)
         for (int x = 0; x < size_[0]; x++)
         {
           for (int y = 0; y < size_[1]; y++)
