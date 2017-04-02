@@ -6,6 +6,8 @@ from __future__ import division, print_function, absolute_import
 
 #import tensorflow as tf
 import numpy as np
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 import pickle
@@ -17,6 +19,7 @@ from anneal import *
 from extra import *
 from optimize import *
 sys.path.append('/home/ivan/work/scripts/py')
+sys.path.append('/home/ikoryakovskiy/scripts/py')
 from my_file.io import *
 from my_plot.plot import *
 from my_rl.gridworld import *

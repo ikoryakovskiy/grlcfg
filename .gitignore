@@ -35,5 +35,3 @@
 *.c.*
 bayes
 cython_debug/
-policies/
-trajectories/
