@@ -43,7 +43,7 @@ class CMAES(object):
         locy = np.asarray(locy, dtype='float64')
         locz = np.asarray(locz, dtype='float64')
         
-        sigma = np.maximum(1.0/np.power(2*dsize[0], 0.5), 1.0/np.power(2*dsize[1], 0.5))
+        sigma = np.maximum(1.0/np.power(2*dsize[0], 0.5), 1.0/np.power(2*dsize[1], 0.5)) *0.5
         print(sigma)
 
         #print (locz)
@@ -66,13 +66,13 @@ class CMAES(object):
     def objective(self, s):
         #print(s)
         q_hat = self.evaluate(s)
-        n = np.linalg.norm(self.q - q_hat)
-        #print (n)
+        n = np.linalg.norm(self.q - q_hat) + 0.1*np.linalg.norm(s)
+        #print (np.linalg.norm(s))
         return n
 
     def optimize(self, q):
         self.q = q
-        es = cma.CMAEvolutionStrategy(self.dnum * [0], 1000)
+        es = cma.CMAEvolutionStrategy(self.dnum * [-500], 1000)
         es.optimize(self.objective)
         res = es.result()
         return res
