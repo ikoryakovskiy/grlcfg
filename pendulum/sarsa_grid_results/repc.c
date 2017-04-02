@@ -34,7 +34,7 @@ class rbf
       for (int i = 0; i < 3; i++)
       {
         dsize_[i] = dsize[i];
-        //std::cout << cz_be_en_[i][0] << "  " << cz_be_en_[i][1] << " = " << dsize_[i] << std::endl;
+        std::cout << cz_be_en_[i][0] << "  " << cz_be_en_[i][1] << " = " << dsize_[i] << std::endl;
       }
     }
   
