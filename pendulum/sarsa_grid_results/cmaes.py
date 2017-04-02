@@ -94,7 +94,15 @@ class CMAES(object):
 
     def optimize(self, q, f_init):
         self.q = q
+
+        #opts = cma.CMAOptions()
+        #opts['tolstagnation'] = 0
+        #res = cma.fmin(self.objective, f_init, 1, opts)
+
         es = cma.CMAEvolutionStrategy(f_init, 1, {'verb_log': 0}) #self.dnum * [-500]
-        es.optimize(self.objective)
+        es.optimize(self.objective, 3000, 3000)
+        
+        print('termination by', es.stop())
         res = es.result()
+        es.stop()
         return res

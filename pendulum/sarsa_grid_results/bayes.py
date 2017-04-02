@@ -53,30 +53,34 @@ save_grid_representation(tm, "policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_exp
 ##############################################
 
 size  = (125, 101, 1)
-dsize = (2, 2, 1)
+dsize = (3, 2, 1)
 num = np.prod(size)
 dnum = np.prod(dsize)
 
 cmaes = CMAES(size, dsize)
 
-tmsc = cmaes.evaluate(np.array([[0, 1, 1, 0]], dtype='float64'))
-tm = np.copy(tmsc)
-show_grid_representation(tm, (0, 1), (size[0], size[1], 1))
-plt.waitforbuttonpress()
+#tmsc = cmaes.evaluate(np.array([[0.00000000e+00,   1.00000000e+00,   5.68434189e-14,  -2.84217094e-14, -1.00000000e+00,   0.00000000e+00]], dtype='float64'))
+f_true = np.array([[-500, 500, -500, 500, -500, 500]], dtype='float64')
+q_true_ref = cmaes.evaluate(f_true)
+q_true = np.copy(q_true_ref)
+#show_grid_representation(q_true, (0, 1), (size[0], size[1], 1))
+#plt.waitforbuttonpress()
 
-a
-
-f_init = cmaes.initial(tm)
+f_init = cmaes.initial(q_true)
 print(f_init)
 
-f = cmaes.optimize(tm, f_init)[0]
-q_hat = cmaes.evaluate(f)
+f_hat = cmaes.optimize(q_true, f_init)
+q_hat = cmaes.evaluate(f_hat[0])
 
-print(f)
+print(f_hat[0], f_hat[1])
 
-#q_hat = cmaes.evaluate(1*np.ones([dnum, 1]))
+print(cmaes.objective(np.array(f_true)))
+print(cmaes.objective(np.array(f_init)))
+print(cmaes.objective(np.array(f_hat[0])))
 
-show_grid_representation(tm[0:offset], (0, 1), (size[0], size[1], 1))
+
+#show_grid_representation(q_hat-q_true, (0, 1), (size[0], size[1], 1))
+show_grid_representation(q_true, (0, 1), (size[0], size[1], 1))
 show_grid_representation(q_hat, (0, 1), (size[0], size[1], 1))
 plt.waitforbuttonpress()
 
