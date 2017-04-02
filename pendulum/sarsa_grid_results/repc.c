@@ -2,11 +2,13 @@
 #include <iomanip>
 #include <math.h>
 #include <cstring>
+#include <omp.h>
 
 class rbf
 {
   public:
-    rbf(int *size, int* dsize, int num, double *cx, double *cy, double *cz, double sigma) :
+    rbf(const int *size, const int *dsize, int num, 
+          const double *cx, const double *cy, const double *cz, double sigma) :
         num_(num), sigma_(sigma)
     {
       size_ = new int[3];
@@ -36,18 +38,15 @@ class rbf
         dsize_[i] = dsize[i];
         //std::cout << cz_be_en_[i][0] << "  " << cz_be_en_[i][1] << " = " << dsize_[i] << std::endl;
       }
+/*
+      #pragma omp parallel for
+      for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+          std::cout << i << " " << j << " " << omp_get_thread_num() << std::endl;
+*/
     }
-  
-
-  /*
-        std::cout << std::fixed << std::setprecision(3) << std::right;
-        for (int i = 0; i < num_; i++)
-             std::cout << std::setw(10) << cx_[i] 
-                       << std::setw(10) << cy_[i] 
-                       << std::setw(10) << cz_[i] << std::endl;
-  */
-      
-    double * evaluate( double *f)
+       
+    double *evaluate(const double *f)
     {
 /*
       std::cout << "Internal size " << size_[0]*size_[1]*size_[2] << std::endl;
@@ -74,21 +73,27 @@ class rbf
       memset(q_, 0, sizeof(double)*size_[0]*size_[1]*size_[2]);
 
       for (int z = 0; z < size_[2]; z++)
-        for (int y = 0; y < size_[1]; y++)
-          for (int x = 0; x < size_[0]; x++)
+      {
+        #pragma omp parallel for collapse(2)
+        for (int x = 0; x < size_[0]; x++)
+        {
+          for (int y = 0; y < size_[1]; y++)
+          {
+            int idx = x + y*size_[0] + z*size_[0]*size_[1];
+            double xx = (x+0.5)/size_[0];
+            double yy = (y+0.5)/size_[1];
+            
+            for (int i = cz_be_en_[z][0]; i <= cz_be_en_[z][1]; i++)
             {
-              int idx = x + y*size_[0] + z*size_[0]*size_[1];
-              double xx = (x+0.5)/size_[0];
-              double yy = (y+0.5)/size_[1];
-              for (int i = cz_be_en_[z][0]; i <= cz_be_en_[z][1]; i++)
-              {
-                double dist2 = pow(xx - cx_[i], 2) + pow(yy - cy_[i], 2);
-                int dx = cx_[i]*dsize_[0] - 0.5;
-                int dy = cy_[i]*dsize_[1] - 0.5;
-                int f_idx = round(dx + dy*dsize_[0] + z*dsize_[0]*dsize_[1]);
-                q_[idx] += f[f_idx] * exp(- dist2 / (sigma_*sigma_));
-              }
+              double dist2 = pow(xx - cx_[i], 2) + pow(yy - cy_[i], 2);
+              int dx = cx_[i]*dsize_[0] - 0.5;
+              int dy = cy_[i]*dsize_[1] - 0.5;
+              int f_idx = round(dx + dy*dsize_[0] + z*dsize_[0]*dsize_[1]);
+              q_[idx] += f[f_idx] * exp(- dist2 / (sigma_*sigma_));
             }
+          }
+        }
+      }
 
       return q_;
     }
@@ -106,9 +111,10 @@ class rbf
 
 extern "C" 
 {
-  rbf* rbf_new(int *size, int *dsize,int num, double *cx, double *cy, double *cz, double sigma)
+  rbf* rbf_new(const int *size, const int *dsize, int num, 
+                const double *cx, const double *cy, const double *cz, double sigma)
   {
     return new rbf(size, dsize, num, cx, cy, cz, sigma); 
   }
-  double *rbf_evaluate(rbf* r, double *f){ return r->evaluate(f); }
+  double *rbf_evaluate(rbf* r, const double *f){ return r->evaluate(f); }
 }
