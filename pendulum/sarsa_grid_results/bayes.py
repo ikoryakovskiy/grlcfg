@@ -7,7 +7,7 @@ from __future__ import division, print_function, absolute_import
 #import tensorflow as tf
 import numpy as np
 import matplotlib as mpl
-#mpl.use('Agg')
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 import pickle
@@ -47,7 +47,7 @@ def main():
   # Import data
   n = 50
   size  = (125, 101, 3)
-  dsize = (4, 4, 3)
+  dsize = (10, 10, 3)
   
   offset = size[0]*size[1]
   num = np.prod(size)
@@ -74,7 +74,9 @@ def main():
   Q_hat = mp_cma_run(args, Q_init, size, dsize)
   Q_hat.tofile("q_hat.bin")
   
-  save_grid_representation(tm, "policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_experiment_agent_policy_representation.dat")
+  save_grid_representation(tm, "policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-v2-_experiment_agent_policy_representation.dat")
+
+  return
 
   for i in range(0, 3):
     show_grid_representation(Q_init[offset*i:offset*(i+1)], (0, 1), (125, 101, 1))
