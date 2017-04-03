@@ -24,6 +24,7 @@ dim = (125, 101, 3)
 offset = dim[0]*dim[1]
 
 q0 = np.fromfile("policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_experiment_agent_policy_representation.dat")
+q1 = np.fromfile("policies/cfg_pendulum_sarsa_grid-it0-mp0-run0-_experiment_agent_policy_representation.dat")
 
 csv_data = csv_read(["trajectories/pendulum_sarsa_grid_play-test-0.csv"])
 tr = load_trajectories(csv_data)
