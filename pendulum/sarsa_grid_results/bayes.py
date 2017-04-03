@@ -6,12 +6,13 @@ from __future__ import division, print_function, absolute_import
 
 #import tensorflow as tf
 import numpy as np
+import multiprocessing
 import matplotlib as mpl
-#mpl.use('Agg')
+if (multiprocessing.cpu_count() > 4):
+  mpl.use('agg')
 import matplotlib.pyplot as plt
 import sys
 import pickle
-import multiprocessing
 import argparse
 from functools import partial
 
@@ -62,8 +63,6 @@ def main():
     #show_grid_representation(train[i], (0, 1), (125, 101, 3))
     #plt.waitforbuttonpress()
 
-
-
   tm = train.mean(0)
   ts = train.std(0)
   tv2 = 2*np.maximum( num * [0.0001], train.var(0))
@@ -80,9 +79,9 @@ def main():
   for i in range(0, 3):
     show_grid_representation(Q_init[offset*i:offset*(i+1)], (0, 1), (125, 101, 1))
     show_grid_representation(Q_hat[offset*i:offset*(i+1)], (0, 1), (125, 101, 1))
-  plt.waitforbuttonpress()
+  waitforbuttonpress()
 
-  a
+  return
 
 
   csv_data = csv_read(["trajectories/pendulum_sarsa_grid_play-test-0.csv"])
