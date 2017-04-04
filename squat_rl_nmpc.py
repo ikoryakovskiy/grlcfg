@@ -48,11 +48,10 @@ def main():
     options = []
     for r in itertools.product(weight_nmpc, weight_nmpc_aux, weight_shaping, model_types, runs): options.append(r)
     for r in itertools.product([0], [0], [1], model_types, runs): options.append(r)
-    for r in itertools.product([1], [1], [1], model_types, runs): options.append(r) # testing if inrespective of MUSCOD warnings/errors, RL can learn (e.g. NMPC fails deterministically) 
     options = [flatten(tupl) for tupl in options]
 
     # Main
-    rl_run_param(args, ["leo/nmpc_rl/rbdl_nmpc_ac_tc_squat_fb_sl_fa.yaml"], options)
+    rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2ac_tc_squat_fb_sl_fa.yaml"], options)
 
 ######################################################################################
 def rl_run_param(args, list_of_cfgs, options):
