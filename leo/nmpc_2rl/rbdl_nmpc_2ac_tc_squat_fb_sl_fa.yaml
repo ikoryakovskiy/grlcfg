@@ -2,7 +2,7 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 350000
+  steps: 700000
   rate: 0
   test_interval: 10
   output: rbdl_nmpc_2ac_tc_squat_fb_sl_fa
@@ -19,6 +19,7 @@ experiment:
         auxiliary: mm, com, comv, am
       target_dof: 4
       animation: nope
+      condition: [ 0.01, 0.01 ]
       lower_height: 0.28
       upper_height: 0.35
     task: 
@@ -131,7 +132,7 @@ experiment:
           type: agent/fixed
           policy: 
             type: mapping/policy/action
-            sigma: [  ]
+            sigma: []
             output_min: experiment/environment/task/action_min
             output_max: experiment/environment/task/action_max
             projector: experiment/agent/agent2/agent1/agent/policy/projector

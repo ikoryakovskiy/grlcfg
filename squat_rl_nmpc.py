@@ -39,6 +39,7 @@ def main():
 
     # Parameters
     runs = range(10)
+    condition_x = [0.01, 0.001]
     weight_nmpc = [0.0001]
     weight_nmpc_aux = [1] #, 0.01, 0]
     weight_shaping = [0] #, 1]
@@ -46,7 +47,7 @@ def main():
     model_types = [0, 1] # 0 -ideal, 1 - real
 
     options = []
-    for r in itertools.product(weight_nmpc, weight_nmpc_aux, weight_shaping, model_types, runs): options.append(r)
+    for r in itertools.product(condition_x, weight_nmpc, weight_nmpc_aux, weight_shaping, model_types, runs): options.append(r)
 #    for r in itertools.product([0], [0], [1], model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
@@ -77,10 +78,11 @@ def rl_run_param(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['environment']['task']['weight_nmpc'] = o[0]
-            conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[1]
-            conf['experiment']['environment']['task']['weight_shaping'] = o[2]
-            if o[3] == 0:
+            conf['experiment']['environment']['model']['condition'] = [float(o[-6]), 0.01]
+            conf['experiment']['environment']['task']['weight_nmpc'] = o[-5]
+            conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[-4]
+            conf['experiment']['environment']['task']['weight_shaping'] = o[-3]
+            if o[-2] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl.lua"
             else:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl_real.lua"
@@ -93,7 +95,7 @@ def rl_run_param(args, list_of_cfgs, options):
 
     #print list_of_new_cfgs
 
-    do_multiprocessing_pool(args, list_of_new_cfgs)
+    #do_multiprocessing_pool(args, list_of_new_cfgs)
 
 ######################################################################################
 def mp_run(cfg):
