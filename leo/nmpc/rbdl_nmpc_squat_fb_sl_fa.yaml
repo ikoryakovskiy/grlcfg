@@ -43,7 +43,7 @@ experiment:
     type: agent/fixed
     policy: 
       type: mapping/policy/nmpc
-      verbose: 1
+      verbose: 0
       initFeedback: 1
       action_min: experiment/environment/task/action_min
       action_max: experiment/environment/task/action_max
