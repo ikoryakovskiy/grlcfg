@@ -144,4 +144,4 @@ experiment:
         agent: experiment/test_agent/agent2/agent1/agent
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  save_every: run
+  save_every: never
