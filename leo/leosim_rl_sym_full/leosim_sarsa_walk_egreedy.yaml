@@ -11,7 +11,7 @@ experiment:
     behavior: 
       type: behavior/leo_walk_sym
     randomize: 0.0872639
-    xml: ../../leo/cfg/xm430_210_vc_leo_walk_d000.xml
+    xml: ../../leo/cfg/Divyam_xm430_210_vc_leo_walk_ankle_bound.xml
     target_env: 
       type: environment/ode
       xml: experiment/environment/xml
@@ -71,4 +71,4 @@ experiment:
         type: sampler/greedy
         rand_max: 0
     pub_transition_type: experiment/environment/sub_transition_type
-  save_every: run
+  save_every: never

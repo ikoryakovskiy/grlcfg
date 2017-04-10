@@ -45,7 +45,7 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     # Main
-    rl_run_param(args, ["leo/leosim_rl_sym_full/leosim_sarsa_walk_ou_full.yaml", "leo/leosim_rl_sym_full/leosim_sarsa_walk_ou.yaml"], options)
+    rl_run_param(args, ["leo/leosim_rl_sym_full/leosim_sarsa_walk_egreedy.yaml", "leo/leosim_rl_sym_full/leosim_sarsa_walk_ou.yaml"], options)
 
 ######################################################################################
 def rl_run_param(args, list_of_cfgs, options):
