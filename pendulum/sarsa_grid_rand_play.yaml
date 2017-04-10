@@ -5,7 +5,7 @@ experiment:
   steps: 0
   rate: 3
   test_interval: 0
-  output: pendulum_sarsa_grid_play
+  output: pendulum_sarsa_grid_rand_play
   environment: 
     type: environment/modeled
     model: 
@@ -22,7 +22,7 @@ experiment:
       wrap_angle: 0
     exporter: 
       type: exporter/csv
-      file: pendulum_sarsa_grid_play
+      file: pendulum_sarsa_grid_rand_play
       style: meshup
       variant: all
       enabled: 1
@@ -72,8 +72,10 @@ experiment:
       projector: experiment/agent/policy/projector
       representation: experiment/agent/policy/representation
       sampler: 
-        type: sampler/greedy
-        rand_max: 0
+        type: sampler/epsilon_greedy
+        rand_max: 1
+        epsilon: [ 0.10]
+        decay: [  ]
   load_file: q_cfg_pendulum_sarsa_grid-it0-mp0-run0-rbf-test
   save_every: never
 visualizer: 
