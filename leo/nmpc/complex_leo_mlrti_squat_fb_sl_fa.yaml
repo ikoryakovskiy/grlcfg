@@ -5,7 +5,7 @@ experiment:
   steps: 0
   rate: 0
   test_interval: 0
-  output: complex_leo_nmpc_squat_fb_sl_fa
+  output: complex_leo_mlrti_squat_fb_sl_fa
   environment: 
     type: environment/sandbox
     model: 
@@ -36,7 +36,7 @@ experiment:
         target_action_dims: 7
         benchmark_delays: 0
       lower_height: 0.28
-      upper_height: 0.35
+      upper_height: 0.32
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
@@ -50,7 +50,7 @@ experiment:
       continue_after_fall: 1
     exporter: 
       type: exporter/csv
-      file: complex_leo_nmpc_squat_fb_sl_fa
+      file: complex_leo_mlrti_squat_fb_sl_fa
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: test
@@ -86,7 +86,7 @@ experiment:
     agent_main: 
       type: agent/fixed
       policy: 
-        type: mapping/policy/nmpc
+        type: mapping/policy/nmpc_mlrti
         verbose: 0
         initFeedback: 1
         action_min: experiment/agent/agent_standup/policy/action_min
@@ -94,8 +94,6 @@ experiment:
         lua_model: leo_fb_sl_fa.lua
         model_name: nmpc_leo_squat_fb_sl_fa
         nmpc_model_name: nmpc_leo_squat_fb_sl_fa
-        feedback: non-threaded
-        n_iter: 1
     upright_trigger: 
       type: trigger
       min: [0.8, -2.4, 1.0, -100, -100, -100, -100]

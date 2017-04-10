@@ -30,7 +30,7 @@ experiment:
       weight_nmpc_aux: 1
       weight_shaping: 0
       setpoint_reward: 0
-      gamma: 0.95
+      gamma: 0
       continue_after_fall: 0
     exporter: 
       type: exporter/csv
