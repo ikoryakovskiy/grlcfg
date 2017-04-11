@@ -38,15 +38,16 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(10)
-    power = [1]
-    weight_nmpc = [0.01]
-    weight_nmpc_aux = [1, 0.1, 0]
+    runs = range(2)
+    power = [2]
+    weight_nmpc = [0.0001]
+    weight_nmpc_aux = [1]
+    weight_nmpc_qd = [0.1, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0]
     weight_shaping = [0]
     model_types = [0, 1] # 0 -ideal, 1 - real
 
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_shaping, model_types, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     # Main
@@ -76,11 +77,12 @@ def rl_run_param(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['environment']['task']['power'] = o[-6]
-            conf['experiment']['environment']['task']['weight_nmpc'] = o[-5]
-            conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[-4]
-            conf['experiment']['environment']['task']['weight_shaping'] = o[-3]
-            if o[-2] == 0:
+            conf['experiment']['environment']['task']['power'] = o[0]
+            conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
+            conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
+            conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
+            conf['experiment']['environment']['task']['weight_shaping'] = o[4]
+            if o[5] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl.lua"
             else:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl_real.lua"
