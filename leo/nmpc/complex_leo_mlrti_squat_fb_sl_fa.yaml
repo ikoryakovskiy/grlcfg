@@ -36,7 +36,7 @@ experiment:
         target_action_dims: 7
         benchmark_delays: 0
       lower_height: 0.28
-      upper_height: 0.32
+      upper_height: 0.35
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env

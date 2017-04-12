@@ -38,16 +38,17 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(2)
+    runs = range(3)
     power = [2]
     weight_nmpc = [0.0001]
     weight_nmpc_aux = [1]
-    weight_nmpc_qd = [0.1, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0]
+    weight_nmpc_qd = [0.1, 1.0, 10.0]
     weight_shaping = [0]
-    model_types = [0, 1] # 0 -ideal, 1 - real
+    sigma = [0.1, 1.0, 3.0, 5.0]
+    model_types = [0] # 0 -ideal, 1 - real
 
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, model_types, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sigma, model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     # Main
@@ -82,7 +83,8 @@ def rl_run_param(args, list_of_cfgs, options):
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
             conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
             conf['experiment']['environment']['task']['weight_shaping'] = o[4]
-            if o[5] == 0:
+            conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
+            if o[6] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl.lua"
             else:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl_real.lua"

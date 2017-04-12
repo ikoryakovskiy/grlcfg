@@ -76,7 +76,7 @@ experiment:
             representation: 
               type: representation/parameterized/linear
               init_min: [0]
-              init_max: [1]
+              init_max: [0]
               memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
               outputs: experiment/environment/task/action_dims
               output_min: experiment/environment/task/action_min
@@ -85,7 +85,7 @@ experiment:
             type: predictor/ac/action
             alpha: 0.2
             beta: 0.02
-            gamma: 0.9962
+            gamma: 1.0
             lambda: 0.8582
             update_method: proportional
             step_limit: []
@@ -104,7 +104,7 @@ experiment:
             critic_representation: 
               type: representation/parameterized/linear
               init_min: [0]
-              init_max: [1]
+              init_max: [0]
               memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
               outputs: 1
               output_min: []
