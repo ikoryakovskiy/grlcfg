@@ -9,6 +9,7 @@ from time import sleep
 import math
 import argparse
 import itertools
+from random import shuffle
 
 counter = None
 counter_lock = multiprocessing.Lock()
@@ -37,26 +38,51 @@ def main():
     yaml.add_representer(collections.OrderedDict, dict_representer)
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
-    # Parameters
+    # Parameters #1
     runs = range(3)
     power = [2]
     weight_nmpc = [0.0001]
     weight_nmpc_aux = [1]
-    weight_nmpc_qd = [0.1, 1.0, 10.0]
+    weight_nmpc_qd = [0.1, 1.0]
     weight_shaping = [0]
-    sigma = [0.1, 1.0, 3.0, 5.0]
-    model_types = [0] # 0 -ideal, 1 - real
+    sigma = [0.1, 1.0, 3.0]
+    model_types = [0, 1] # 0 -ideal, 1 - real
 
     options = []
     for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sigma, model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
-    # Main
-    rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2ac_tc_squat_fb_sl_fa.yaml"], options)
+    # Main #1
+    L1 = rl_run_param1(args, ["leo/nmpc_2rl/rbdl_nmpc_2ac_tc_squat_fb_sl_fa.yaml"], options)
+
+    # Parameters #2
+    runs = range(3)
+    power = [2]
+    weight_nmpc = [0.0001]
+    weight_nmpc_aux = [1]
+    weight_nmpc_qd = [1.0]
+    weight_shaping = [0]
+    sigma = [1.0, 3.0]
+    model_types = [1] # 0 -ideal, 1 - real
+
+    options = []
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sigma, model_types, runs): options.append(r)
+    options = [flatten(tupl) for tupl in options]
+
+    # Main #2
+    L2 = rl_run_param2(args, ["leo/squat_rl/rbdl_ac_tc_squat_fb_sl_fa.yaml"], options)
+
+    L = L1 + L2
+    print(L)
+
+    shuffle(L)
+    print("\nShuffled list:")
+    print(L)
+
+    do_multiprocessing_pool(args, L)
 
 ######################################################################################
-def rl_run_param(args, list_of_cfgs, options):
-    """Playing RL on a slope of x.xxx which were learnt for slope 0.004"""
+def rl_run_param1(args, list_of_cfgs, options):
     list_of_new_cfgs = []
 
     loc = "tmp"
@@ -97,7 +123,53 @@ def rl_run_param(args, list_of_cfgs, options):
 
     #print list_of_new_cfgs
 
-    do_multiprocessing_pool(args, list_of_new_cfgs)
+    #do_multiprocessing_pool(args, list_of_new_cfgs)
+    return list_of_new_cfgs
+
+######################################################################################
+def rl_run_param2(args, list_of_cfgs, options):
+    list_of_new_cfgs = []
+
+    loc = "tmp"
+    if not os.path.exists(loc):
+        os.makedirs(loc)
+
+    for cfg in list_of_cfgs:
+        conf = read_cfg(cfg)
+
+        # after reading cfg can do anything with the name
+        fname, fext = os.path.splitext( cfg.replace("/", "_") )
+
+        for o in options:
+            str_o = "-".join(map(lambda x : "{:05d}".format(int(round(10000*x))), o[:-1]))  # last element in 'o' is reserved for mp
+            str_o += "-mp{}".format(o[-1])
+            print "Generating parameters: {}".format(str_o)
+
+            # create local filename
+            list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
+
+            # modify options
+            conf['experiment']['environment']['task']['power'] = o[0]
+            conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
+            conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
+            conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
+            conf['experiment']['environment']['task']['weight_shaping'] = o[4]
+            conf['experiment']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
+            if o[6] == 0:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl.lua"
+            else:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl_real.lua"
+            conf['experiment']['output'] = "{}-{}".format(fname, str_o)
+            if "exporter" in conf['experiment']['environment']:
+              conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
+
+            conf = remove_viz(conf)
+            write_cfg(list_of_new_cfgs[-1], conf)
+
+    #print list_of_new_cfgs
+
+    #do_multiprocessing_pool(args, list_of_new_cfgs)
+    return list_of_new_cfgs
 
 ######################################################################################
 def mp_run(cfg):

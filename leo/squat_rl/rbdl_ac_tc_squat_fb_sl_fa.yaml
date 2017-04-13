@@ -2,7 +2,7 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 25000000
+  steps: 500000000
   rate: 0
   test_interval: 500
   output: rbdl_ac_tc_squat_fb_sl_fa
@@ -14,11 +14,12 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_fb_sl.lua
+        file: leo_fb_sl_real.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       target_dof: 4
       animation: nope
+      condition: [ 0.01, 0.01 ]
       lower_height: 0.28
       upper_height: 0.35
     task: 
@@ -27,7 +28,11 @@ experiment:
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1.0
+      weight_nmpc_qd: 1.0
       weight_shaping: 0
+      power: 2
+      setpoint_reward: 0
+      continue_after_fall: 0
   agent: 
     type: agent/td
     policy: 
@@ -96,4 +101,4 @@ experiment:
       output_max: experiment/environment/task/action_max
       projector: experiment/agent/policy/projector
       representation: experiment/agent/policy/representation
-  save_every: never
+  save_every: run
