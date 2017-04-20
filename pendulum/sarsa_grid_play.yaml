@@ -74,7 +74,7 @@ experiment:
       sampler: 
         type: sampler/greedy
         rand_max: 0
-  load_file: q_cfg_pendulum_sarsa_grid-it0-mp0-run0-rbf-test
+  load_file: q_rbf-run2
   save_every: never
 visualizer: 
   type: visualizer/glut
@@ -87,6 +87,6 @@ visualization:
   savepoints: 1048576
   projection: mean
   policy: experiment/test_agent/policy
-vis2: 
+visualization2: 
   type: visualization/pendulum
   state: experiment/environment/state
