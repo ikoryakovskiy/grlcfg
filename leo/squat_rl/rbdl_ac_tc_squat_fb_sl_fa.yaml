@@ -14,11 +14,11 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_fb_sl_real.lua
+        file: leo_tc/leo_fb_sl_real.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       target_dof: 4
-      animation: nope
+      animation: immediate
       condition: [ 0.01, 0.01 ]
       lower_height: 0.28
       upper_height: 0.35
@@ -37,7 +37,7 @@ experiment:
     type: agent/td
     policy: 
       type: mapping/policy/action
-      sigma: [3, 3, 3]
+      sigma: [0.5, 0.5, 0.5]
       output_min: experiment/environment/task/action_min
       output_max: experiment/environment/task/action_max
       projector: 

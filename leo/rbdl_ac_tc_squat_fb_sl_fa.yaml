@@ -14,7 +14,7 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_fb_sl_fa.lua
+        file: leo_tc/leo_fb_sl_fa.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       target_dof: 3
