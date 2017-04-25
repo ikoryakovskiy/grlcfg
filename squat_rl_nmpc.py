@@ -53,9 +53,9 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     # Main
-    L = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2ac_tc_squat_fb_sl_fa.yaml"], options)
+    L = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2ac_tc_squat_vc_fb_sl_fa.yaml"], options)
 
-    #do_multiprocessing_pool(args, L)
+    do_multiprocessing_pool(args, L)
 
 ######################################################################################
 def rl_run_param(args, list_of_cfgs, options):
@@ -87,9 +87,9 @@ def rl_run_param(args, list_of_cfgs, options):
             conf['experiment']['environment']['task']['weight_shaping'] = o[4]
             conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
             if o[6] == 0:
-                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl.lua"
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
             else:
-                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_fb_sl_real.lua"
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
               conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
