@@ -5,7 +5,7 @@ experiment:
   steps: 0
   rate: 0
   test_interval: 0
-  output: rbdl_nmpc_squat_fb_sl
+  output: rbdl_nmpc_squat_fb_sl_tc
   environment: 
     type: environment/sandbox
     model: 
@@ -30,11 +30,11 @@ experiment:
       weight_nmpc_aux: 1
       weight_shaping: 0
       setpoint_reward: 0
-      gamma: 0.95
+      gamma: 0
       continue_after_fall: 0
     exporter: 
       type: exporter/csv
-      file: rbdl_nmpc_squat_fb_sl
+      file: rbdl_nmpc_squat_fb_sl_tc
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: test
@@ -48,8 +48,8 @@ experiment:
       action_min: experiment/environment/task/action_min
       action_max: experiment/environment/task/action_max
       lua_model: leo_fb_sl_fa.lua
-      model_name: nmpc_leo_squat_fb_sl_fa
-      nmpc_model_name: nmpc_leo_squat_fb_sl_fa
+      model_name: nmpc_leo_squat_fb_sl_fa_tc
+      nmpc_model_name: nmpc_leo_squat_fb_sl_fa_tc
       feedback: non-threaded
       n_iter: 1
   test_agent: experiment/agent
