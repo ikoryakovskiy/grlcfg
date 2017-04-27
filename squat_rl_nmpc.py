@@ -53,7 +53,7 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     # Main
-    L = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2ac_tc_squat_vc_fb_sl_fa.yaml"], options)
+    L = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2ac_tc_squat_fb_sl_fa_vc2.yaml"], options)
 
     do_multiprocessing_pool(args, L)
 

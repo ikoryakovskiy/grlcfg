@@ -19,18 +19,20 @@ experiment:
         auxiliary: mm, com, comv, am
       target_dof: 4
       animation: immediate
-      condition: [ 0.01, 0.01 ]
+      condition: [0.01, 0.01]
       lower_height: 0.28
       upper_height: 0.35
+      mode: vc
     task: 
       type: task/leo_squatting
       timeout: 10
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1
+      weight_nmpc_qd: 1
       weight_shaping: 0
+      power: 2
       setpoint_reward: 0
-      gamma: 0
       continue_after_fall: 0
     exporter: 
       type: exporter/csv

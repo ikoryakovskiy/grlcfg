@@ -1,11 +1,11 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 1
-  steps: 0
+  trials: 0
+  steps: 7000000
   rate: 0
-  test_interval: 0
-  output: rbdl_nmpc_2ac_tc_squat_fb_sl_fa_play
+  test_interval: 10
+  output: rbdl_nmpc_2ac_tc_squat_fb_sl_fa_vc
   environment: 
     type: environment/sandbox
     model: 
@@ -14,24 +14,25 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_tc/leo_fb_sl.lua
+        file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       target_dof: 4
-      animation: immediate
+      animation: nope
       condition: [0.01, 0.01]
       lower_height: 0.28
       upper_height: 0.35
+      mode: vc
     task: 
       type: task/leo_squatting
       timeout: 10
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1.0
+      weight_nmpc_qd: 1.0
       weight_shaping: 0.0
       power: 2.0
       setpoint_reward: 0
-      gamma: 0
       continue_after_fall: 0
   agent: 
     type: agent/master/sequential/additive
@@ -44,8 +45,8 @@ experiment:
         action_min: experiment/environment/task/action_min
         action_max: experiment/environment/task/action_max
         lua_model: leo_fb_sl_fa.lua
-        model_name: nmpc_leo_squat_fb_sl_fa
-        nmpc_model_name: nmpc_leo_squat_fb_sl_fa
+        model_name: nmpc_leo_squat_fb_sl_fa_vc
+        nmpc_model_name: nmpc_leo_squat_fb_sl_fa_vc
         feedback: non-threaded
         n_iter: 1
     agent2: 
@@ -76,7 +77,7 @@ experiment:
             representation: 
               type: representation/parameterized/linear
               init_min: [0]
-              init_max: [1]
+              init_max: [0]
               memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
               outputs: experiment/environment/task/action_dims
               output_min: experiment/environment/task/action_min
@@ -104,7 +105,7 @@ experiment:
             critic_representation: 
               type: representation/parameterized/linear
               init_min: [0]
-              init_max: [1]
+              init_max: [0]
               memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
               outputs: 1
               output_min: []
@@ -117,13 +118,65 @@ experiment:
         type: agent/sub/compartmentalized
         min: [-100, -100, -100, -100, -100, -100, 0.27]
         max: [100, 100, 100, 100, 100, 100, 0.29]
-        agent: experiment/agent/agent2/agent1/agent
-    exporter: 
-      type: exporter/csv
-      file: additive_rbdl_nmpc_2ac_tc_squat_fb_sl_fa_play
-      style: meshup
-      variant: all
-      enabled: 1
+        agent: 
+          type: agent/td
+          policy: 
+            type: mapping/policy/action
+            sigma: experiment/agent/agent2/agent1/agent/policy/sigma
+            output_min: experiment/environment/task/action_min
+            output_max: experiment/environment/task/action_max
+            projector: 
+              type: projector/pre/peaked
+              peaking: experiment/agent/agent2/agent1/agent/policy/projector/peaking
+              input_min: experiment/environment/task/observation_min
+              input_max: experiment/environment/task/observation_max
+              projector: 
+                type: projector/tile_coding
+                tilings: experiment/agent/agent2/agent1/agent/policy/projector/projector/tilings
+                memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
+                safe: experiment/agent/agent2/agent1/agent/policy/projector/projector/safe
+                resolution: experiment/agent/agent2/agent1/agent/policy/projector/projector/resolution
+                wrapping: experiment/agent/agent2/agent1/agent/policy/projector/projector/wrapping
+            representation: 
+              type: representation/parameterized/linear
+              init_min: [0]
+              init_max: [0]
+              memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
+              outputs: experiment/environment/task/action_dims
+              output_min: experiment/environment/task/action_min
+              output_max: experiment/environment/task/action_max
+          predictor: 
+            type: predictor/ac/action
+            alpha: experiment/agent/agent2/agent1/agent/predictor/alpha
+            beta: experiment/agent/agent2/agent1/agent/predictor/beta
+            gamma: experiment/agent/agent2/agent1/agent/predictor/gamma
+            lambda: experiment/agent/agent2/agent1/agent/predictor/lambda
+            update_method: proportional
+            step_limit: []
+            critic_projector: 
+              type: projector/pre/peaked
+              peaking: experiment/agent/agent2/agent1/agent/policy/projector/peaking
+              input_min: experiment/environment/task/observation_min
+              input_max: experiment/environment/task/observation_max
+              projector: 
+                type: projector/tile_coding
+                tilings: experiment/agent/agent2/agent1/agent/policy/projector/projector/tilings
+                memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
+                safe: experiment/agent/agent2/agent1/agent/policy/projector/projector/safe
+                resolution: experiment/agent/agent2/agent1/agent/policy/projector/projector/resolution
+                wrapping: experiment/agent/agent2/agent1/agent/policy/projector/projector/wrapping
+            critic_representation: 
+              type: representation/parameterized/linear
+              init_min: [0]
+              init_max: [0]
+              memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
+              outputs: 1
+              output_min: []
+              output_max: []
+            critic_trace: 
+              type: trace/enumerated/replacing
+            actor_projector: experiment/agent/agent2/agent2/agent/policy/projector
+            actor_representation: experiment/agent/agent2/agent2/agent/policy/representation
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
   test_agent: 
@@ -148,9 +201,15 @@ experiment:
         type: agent/sub/compartmentalized
         min: experiment/agent/agent2/agent2/min
         max: experiment/agent/agent2/agent2/max
-        agent: experiment/test_agent/agent2/agent1/agent
-    exporter: experiment/agent/exporter
+        agent: 
+          type: agent/fixed
+          policy: 
+            type: mapping/policy/action
+            sigma: []
+            output_min: experiment/environment/task/action_min
+            output_max: experiment/environment/task/action_max
+            projector: experiment/agent/agent2/agent2/agent/policy/projector
+            representation: experiment/agent/agent2/agent2/agent/policy/representation
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  load_file: leo_nmpc_2rl_rbdl_nmpc_2ac_tc_squat_fb_sl_fa-00100-00001-10000-00000-00000-mp0-run0
   save_every: never
