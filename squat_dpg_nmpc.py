@@ -39,7 +39,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(3)
+    runs = range(1)
     power = [2]
     weight_nmpc = [0.0001]
     weight_nmpc_aux = [1]
@@ -53,9 +53,17 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     # Main
-    L = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc.yaml"], options)
+    L1 = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml", "leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc_05.yaml"], options)
 
-    do_multiprocessing_pool(args, L)
+    options = []
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, [3.0], [1], range(3)): options.append(r)
+    options = [flatten(tupl) for tupl in options]
+    L2 = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc_ss.yaml"], options)
+
+    L = L1 + L2
+    print(L)
+
+    #do_multiprocessing_pool(args, L)
 
 ######################################################################################
 def rl_run_param(args, list_of_cfgs, options):
@@ -85,7 +93,7 @@ def rl_run_param(args, list_of_cfgs, options):
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
             conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
             conf['experiment']['environment']['task']['weight_shaping'] = o[4]
-            conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
+            conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5]), float(o[5])]
             if o[6] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
             else:

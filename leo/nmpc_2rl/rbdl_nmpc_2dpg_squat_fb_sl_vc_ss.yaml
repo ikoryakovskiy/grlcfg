@@ -2,10 +2,10 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 5000000
+  steps: 1000000
   rate: 0
   test_interval: 10
-  output: rbdl_nmpc_2dpg_squat_fb_sl_fa_vc
+  output: rbdl_nmpc_2dpg_squat_fb_sl_vc_ss
   environment: 
     type: environment/sandbox
     model: 
@@ -14,7 +14,7 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_vc/leo_fb_sl.lua
+        file: leo_vc/leo_fb_sl_real.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       target_dof: 4
@@ -24,7 +24,7 @@ experiment:
       upper_height: 0.35
       mode: vc
     task: 
-      type: task/leo_squatting_fa
+      type: task/leo_squatting
       timeout: 10
       randomize: 0
       weight_nmpc: 0.0001
@@ -44,22 +44,24 @@ experiment:
         initFeedback: 1
         action_min: experiment/environment/task/action_min
         action_max: experiment/environment/task/action_max
-        lua_model: leo_fb_sl_fa.lua
-        model_name: nmpc_leo_squat_fb_sl_fa_vc
-        nmpc_model_name: nmpc_leo_squat_fb_sl_fa_vc
+        lua_model: leo_fb_sl.lua
+        model_name: nmpc_leo_squat_fb_sl_vc
+        nmpc_model_name: nmpc_leo_squat_fb_sl_vc
         feedback: non-threaded
         n_iter: 1
+        pub_error_signal: 
+          type: signal/vector
     agent2: 
       type: agent/master/selective
       agent1: 
         type: agent/sub/compartmentalized
-        min: [-100, -100, -100, -100, -100, -100, 0.34]
-        max: [100, 100, 100, 100, 100, 100, 0.36]
+        min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.34]
+        max: [100, 100, 100, 100, 100, 100, 100, 100, 0.36]
         agent: 
           type: agent/td
           policy: 
-            type: mapping/policy/action
-            sigma: [1, 1, 1]
+            type: mapping/policy/leo/action/learn
+            sigma: [1, 1, 1, 1]
             output_min: experiment/environment/task/action_min
             output_max: experiment/environment/task/action_max
             projector: 
@@ -67,8 +69,8 @@ experiment:
               tilings: 16
               memory: 25165824
               safe: 1
-              resolution: [0.28, 0.28, 0.28, 10, 10, 10, 0.01]
-              wrapping: [0, 0, 0, 0, 0, 0, 0]
+              resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
+              wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
             representation: 
               type: representation/parameterized/linear
               init_min: [0]
@@ -77,6 +79,8 @@ experiment:
               outputs: experiment/environment/task/action_dims
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
+            sub_sigma_signal: 
+              type: signal/vector
           predictor: 
             type: predictor/dpg
             alpha: 0.01
@@ -106,8 +110,8 @@ experiment:
             actor_representation: experiment/agent/agent2/agent1/agent/policy/representation
       agent2: 
         type: agent/sub/compartmentalized
-        min: [-100, -100, -100, -100, -100, -100, 0.27]
-        max: [100, 100, 100, 100, 100, 100, 0.29]
+        min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.27]
+        max: [100, 100, 100, 100, 100, 100, 100, 100, 0.29]
         agent: experiment/agent/agent2/agent1/agent
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
@@ -123,17 +127,20 @@ experiment:
         agent: 
           type: agent/fixed
           policy: 
-            type: mapping/policy/action
+            type: mapping/policy/leo/action/test
             sigma: []
             output_min: experiment/environment/task/action_min
             output_max: experiment/environment/task/action_max
             projector: experiment/agent/agent2/agent1/agent/policy/projector
             representation: experiment/agent/agent2/agent1/agent/policy/representation
+            sub_error_signal: experiment/agent/agent1/policy/pub_error_signal
+            pub_sigma_signal: experiment/agent/agent2/agent1/agent/policy/sub_sigma_signal
       agent2: 
         type: agent/sub/compartmentalized
         min: experiment/agent/agent2/agent2/min
         max: experiment/agent/agent2/agent2/max
         agent: experiment/test_agent/agent2/agent1/agent
+      sub_sigma_signal: experiment/agent/agent2/agent1/agent/policy/sub_sigma_signal
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
   save_every: never
