@@ -3,9 +3,9 @@ experiment:
   runs: 1
   trials: 1
   steps: 0
-  rate: 0
+  rate: 30
   test_interval: 0
-  output: complex_leo_nmpc_squat_fb_sl_fa
+  output: complex_rbdl_mlrti_squat_fb_sl_fa_vc
   environment: 
     type: environment/sandbox
     model: 
@@ -14,29 +14,15 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_tc/leo_fb_sl.lua
+        file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       target_dof: 4
-      animation: nope
-      target_env: 
-        type: environment/communicator
-        converter: 
-          type: converter/state_action_converter
-          state_in: ljHipLeftAngle, ljHipRightAngle, ljKneeLeftAngle, ljKneeRightAngle, ljAnkleLeftAngle, ljAnkleRightAngle, ljShoulderAngle, ljTorsoAngle, ljHipLeftAngleRate, ljHipRightAngleRate, ljKneeLeftAngleRate, ljKneeRightAngleRate, ljAnkleLeftAngleRate, ljAnkleRightAngleRate, ljShoulderAngleRate, ljTorsoAngleRate, lfToeRight, lfHeelRight, lfToeLeft, lfHeelLeft
-          state_out: ljAnkleLeftAngle, ljKneeLeftAngle, ljHipLeftAngle, ljShoulderAngle, ljAnkleLeftAngleRate, ljKneeLeftAngleRate, ljHipLeftAngleRate, ljShoulderAngleRate
-          action_in: ljAnkleLeftVoltage, ljKneeLeftVoltage, ljHipLeftVoltage, ljShoulderVoltage
-          action_out: ljHipLeftVoltage, ljHipLeftVoltage, ljKneeLeftVoltage, ljKneeLeftVoltage, ljAnkleLeftVoltage, ljAnkleLeftVoltage, ljShoulderVoltage
-        communicator: 
-          type: communicator/zeromq/request_reply
-          role: ZMQ_REP
-          sync: tcp://192.168.1.10:5560
-          addr: tcp://*:5561
-        target_obs_dims: 20
-        target_action_dims: 7
-        benchmark_delays: 0
+      animation: immediate
+      condition: [ 0.01, 0.01 ]
       lower_height: 0.28
       upper_height: 0.35
+      mode: vc
     task: 
       type: task/leo_squatting_fa
       target_env: experiment/environment/model/target_env
@@ -50,7 +36,7 @@ experiment:
       continue_after_fall: 1
     exporter: 
       type: exporter/csv
-      file: complex_leo_nmpc_squat_fb_sl_fa
+      file: complex_rbdl_mlrti_squat_fb_sl_fa_vc
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: test
@@ -65,7 +51,7 @@ experiment:
         type: mapping/policy/parameterized/pid
         setpoint: [1.06, -2.13, 1.27, 0, 0, 0, 0]
         outputs: 3
-        p: [10, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0]
+        p: [40, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0]
         i: []
         d: []
         il: []
@@ -86,16 +72,14 @@ experiment:
     agent_main: 
       type: agent/fixed
       policy: 
-        type: mapping/policy/nmpc
+        type: mapping/policy/nmpc_mlrti
         verbose: 0
         initFeedback: 1
-        action_min: experiment/agent/agent_standup/policy/action_min
-        action_max: experiment/agent/agent_standup/policy/action_max
+        action_min: experiment/environment/task/action_min
+        action_max: experiment/environment/task/action_max
         lua_model: leo_fb_sl_fa.lua
-        model_name: nmpc_leo_squat_fb_sl_fa
-        nmpc_model_name: nmpc_leo_squat_fb_sl_fa
-        feedback: non-threaded
-        n_iter: 1
+        model_name: nmpc_leo_squat_fb_sl_fa_vc
+        nmpc_model_name: nmpc_leo_squat_fb_sl_fa_vc
     upright_trigger: 
       type: trigger
       min: [0.8, -2.4, 1.0, -100, -100, -100, -100]
@@ -105,6 +89,6 @@ experiment:
       type: trigger
       min: [1]
       max: [1]
-      delay: 10
+      delay: 5
   test_agent: experiment/agent
   save_every: never
