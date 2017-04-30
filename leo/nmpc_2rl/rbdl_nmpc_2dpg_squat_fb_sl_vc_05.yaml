@@ -90,7 +90,7 @@ experiment:
               init_min: [0]
               init_max: [0]
               memory: experiment/agent/agent2/agent1/agent/policy/projector/memory
-              outputs: experiment/environment/task/action_dims
+              outputs: 1
               output_min: []
               output_max: []
             critic_trace: 
