@@ -63,7 +63,7 @@ def main():
     L = L1 + L2
     print(L)
 
-    #do_multiprocessing_pool(args, L)
+    do_multiprocessing_pool(args, L)
 
 ######################################################################################
 def rl_run_param(args, list_of_cfgs, options):
