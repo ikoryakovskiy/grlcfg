@@ -5,7 +5,7 @@ experiment:
   steps: 2000000
   rate: 0
   test_interval: 10
-  output: rbdl_nmpc_2dpg_squat_fb_sl_vc
+  output: rbdl_nmpc_2dpg_squat_fb_sl_vc_tt
   environment: 
     type: environment/sandbox
     model: 

@@ -53,18 +53,17 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     # Main
-    #L1 = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml", "leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc_05.yaml"], options)
-    L1 = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc_tt.yaml"], options)
+    L1 = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml", "leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc_05.yaml", "leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc_tt.yaml"], options)
 
-    #options = []
-    #for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, [3.0], [1], range(3)): options.append(r)
-    #options = [flatten(tupl) for tupl in options]
-    L2 = []#rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc_ss.yaml"], options)
+    options = []
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, [3.0], [1], range(3)): options.append(r)
+    options = [flatten(tupl) for tupl in options]
+    L2 = rl_run_param(args, ["leo/nmpc_2rl/rbdl_nmpc_2dpg_squat_fb_sl_vc_ss.yaml"], options)
 
     L = L1 + L2
     print(L)
 
-    #do_multiprocessing_pool(args, L)
+    do_multiprocessing_pool(args, L)
 
 ######################################################################################
 def rl_run_param(args, list_of_cfgs, options):
