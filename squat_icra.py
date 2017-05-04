@@ -116,7 +116,12 @@ def rl_run_param1(args, list_of_cfgs, options):
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
             conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
             conf['experiment']['environment']['task']['weight_shaping'] = o[4]
-            conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5]), float(o[5])]
+
+            fa = fname.find("_fa_")
+            if fa == -1:
+                conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5]), float(o[5])]
+            else:
+                conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
             if o[6] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
             else:
@@ -162,7 +167,13 @@ def rl_run_param2(args, list_of_cfgs, options):
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
             conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
             conf['experiment']['environment']['task']['weight_shaping'] = o[4]
-            conf['experiment']['agent']['agent2']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5]), float(o[5])]
+
+            fa = fname.find("_fa_")
+            if fa == -1:
+                conf['experiment']['agent']['agent2']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5]), float(o[5])]
+            else:
+                conf['experiment']['agent']['agent2']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
+
             if o[6] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
             else:
