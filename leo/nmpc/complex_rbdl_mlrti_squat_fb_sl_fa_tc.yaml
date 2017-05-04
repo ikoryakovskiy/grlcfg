@@ -24,7 +24,7 @@ experiment:
       upper_height: 0.35
       mode: tc
     task: 
-      type: task/leo_squatting_fa
+      type: task/leo_squatting
       target_env: experiment/environment/model/target_env
       timeout: 5000
       randomize: 0
@@ -51,7 +51,7 @@ experiment:
         type: mapping/policy/parameterized/pid
         setpoint: [1.06, -2.13, 1.27, 0, 0, 0, 0]
         outputs: 3
-        p: [4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0]
+        p: [4, 0, 0, 0.2, 0, 0, 0, 0, 6, 0, 0, 0.3, 0, 0, 0, 0, 3, 0, 0, 0.1, 0]
         i: []
         d: []
         il: []

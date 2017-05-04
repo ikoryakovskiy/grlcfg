@@ -22,7 +22,7 @@ experiment:
       lower_height: 0.28
       upper_height: 0.35
     task: 
-      type: task/leo_squatting_fa
+      type: task/leo_squatting
       target_env: experiment/environment/model/target_env
       timeout: 5000
       randomize: 0

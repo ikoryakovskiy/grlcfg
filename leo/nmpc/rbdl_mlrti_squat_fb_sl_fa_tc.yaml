@@ -24,7 +24,7 @@ experiment:
       upper_height: 0.35
       mode: tc
     task: 
-      type: task/leo_squatting_fa
+      type: task/leo_squatting
       timeout: 10
       randomize: 0
       weight_nmpc: 0.0001

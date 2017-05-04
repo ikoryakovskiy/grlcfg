@@ -2,7 +2,7 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 7000000
+  steps: 1000000
   rate: 0
   test_interval: 10
   output: rbdl_nmpc_2ac_tc_squat_fb_sl_fa_vc
@@ -24,7 +24,7 @@ experiment:
       upper_height: 0.35
       mode: vc
     task: 
-      type: task/leo_squatting_fa
+      type: task/leo_squatting
       timeout: 10
       randomize: 0
       weight_nmpc: 0.0001
@@ -81,8 +81,8 @@ experiment:
             type: predictor/ac/action
             alpha: 0.2
             beta: 0.02
-            gamma: 0.9962
-            lambda: 0.8582
+            gamma: 0.97
+            lambda: 0.65
             update_method: proportional
             step_limit: []
             critic_projector: 

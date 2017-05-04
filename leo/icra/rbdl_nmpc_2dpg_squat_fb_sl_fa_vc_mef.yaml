@@ -2,10 +2,10 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 350000
+  steps: 1000000
   rate: 0
   test_interval: 10
-  output: rbdl_nmpc_2ac_tc_squat_fb_sl_fa_real
+  output: rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef
   environment: 
     type: environment/sandbox
     model: 
@@ -14,23 +14,30 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_tc/leo_fb_sl_real.lua
+        file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       target_dof: 4
       animation: nope
+      condition: [0.01, 0.01]
       lower_height: 0.28
       upper_height: 0.35
+      mode: vc
     task: 
       type: task/leo_squatting
       timeout: 10
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1.0
+      weight_nmpc_qd: 1.0
       weight_shaping: 0.0
+      power: 2.0
       setpoint_reward: 0
-      gamma: 0
       continue_after_fall: 0
+      sub_sim_state: 
+        type: signal/vector
+      gamma: 0.97
+      fixed_arm: 1
   agent: 
     type: agent/master/sequential/additive
     agent1: 
@@ -42,10 +49,11 @@ experiment:
         action_min: experiment/environment/task/action_min
         action_max: experiment/environment/task/action_max
         lua_model: leo_fb_sl_fa.lua
-        model_name: nmpc_leo_squat_fb_sl_fa
-        nmpc_model_name: nmpc_leo_squat_fb_sl_fa
+        model_name: nmpc_leo_squat_fb_sl_fa_vc
+        nmpc_model_name: nmpc_leo_squat_fb_sl_fa_vc
         feedback: non-threaded
         n_iter: 1
+        pub_sim_state: experiment/environment/task/sub_sim_state
     agent2: 
       type: agent/master/selective
       agent1: 
@@ -60,56 +68,46 @@ experiment:
             output_min: experiment/environment/task/action_min
             output_max: experiment/environment/task/action_max
             projector: 
-              type: projector/pre/peaked
-              peaking: [0, 0, 0, 0, 0, 0, 0]
-              input_min: experiment/environment/task/observation_min
-              input_max: experiment/environment/task/observation_max
-              projector: 
-                type: projector/tile_coding
-                tilings: 16
-                memory: 25165824
-                safe: 1
-                resolution: [0.28, 0.28, 0.28, 10, 10, 10, 0.01]
-                wrapping: [0, 0, 0, 0, 0, 0, 0]
+              type: projector/tile_coding
+              tilings: 16
+              memory: 25165824
+              safe: 1
+              resolution: [0.28, 0.28, 0.28, 10, 10, 10, 0.01]
+              wrapping: [0, 0, 0, 0, 0, 0, 0]
             representation: 
               type: representation/parameterized/linear
               init_min: [0]
-              init_max: [1]
-              memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
+              init_max: [0]
+              memory: experiment/agent/agent2/agent1/agent/policy/projector/memory
               outputs: experiment/environment/task/action_dims
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
           predictor: 
-            type: predictor/ac/action
-            alpha: 0.2
-            beta: 0.02
-            gamma: 0.9962
-            lambda: 0.8582
-            update_method: proportional
-            step_limit: []
-            critic_projector: 
-              type: projector/pre/peaked
-              peaking: experiment/agent/agent2/agent1/agent/policy/projector/peaking
-              input_min: experiment/environment/task/observation_min
-              input_max: experiment/environment/task/observation_max
-              projector: 
-                type: projector/tile_coding
-                tilings: experiment/agent/agent2/agent1/agent/policy/projector/projector/tilings
-                memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
-                safe: experiment/agent/agent2/agent1/agent/policy/projector/projector/safe
-                resolution: experiment/agent/agent2/agent1/agent/policy/projector/projector/resolution
-                wrapping: experiment/agent/agent2/agent1/agent/policy/projector/projector/wrapping
+            type: predictor/dpg
+            alpha: 0.01
+            beta_v: 0.1
+            beta_a: 0.01
+            gamma: experiment/environment/task/gamma
+            lambda: 0.65
+            projector: experiment/agent/agent2/agent1/agent/policy/projector
             critic_representation: 
               type: representation/parameterized/linear
               init_min: [0]
-              init_max: [1]
-              memory: experiment/agent/agent2/agent1/agent/policy/projector/projector/memory
+              init_max: [0]
+              memory: experiment/agent/agent2/agent1/agent/policy/projector/memory
               outputs: 1
               output_min: []
               output_max: []
             critic_trace: 
               type: trace/enumerated/replacing
-            actor_projector: experiment/agent/agent2/agent1/agent/policy/projector
+            advantage_representation: 
+              type: representation/parameterized/linear
+              init_min: [0]
+              init_max: [0]
+              memory: experiment/agent/agent2/agent1/agent/policy/projector/memory
+              outputs: experiment/environment/task/action_dims
+              output_min: []
+              output_max: []
             actor_representation: experiment/agent/agent2/agent1/agent/policy/representation
       agent2: 
         type: agent/sub/compartmentalized
@@ -131,7 +129,7 @@ experiment:
           type: agent/fixed
           policy: 
             type: mapping/policy/action
-            sigma: [  ]
+            sigma: []
             output_min: experiment/environment/task/action_min
             output_max: experiment/environment/task/action_max
             projector: experiment/agent/agent2/agent1/agent/policy/projector
