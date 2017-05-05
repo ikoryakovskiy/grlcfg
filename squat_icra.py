@@ -39,7 +39,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(1)
+    runs = range(3)
     power = [2]
     weight_nmpc = [0.0001]
     weight_nmpc_aux = [1]
@@ -109,7 +109,7 @@ def rl_run_param1(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 200000
+            conf['experiment']['steps'] = 1000000
             conf['experiment']['test_interval'] = 20
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
@@ -160,7 +160,7 @@ def rl_run_param2(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 200000
+            conf['experiment']['steps'] = 1000000
             conf['experiment']['test_interval'] = 20
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
