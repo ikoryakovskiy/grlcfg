@@ -54,13 +54,13 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     configs = [
-                "leo/icra/rbdl_nmpc_2ac_tc_squat_fb_sl_fa_vc.yaml",
-                "leo/icra/rbdl_nmpc_2ac_tc_squat_fb_sl_vc.yaml",
+#                "leo/icra/rbdl_nmpc_2ac_tc_squat_fb_sl_fa_vc.yaml",
+#                "leo/icra/rbdl_nmpc_2ac_tc_squat_fb_sl_vc.yaml",
                 #
-                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc.yaml",
+#                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc.yaml",
                 "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml",
                 #
-                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef.yaml",
+#                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef.yaml",
                 "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
               ]
 
@@ -84,7 +84,7 @@ def main():
     shuffle(L)
     print(L)
 
-    do_multiprocessing_pool(args, L)
+    #do_multiprocessing_pool(args, L)
 
 ######################################################################################
 def rl_run_param1(args, list_of_cfgs, options):
