@@ -35,6 +35,7 @@ experiment:
         target_obs_dims: 20
         target_action_dims: 7
         benchmark_delays: 0
+      condition: [ 0.01, 0.01 ]
       lower_height: 0.28
       upper_height: 0.35
       mode: tc
@@ -45,16 +46,20 @@ experiment:
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1
+      weight_nmpc_qd: 1
       weight_shaping: 0
+      power: 2
       setpoint_reward: 0
-      gamma: 0
       continue_after_fall: 1
+      gamma: 0
+      fixed_arm: 1
     exporter: 
       type: exporter/csv
       file: complex_leo_mlrti_squat_fb_sl_fa_tc
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: test
+      precision: 6
       enabled: 1
   agent: 
     type: agent/leo/sma
@@ -90,8 +95,8 @@ experiment:
         type: mapping/policy/nmpc_mlrti
         verbose: 0
         initFeedback: 1
-        action_min: experiment/agent/agent_standup/policy/action_min
-        action_max: experiment/agent/agent_standup/policy/action_max
+        action_min: experiment/environment/task/action_min
+        action_max: experiment/environment/task/action_max
         lua_model: leo_fb_sl_fa.lua
         model_name: nmpc_leo_squat_fb_sl_fa_tc
         nmpc_model_name: nmpc_leo_squat_fb_sl_fa_tc
@@ -104,6 +109,6 @@ experiment:
       type: trigger
       min: [1]
       max: [1]
-      delay: 10000
+      delay: 10
   test_agent: experiment/agent
   save_every: never
