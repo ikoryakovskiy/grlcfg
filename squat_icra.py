@@ -44,8 +44,8 @@ def main():
     weight_nmpc = [0.0001]
     weight_nmpc_aux = [1]
     weight_nmpc_qd = [1.0]
-    weight_shaping = [0, 1]
-    sigma = [0.01, 0.1]
+    weight_shaping = [0]
+    sigma = [1.0, 0.1]
     model_types = [0, 1] # 0 -ideal, 1 - real
 
     # 1
@@ -55,7 +55,7 @@ def main():
 
     configs = [
 #                "leo/icra/rbdl_nmpc_2ac_tc_squat_fb_sl_fa_vc.yaml",
-#                "leo/icra/rbdl_nmpc_2ac_tc_squat_fb_sl_vc.yaml",
+                "leo/icra/rbdl_nmpc_2ac_tc_squat_fb_sl_vc.yaml",
                 #
 #                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc.yaml",
                 "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml",
@@ -74,7 +74,7 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     configs = [
-                "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_fa_vc_mef.yaml",
+#                "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_fa_vc_mef.yaml",
                 "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_vc_mef.yaml",
               ]
 
@@ -109,8 +109,8 @@ def rl_run_param1(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 1000000
-            conf['experiment']['test_interval'] = 20
+            conf['experiment']['steps'] = 1500000
+            conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
@@ -160,8 +160,8 @@ def rl_run_param2(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 1000000
-            conf['experiment']['test_interval'] = 20
+            conf['experiment']['steps'] = 1500000
+            conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
