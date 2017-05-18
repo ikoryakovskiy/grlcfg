@@ -39,20 +39,21 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(1)
+    runs = range(3)
     power = [2]
     weight_nmpc = [0.0001]
     weight_nmpc_aux = [1]
     weight_nmpc_qd = [1.0]
     weight_shaping = [0]
     sigma = [0.1]
-    model_types = [0, 1] # 0 -ideal, 1 - real
+    #model_types = [0, 1] # 0 -ideal, 1 - real
 
-    gamma = [0, 1]
+    model_types = [1] # 0 -ideal, 1 - real
+    gamma = [0.0, 0.4, 0.8]
 
     # 1
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sigma, model_types, gamma, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sigma, gamma, model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     configs = [
@@ -72,18 +73,18 @@ def main():
     # 2
     weight_shaping = [0] # shaping is not applicable in single RL controller
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sigma, model_types, gamma, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sigma, gamma, model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     configs = [
                 #"leo/icra/rbdl_nmpc_dpg_squat_fb_sl_fa_vc_mef.yaml",
-#                "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_vc_mef.yaml",
+                "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_vc_mef.yaml",
               ]
 
     L2 = rl_run_param2(args, configs, options)
 
     L = L1 + L2
-    shuffle(L)
+    #shuffle(L)
     print(L)
 
     do_multiprocessing_pool(args, L)
@@ -124,12 +125,13 @@ def rl_run_param1(args, list_of_cfgs, options):
                 conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5]), float(o[5])]
             else:
                 conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
-            if o[6] == 0:
+
+            conf['experiment']['environment']['task']['gamma'] = o[6]
+
+            if o[7] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
             else:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
-
-            conf['experiment']['environment']['task']['gamma'] = o[7]
 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
@@ -179,12 +181,12 @@ def rl_run_param2(args, list_of_cfgs, options):
             else:
                 conf['experiment']['agent']['agent2']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
 
-            if o[6] == 0:
+            conf['experiment']['environment']['task']['gamma'] = o[6]
+
+            if o[7] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
             else:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
-
-            conf['experiment']['environment']['task']['gamma'] = o[7]
 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
