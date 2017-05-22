@@ -5,7 +5,7 @@ experiment:
   steps: 0
   rate: 33.33
   test_interval: 0
-  output: rbdl_mlrti_squat_fb_sl_tc
+  output: rbdl_mlrti_squat_fb_sl_vc
   environment: 
     type: environment/sandbox
     model: 
@@ -14,7 +14,7 @@ experiment:
       integration_steps: 25
       dynamics: 
         type: dynamics/rbdl
-        file: leo_tc/leo_fb_sl.lua
+        file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       target_dof: 4
@@ -22,7 +22,7 @@ experiment:
       condition: [0.01, 0.01]
       lower_height: 0.28
       upper_height: 0.35
-      mode: tc
+      mode: vc
     task: 
       type: task/leo_squatting
       timeout: 10
@@ -34,23 +34,26 @@ experiment:
       power: 2
       setpoint_reward: 0
       continue_after_fall: 0
+      gamma: 0.97
+      fixed_arm: 0
     exporter: 
       type: exporter/csv
-      file: rbdl_mlrti_squat_fb_sl_tc
+      file: rbdl_mlrti_squat_fb_sl_vc
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: test
+      precision: 6
       enabled: 1
   agent: 
     type: agent/fixed
     policy: 
       type: mapping/policy/nmpc_mlrti
-      verbose: 1
+      verbose: 0
       initFeedback: 1
       action_min: experiment/environment/task/action_min
       action_max: experiment/environment/task/action_max
-      lua_model: leo_fb_sl_fa.lua
-      model_name: nmpc_leo_squat_fb_sl_fa_tc
-      nmpc_model_name: nmpc_leo_squat_fb_sl_fa_tc
+      lua_model: leo_fb_sl.lua
+      model_name: nmpc_leo_squat_fb_sl_vc
+      nmpc_model_name: nmpc_leo_squat_fb_sl_vc
   test_agent: experiment/agent
   save_every: never

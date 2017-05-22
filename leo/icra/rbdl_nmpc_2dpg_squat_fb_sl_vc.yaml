@@ -23,6 +23,7 @@ experiment:
       lower_height: 0.28
       upper_height: 0.35
       mode: vc
+      sim_filtered: 0
     task: 
       type: task/leo_squatting
       timeout: 10
