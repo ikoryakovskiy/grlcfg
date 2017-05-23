@@ -35,7 +35,7 @@ experiment:
         target_obs_dims: 20
         target_action_dims: 7
         benchmark_delays: 0
-      condition: [ 0.01, 0.01 ]
+      precision: [ 0.01, 0.01 ]
       lower_height: 0.28
       upper_height: 0.35
       mode: tc

@@ -12,17 +12,27 @@ experiment:
       type: sandbox_model/leo_squatting
       control_step: 0.03
       integration_steps: 25
+      target_dof: 4
       dynamics: 
         type: dynamics/rbdl
         file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      target_dof: 4
+      true_model: 
+        type: model/dynamical
+        control_step: experiment/environment/model/control_step
+        integration_steps: experiment/environment/model/integration_steps
+        dynamics: 
+          type: dynamics/rbdl
+          file: leo_vc/leo_fb_sl.lua
       animation: nope
-      condition: [0.01, 0.01]
       lower_height: 0.28
       upper_height: 0.35
+      precision: [0.01, 0.01]
       mode: vc
+      sim_filtered: 1
+      sub_true_action: 
+        type: signal/vector
     task: 
       type: task/leo_squatting
       timeout: 10
@@ -32,10 +42,9 @@ experiment:
       weight_nmpc_qd: 1.0
       weight_shaping: 0.0
       power: 2.0
+      use_mef: 1
       setpoint_reward: 0
       continue_after_fall: 0
-      sub_sim_state: 
-        type: signal/vector
       gamma: 0.97
       fixed_arm: 0
   agent: 
@@ -50,12 +59,11 @@ experiment:
         action_max: experiment/environment/task/action_max
         lua_model: leo_fb_sl.lua
         model_name: nmpc_leo_squat_fb_sl_vc
-        nmpc_model_name: nmpc_leo_squat_fb_sl_vc   
     agent2: 
       type: agent/td
       policy: 
         type: mapping/policy/action
-        sigma: [1, 1, 1, 1]
+        sigma: [0.1, 0.1, 0.1, 0.1]
         output_min: experiment/environment/task/action_min
         output_max: experiment/environment/task/action_max
         projector: 
@@ -100,6 +108,7 @@ experiment:
           output_min: []
           output_max: []
         actor_representation: experiment/agent/agent2/policy/representation
+    pub_action1: experiment/environment/model/sub_true_action
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
   test_agent: 
@@ -114,6 +123,7 @@ experiment:
         output_max: experiment/environment/task/action_max
         projector: experiment/agent/agent2/policy/projector
         representation: experiment/agent/agent2/policy/representation
+    pub_action1: experiment/environment/model/sub_true_action
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
   save_every: never
