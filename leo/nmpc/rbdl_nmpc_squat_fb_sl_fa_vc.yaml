@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
-  runs: 3
-  trials: 1
+  runs: 1
+  trials: 100
   steps: 0
   rate: 0
   test_interval: 0
@@ -12,36 +12,40 @@ experiment:
       type: sandbox_model/leo_squatting
       control_step: 0.03
       integration_steps: 25
+      target_dof: 4
       dynamics: 
         type: dynamics/rbdl
         file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      target_dof: 4
       animation: immediate
       precision: [0.01, 0.01]
       lower_height: 0.28
       upper_height: 0.35
       mode: vc
+      sim_filtered: 0
     task: 
       type: task/leo_squatting
       timeout: 10
       randomize: 0
       weight_nmpc: 0.0001
-      weight_nmpc_aux: 1.0
-      weight_nmpc_qd: 1.0
-      weight_shaping: 0.0
-      power: 2.0
+      weight_nmpc_aux: 1
+      weight_nmpc_qd: 1
+      weight_shaping: 0
+      power: 2
+      use_mef: 0
       setpoint_reward: 0
       continue_after_fall: 0
+      gamma: 0.97
+      fixed_arm: 1
     exporter: 
       type: exporter/csv
       file: rbdl_nmpc_squat_fb_sl_fa_vc
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: test
-      precision: 16
-      enabled: 1
+      precision: 6
+      enabled: 0
   agent: 
     type: agent/fixed
     policy: 
