@@ -10,10 +10,13 @@ import math
 import argparse
 import itertools
 from random import shuffle
+import random
+from datetime import datetime
 
 counter = None
 counter_lock = multiprocessing.Lock()
-proc_per_processor = 0;
+cores = 0;
+random.seed(datetime.now())
 
 def flatten(x):
     if isinstance(x, collections.Iterable):
@@ -39,21 +42,22 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs    = range(3)
-    alpha   = [ 0.01, 0.05, 0.1, 0.15, 0.2 ]
+    runs    = range(1)
+    sigma   = [25, 50, 75, 100]
+    alpha   = map(lambda x : 0.0001*x, range(1, 10))
 
-    beta_v  = [ 0.05, 0.1, 0.2, 0.5 ]
-    x_beta_a  = [ 0.1, 0.5 ]
+    beta_v  = [ 0.005, 0.01, 0.05, 0.1 ]
+    x_beta_a  = [ 0.5, 0.2, 0.1 ]
     beta_va = []
     for x in x_beta_a:
       for y in beta_v:
         beta_va.append((y, x*y))
 
-    gamma   = [ 0.8, 0.9, 0.95, 0.97, 0.99 ]
-    lm      = [ 0.65, 0.8 ]
+    gamma   = [ 0.99, 0.97 ]
+    lm      = [ 0.65, 0.80 ]
 
     options = []
-    for r in itertools.product(alpha, beta_va, gamma, lm, runs): options.append(r)
+    for r in itertools.product(sigma, alpha, beta_va, gamma, lm, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     # Main
@@ -85,11 +89,12 @@ def rl_run_param(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['agent']['predictor']['alpha']   = o[0]
-            conf['experiment']['agent']['predictor']['beta_v']  = o[1]
-            conf['experiment']['agent']['predictor']['beta_a']  = o[2]
-            conf['experiment']['agent']['predictor']['gamma']   = o[3]
-            conf['experiment']['agent']['predictor']['lambda']  = o[4]
+            conf['experiment']['agent']['policy']['sigma']      = [ o[0] ]
+            conf['experiment']['agent']['predictor']['alpha']   = o[1]
+            conf['experiment']['agent']['predictor']['beta_v']  = o[2]
+            conf['experiment']['agent']['predictor']['beta_a']  = o[3]
+            conf['experiment']['agent']['predictor']['gamma']   = o[4]
+            conf['experiment']['agent']['predictor']['lambda']  = o[5]
 
             # rest
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
@@ -106,14 +111,11 @@ def mp_run(cfg):
     # Multiple copies can be run on one computer at the same time, which results in the same seed for a random generator.
     # Thus we need to wait for a second or so between runs
     global counter
-    global proc_per_processor
+    global cores
     with counter_lock:
-        wait = counter.value
+        #wait = counter.value
+        wait = cores.value*random.random()
         counter.value += 2
-    # wait for the specified number of seconds
-    #print 'floor {0}'.format(math.floor(wait / multiprocessing.cpu_count()))
-    #wait = wait % multiprocessing.cpu_count() + (1.0/proc_per_processor.value) * math.floor(wait / multiprocessing.cpu_count())
-    #print 'wait {0}'.format(wait)
     sleep(wait)
     print 'wait finished {0}'.format(wait)
     # Run the experiment
@@ -131,17 +133,17 @@ def mp_run(cfg):
 def init(cnt, num):
     ''' store the counter for later use '''
     global counter
-    global proc_per_processor
+    global cores
     counter = cnt
-    proc_per_processor = num
+    cores = num
 
 ######################################################################################
 def do_multiprocessing_pool(args, list_of_new_cfgs):
     """Do multiprocesing"""
     counter = multiprocessing.Value('i', 0)
-    proc_per_processor = multiprocessing.Value('d', math.ceil(len(list_of_new_cfgs)/args.cores))
-    print 'proc_per_processor {0}'.format(proc_per_processor.value)
-    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (counter, proc_per_processor))
+    cores = multiprocessing.Value('i', args.cores)
+    print 'cores {0}'.format(cores.value)
+    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (counter, cores))
     pool.map(mp_run, list_of_new_cfgs)
     pool.close()
 ######################################################################################
