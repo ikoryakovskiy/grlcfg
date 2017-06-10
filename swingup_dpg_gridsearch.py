@@ -43,27 +43,33 @@ def main():
 
     # Parameters
     runs    = range(1)
-    sigma   = [25, 50, 75, 100]
-    alpha   = map(lambda x : 0.0001*x, range(1, 10))
+    sigma   = map(lambda x : 0.01*(1+x), range(0, 51, 10))
+    theta   = map(lambda x : 0.01*(1+x), range(0, 51, 10))
 
-    beta_v  = [ 0.005, 0.01, 0.05, 0.1 ]
-    x_beta_a  = [ 0.5, 0.2, 0.1 ]
+    alpha   = map(lambda x : 0.00001*x, range(1, 10, 2)) + map(lambda x : 0.00005*(1+x), range(1, 20, 2)) + map(lambda x : 0.001*(1+x), range(1, 5, 2))
+
+    beta_v  = [ 0.005, 0.01, 0.05, 0.1, 0.5 ]
+    x_beta_a  = [ 0.5, 0.2, 0.1, 0.05 ]
     beta_va = []
     for x in x_beta_a:
       for y in beta_v:
         beta_va.append((y, x*y))
 
-    gamma   = [ 0.99, 0.97 ]
-    lm      = [ 0.65, 0.80 ]
+    gamma   = [ 0.97 ]
+    lm      = [ 0.65 ]
+
+    #print (alpha)
+    #return
 
     options = []
-    for r in itertools.product(sigma, alpha, beta_va, gamma, lm, runs): options.append(r)
+    for r in itertools.product(sigma, theta, alpha, beta_va, gamma, lm, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     # Main
-    L = rl_run_param(args, ["cfg/cart_pole/icra/rbdl_dpg.yaml"], options)
+    L = rl_run_param(args, ["cfg/cart_pole/icra/rbdl_dpg_ou.yaml"], options)
     #print L
 
+    shuffle(L)
     do_multiprocessing_pool(args, L)
 
 ######################################################################################
@@ -81,7 +87,7 @@ def rl_run_param(args, list_of_cfgs, options):
         fname, fext = os.path.splitext( cfg.replace("/", "_") )
 
         for o in options:
-            str_o = "-".join(map(lambda x : "{:05d}".format(int(round(10000*x))), o[:-1]))  # last element in 'o' is reserved for mp
+            str_o = "-".join(map(lambda x : "{:06d}".format(int(round(100000*x))), o[:-1]))  # last element in 'o' is reserved for mp
             str_o += "-mp{}".format(o[-1])
             print "Generating parameters: {}".format(str_o)
 
@@ -90,11 +96,12 @@ def rl_run_param(args, list_of_cfgs, options):
 
             # modify options
             conf['experiment']['agent']['policy']['sigma']      = [ o[0] ]
-            conf['experiment']['agent']['predictor']['alpha']   = o[1]
-            conf['experiment']['agent']['predictor']['beta_v']  = o[2]
-            conf['experiment']['agent']['predictor']['beta_a']  = o[3]
-            conf['experiment']['agent']['predictor']['gamma']   = o[4]
-            conf['experiment']['agent']['predictor']['lambda']  = o[5]
+            conf['experiment']['agent']['policy']['theta']      = [ o[1] ]
+            conf['experiment']['agent']['predictor']['alpha']   = o[2]
+            conf['experiment']['agent']['predictor']['beta_v']  = o[3]
+            conf['experiment']['agent']['predictor']['beta_a']  = o[4]
+            conf['experiment']['agent']['predictor']['gamma']   = o[5]
+            conf['experiment']['agent']['predictor']['lambda']  = o[6]
 
             # rest
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
