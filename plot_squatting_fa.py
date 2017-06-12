@@ -30,7 +30,7 @@ def main():
       ts = data[:, 0]       # time
       xs = data[:, 1:9]     # states
       rz = data[:, 19:20]   # RootZ
-      xc = data[:, 41:45]   # controls
+      xc = data[:, 39:42]   # controls
       dd.append({'ts':ts, 'xs':xs, 'xc':xc})
 
     plt.close('all')
@@ -43,7 +43,6 @@ def main():
       axarr[i.value].set_ylabel(aname)
       axarr[i.value].grid(True)
     axarr[4].plot(d['ts'], rz)
-    axarr[4].set_ylabel('Height')
     axarr[4].grid(True)
     axarr[0].set_title('pos')
     fig = pylab.gcf()
@@ -62,13 +61,14 @@ def main():
     fig.canvas.set_window_title('vel')
 
 
-    f, axarr = plt.subplots(4, sharex=True)
+    f, axarr = plt.subplots(3, sharex=True)
     for i in ELeoJoint:
-      for d in dd:
-        axarr[i.value].plot(d['ts'], d['xc'][:, i.value])
-      aname = str(i).rsplit('.', 1)[-1]
-      axarr[i.value].set_ylabel(aname)
-      axarr[i.value].grid(True)
+      if i.value < 3:
+        for d in dd:
+          axarr[i.value].plot(d['ts'], d['xc'][:, i.value])
+        aname = str(i).rsplit('.', 1)[-1]
+        axarr[i.value].set_ylabel(aname)
+        axarr[i.value].grid(True)
     axarr[0].set_title('u')
     fig = pylab.gcf()
     fig.canvas.set_window_title('u')

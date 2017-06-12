@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 200000
+  trials: 100000
   steps: 0
   rate: 0
   test_interval: 50
@@ -11,7 +11,7 @@ experiment:
     model: 
       type: model/dynamical
       control_step: 0.05
-      integration_steps: 10
+      integration_steps: 5
       dynamics: 
         type: dynamics/rbdl
         file: cart_pendulum.lua
@@ -88,4 +88,4 @@ experiment:
       output_max: experiment/environment/task/action_max
       projector: experiment/agent/policy/projector
       representation: experiment/agent/policy/representation
-  save_every: never
+  save_every: run

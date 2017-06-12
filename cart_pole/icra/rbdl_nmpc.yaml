@@ -11,7 +11,7 @@ experiment:
     model: 
       type: model/dynamical
       control_step: 0.05
-      integration_steps: 10
+      integration_steps: 5
       dynamics: 
         type: dynamics/rbdl
         file: cart_pendulum.lua
@@ -34,7 +34,7 @@ experiment:
       initFeedback: 0
       action_min: experiment/environment/task/action_min
       action_max: experiment/environment/task/action_max
-      lua_model: experiment/environment/model/dynamics/file
+      lua_model: cartpole_m1.lua
       model_name: nmpc_cartpole
       nmpc_model_name: nmpc_cartpole
       feedback: non-threaded

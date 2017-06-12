@@ -11,7 +11,7 @@ experiment:
     model: 
       type: model/dynamical
       control_step: 0.05
-      integration_steps: 10
+      integration_steps: 5
       dynamics: 
         type: dynamics/rbdl
         file: cart_pendulum.lua
@@ -25,7 +25,7 @@ experiment:
       style: meshup
       variant: test
       precision: 6
-      enabled: 1
+      enabled: 0
   agent: 
     type: agent/master/sequential/additive
     agent1: 
@@ -36,7 +36,7 @@ experiment:
         initFeedback: 0
         action_min: experiment/environment/task/action_min
         action_max: experiment/environment/task/action_max
-        lua_model: experiment/environment/model/dynamics/file
+        lua_model: cartpole_m1.lua
         model_name: nmpc_cartpole
         nmpc_model_name: nmpc_cartpole
         feedback: non-threaded
@@ -45,7 +45,7 @@ experiment:
       type: agent/td
       policy: 
         type: mapping/policy/action
-        sigma: [ 30 ]
+        sigma: [ 5 ]
         output_min: experiment/environment/task/action_min
         output_max: experiment/environment/task/action_max
         projector: 
@@ -63,7 +63,7 @@ experiment:
         representation: 
           type: representation/parameterized/linear
           init_min: [ 0 ]
-          init_max: [ 1 ]
+          init_max: [ 0 ]
           memory: experiment/agent/agent2/policy/projector/projector/memory
           outputs: experiment/environment/task/action_dims
           output_min: experiment/environment/task/action_min
@@ -91,7 +91,7 @@ experiment:
         critic_representation: 
           type: representation/parameterized/linear
           init_min: [ 0 ]
-          init_max: [ 1 ]
+          init_max: [ 0 ]
           memory: experiment/agent/agent2/policy/projector/projector/memory
           outputs: 1
           output_min: [  ]
