@@ -49,8 +49,8 @@ experiment:
       enabled: 1
   agent: 
     type: agent/leo/sma
-    action_min: [ -5, -5, -5, -5]
-    action_max: [ 5, 5, 5, 5]
+    action_min: experiment/environment/task/action_min
+    action_max: experiment/environment/task/action_max
     agent_prepare: 
       type: agent/leo/fixed
       policy: 
@@ -61,8 +61,8 @@ experiment:
         i: []
         d: []
         il: []
-        action_min: [ -3, -3, -3, -3]
-        action_max: [ 3, 3, 3, 3]
+        action_min: experiment/environment/task/action_min
+        action_max: experiment/environment/task/action_max
     agent_standup: 
       type: agent/leo/fixed
       policy: 
@@ -73,16 +73,16 @@ experiment:
         i: []
         d: []
         il: []
-        action_min: [ -3, -3, -3, -3]
-        action_max: [ 3, 3, 3, 3]
+        action_min: experiment/environment/task/action_min
+        action_max: experiment/environment/task/action_max
     agent_main: 
       type: agent/fixed
       policy: 
         type: mapping/policy/nmpc_mlrti
         verbose: 0
         initFeedback: 1
-        action_min: [ -5, -5, -5, -5]
-        action_max: [ 5, 5, 5, 5]
+        action_min: experiment/environment/task/action_min
+        action_max: experiment/environment/task/action_max
         lua_model: leo_fb_sl.lua
         model_name: nmpc_leo_squat_fb_sl_vc
         nmpc_model_name: nmpc_leo_squat_fb_sl_vc
