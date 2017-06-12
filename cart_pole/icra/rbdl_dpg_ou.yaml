@@ -2,7 +2,7 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 3000000
+  steps: 6000000
   rate: 0
   test_interval: 100
   output: rbdl_cart_pendulum_dpg

@@ -42,20 +42,21 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs    = range(1)
-    sigma   = map(lambda x : 0.01*(1+x), range(0, 51, 10))
-    theta   = map(lambda x : 0.01*(1+x), range(0, 51, 10))
+    runs    = range(10)
+    sigma   = [0.01] #map(lambda x : 0.01*(1+x), range(0, 51, 10))
+    theta   = [0.10] #map(lambda x : 0.01*(1+x), range(0, 51, 10))
 
-    alpha   = map(lambda x : 0.00001*x, range(1, 10, 2)) + map(lambda x : 0.00005*(1+x), range(1, 20, 2)) + map(lambda x : 0.001*(1+x), range(1, 5, 2))
+    alpha   = map(lambda x : 0.00001*x, range(8, 10, 1)) + map(lambda x : 0.0001*x, range(1, 10, 1)) + map(lambda x : 0.001*x, range(1, 10, 1))
+    #map(lambda x : 0.00001*x, range(1, 10, 2)) + map(lambda x : 0.00005*(1+x), range(1, 20, 2)) + map(lambda x : 0.001*(1+x), range(1, 5, 2))
 
-    beta_v  = [ 0.005, 0.01, 0.05, 0.1, 0.5 ]
-    x_beta_a  = [ 0.5, 0.2, 0.1, 0.05 ]
+    beta_v  = [0.05, 0.1, 0.5 ] # 0.005, 0.01, 
+    x_beta_a  = [ 0.5, 0.2, 0.1] # 0.05 
     beta_va = []
     for x in x_beta_a:
       for y in beta_v:
         beta_va.append((y, x*y))
 
-    gamma   = [ 0.97 ]
+    gamma   = [ 0.97, 0.99 ]
     lm      = [ 0.65 ]
 
     #print (alpha)
