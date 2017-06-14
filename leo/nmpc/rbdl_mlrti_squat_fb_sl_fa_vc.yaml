@@ -3,7 +3,7 @@ experiment:
   runs: 1
   trials: 100
   steps: 0
-  rate: 33.33
+  rate: 30
   test_interval: 0
   output: rbdl_mlrti_squat_fb_sl_fa_vc
   environment: 

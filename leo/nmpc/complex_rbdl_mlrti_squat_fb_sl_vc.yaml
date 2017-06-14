@@ -3,7 +3,7 @@ experiment:
   runs: 1
   trials: 1
   steps: 0
-  rate: 0
+  rate: 30
   test_interval: 0
   output: complex_rbdl_mlrti_squat_fb_sl_vc
   environment: 
@@ -24,6 +24,8 @@ experiment:
       precision: [0.01, 0.01]
       mode: vc
       sim_filtered: 0
+      sub_sma_state: 
+        type: signal/vector
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
@@ -86,7 +88,7 @@ experiment:
         lua_model: leo_fb_sl.lua
         model_name: nmpc_leo_squat_fb_sl_vc
         nmpc_model_name: nmpc_leo_squat_fb_sl_vc
-    main_timeout: 10.0
+    main_timeout: 30.0
     upright_trigger: 
       type: trigger
       min: []
@@ -97,5 +99,6 @@ experiment:
       min: [1]
       max: [1]
       delay: 5
+    pub_sma_state: experiment/environment/model/sub_sma_state
   test_agent: experiment/agent
   save_every: never

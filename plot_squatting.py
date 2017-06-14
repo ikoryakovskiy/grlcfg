@@ -30,12 +30,13 @@ def main():
       ts = data[:, 0]       # time
       xs = data[:, 1:9]     # states
       rz = data[:, 19:20]   # RootZ
-      xc = data[:, 41:45]   # controls
+      ss = data[:, 31:32]   # sma state
+      xc = data[:, 42:46]   # controls
       dd.append({'ts':ts, 'xs':xs, 'xc':xc})
 
     plt.close('all')
 
-    f, axarr = plt.subplots(5, sharex=True)
+    f, axarr = plt.subplots(6, sharex=True)
     for i in ELeoJoint:
       for d in dd:
         axarr[i.value].plot(d['ts'], d['xs'][:, i.value])
@@ -45,6 +46,9 @@ def main():
     axarr[4].plot(d['ts'], rz)
     axarr[4].set_ylabel('Height')
     axarr[4].grid(True)
+    axarr[5].plot(d['ts'], ss)
+    axarr[5].set_ylabel('SMA State')
+    axarr[5].grid(True)
     axarr[0].set_title('pos')
     fig = pylab.gcf()
     fig.canvas.set_window_title('pos')
