@@ -5,7 +5,7 @@ experiment:
   steps: 0
   rate: 30
   test_interval: 0
-  output: complex_rbdl_mlrti_squat_fb_sl_vc_ts
+  output: complex_rbdl_nmpc_squat_fb_sl_vc_ts
   environment: 
     type: environment/sandbox
     model: 
@@ -45,7 +45,7 @@ experiment:
       fixed_arm: 0
     exporter: 
       type: exporter/csv
-      file: complex_rbdl_mlrti_squat_fb_sl_vc_ts
+      file: complex_rbdl_nmpc_squat_fb_sl_vc_ts
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: test
@@ -82,14 +82,16 @@ experiment:
     agent_main: 
       type: agent/fixed
       policy: 
-        type: mapping/policy/nmpc_mlrti
+        type: mapping/policy/nmpc
         verbose: 0
         initFeedback: 1
-        action_min: experiment/environment/task/action_min
-        action_max: experiment/environment/task/action_max
+        action_min: experiment/agent/agent_standup/policy/action_min
+        action_max: experiment/agent/agent_standup/policy/action_max
         lua_model: leo_fb_sl.lua
         model_name: nmpc_leo_squat_fb_sl_vc
         nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+        feedback: non-threaded
+        n_iter: 1
     main_timeout: 30.0
     upright_trigger: 
       type: trigger

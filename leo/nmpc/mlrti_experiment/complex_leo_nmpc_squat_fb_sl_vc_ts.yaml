@@ -3,9 +3,9 @@ experiment:
   runs: 1
   trials: 1
   steps: 0
-  rate: 30
+  rate: 0
   test_interval: 0
-  output: complex_rbdl_mlrti_squat_fb_sl_vc_ts
+  output: complex_leo_nmpc_squat_fb_sl_vc_ts
   environment: 
     type: environment/sandbox
     model: 
@@ -18,8 +18,24 @@ experiment:
         file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      target_dof: 4
-      animation: immediate
+      animation: full
+      target_env: 
+        type: environment/communicator
+        converter: 
+          type: converter/state_action_converter
+          state_in: ljHipLeftAngle, ljHipRightAngle, ljKneeLeftAngle, ljKneeRightAngle, ljAnkleLeftAngle, ljAnkleRightAngle, ljShoulderAngle, ljTorsoAngle, ljHipLeftAngleRate, ljHipRightAngleRate, ljKneeLeftAngleRate, ljKneeRightAngleRate, ljAnkleLeftAngleRate, ljAnkleRightAngleRate, ljShoulderAngleRate, ljTorsoAngleRate, lfToeRight, lfHeelRight, lfToeLeft, lfHeelLeft
+          state_out: ljAnkleLeftAngle, ljKneeLeftAngle, ljHipLeftAngle, ljShoulderAngle, ljAnkleLeftAngleRate, ljKneeLeftAngleRate, ljHipLeftAngleRate, ljShoulderAngleRate
+          action_in: ljAnkleLeftVoltage, ljKneeLeftVoltage, ljHipLeftVoltage, ljShoulderVoltage
+          action_out: ljHipLeftVoltage, ljHipLeftVoltage, ljKneeLeftVoltage, ljKneeLeftVoltage, ljAnkleLeftVoltage, ljAnkleLeftVoltage, ljShoulderVoltage
+        communicator: 
+          type: communicator/zeromq/request_reply
+          role: ZMQ_REP
+          sync: tcp://192.168.1.10:5560
+          addr: tcp://*:5561
+        target_obs_dims: 20
+        target_action_dims: 7
+        benchmark_delays: 0
+      precision: [0.01, 0.01]
       lower_height: 0.28
       upper_height: 0.35
       precision: [0.01, 0.01]
@@ -45,7 +61,7 @@ experiment:
       fixed_arm: 0
     exporter: 
       type: exporter/csv
-      file: complex_rbdl_mlrti_squat_fb_sl_vc_ts
+      file: complex_leo_nmpc_squat_fb_sl_vc_ts
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: test
@@ -53,43 +69,45 @@ experiment:
       enabled: 1
   agent: 
     type: agent/leo/sma
-    action_min: experiment/environment/task/action_min
-    action_max: experiment/environment/task/action_max
+    action_min: [ -5, -5, -5, -5]
+    action_max: [ 5, 5, 5, 5]
     agent_prepare: 
       type: agent/leo/fixed
       policy: 
         type: mapping/policy/parameterized/pid
         setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
         outputs: 4
-        p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0]
+        p: [25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
         i: []
         d: []
         il: []
-        action_min: experiment/environment/task/action_min
-        action_max: experiment/environment/task/action_max
+        action_min: [ -3, -3, -3, -3]
+        action_max: [ 3, 3, 3, 3]
     agent_standup: 
       type: agent/leo/fixed
       policy: 
         type: mapping/policy/parameterized/pid
         setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
         outputs: 4
-        p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0]
+        p: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
         i: []
         d: []
         il: []
-        action_min: experiment/environment/task/action_min
-        action_max: experiment/environment/task/action_max
+        action_min: [ -3, -3, -3, -3]
+        action_max: [ 3, 3, 3, 3]
     agent_main: 
       type: agent/fixed
       policy: 
-        type: mapping/policy/nmpc_mlrti
+        type: mapping/policy/nmpc
         verbose: 0
         initFeedback: 1
-        action_min: experiment/environment/task/action_min
-        action_max: experiment/environment/task/action_max
+        action_min: [ -5, -5, -5, -5]
+        action_max: [ 5, 5, 5, 5]
         lua_model: leo_fb_sl.lua
         model_name: nmpc_leo_squat_fb_sl_vc
         nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+        feedback: non-threaded
+        n_iter: 1
     main_timeout: 30.0
     upright_trigger: 
       type: trigger
