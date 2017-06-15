@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
-  runs: 3
-  trials: 1
+  runs: 1
+  trials: 100
   steps: 0
   rate: 0
   test_interval: 0
@@ -18,7 +18,7 @@ experiment:
         file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      animation: immediate
+      animation: nope
       lower_height: 0.28
       upper_height: 0.35
       precision: [0.01, 0.01]
@@ -27,7 +27,7 @@ experiment:
       timer_switch: 1
     task: 
       type: task/leo_squatting
-      timeout: 25
+      timeout: 10
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1.0
