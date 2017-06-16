@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 100
+  trials: 1000
   steps: 0
   rate: 30
   test_interval: 0
@@ -18,7 +18,7 @@ experiment:
         file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      animation: immediate
+      animation: nope
       lower_height: 0.28
       upper_height: 0.35
       precision: [0.01, 0.01]
