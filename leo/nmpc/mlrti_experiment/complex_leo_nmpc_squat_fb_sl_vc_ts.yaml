@@ -117,7 +117,7 @@ experiment:
       type: trigger
       min: [1]
       max: [1]
-      delay: 5
+      delay: 10
     pub_sma_state: experiment/environment/model/sub_sma_state
   test_agent: experiment/agent
   save_every: never
