@@ -2,8 +2,8 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 1000000
-  rate: 33.33
+  steps: 500000
+  rate: 30
   test_interval: 10
   output: rbdl_mlrti_2dpg_squat_fb_sl_vc
   environment: 
@@ -138,4 +138,4 @@ experiment:
         agent: experiment/test_agent/agent2/agent1/agent
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  save_every: never
+  save_every: run
