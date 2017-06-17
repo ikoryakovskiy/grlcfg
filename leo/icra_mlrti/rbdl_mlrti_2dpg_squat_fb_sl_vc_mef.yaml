@@ -15,7 +15,7 @@ experiment:
       target_dof: 4
       dynamics: 
         type: dynamics/rbdl
-        file: leo_vc/leo_fb_sl_real.lua
+        file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       true_model: 
@@ -33,6 +33,7 @@ experiment:
       sim_filtered: 1
       sub_true_action: 
         type: signal/vector
+      timer_switch: 0
     task: 
       type: task/leo_squatting
       timeout: 10
@@ -47,6 +48,14 @@ experiment:
       continue_after_fall: 0
       gamma: 0.97
       fixed_arm: 0
+    exporter: 
+      type: exporter/csv
+      file: rbdl_mlrti_2dpg_squat_fb_sl_vc_mef
+      fields: time, state, observation, action, reward, terminal
+      style: meshup
+      variant: all
+      precision: 6
+      enabled: 0
   agent: 
     type: agent/master/sequential/additive
     agent1: 
@@ -149,4 +158,4 @@ experiment:
     pub_action1: experiment/environment/model/sub_true_action
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  save_every: run
+  save_every: never

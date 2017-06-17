@@ -2,8 +2,8 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 1000000
-  rate: 33.33
+  steps: 500000
+  rate: 30
   test_interval: 10
   output: rbdl_mlrti_dpg_squat_fb_sl_vc_mef
   environment: 
@@ -59,6 +59,7 @@ experiment:
         action_max: experiment/environment/task/action_max
         lua_model: leo_fb_sl.lua
         model_name: nmpc_leo_squat_fb_sl_vc
+        nmpc_model_name: nmpc_leo_squat_fb_sl_vc
     agent2: 
       type: agent/td
       policy: 

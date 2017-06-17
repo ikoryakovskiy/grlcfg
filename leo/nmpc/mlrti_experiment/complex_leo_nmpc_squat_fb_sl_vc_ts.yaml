@@ -18,7 +18,7 @@ experiment:
         file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      animation: full
+      animation: nope
       target_env: 
         type: environment/communicator
         converter: 

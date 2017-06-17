@@ -40,6 +40,14 @@ experiment:
       continue_after_fall: 0
       gamma: 0.97
       fixed_arm: 0
+    exporter: 
+      type: exporter/csv
+      file: rbdl_mlrti_2dpg_ou_squat_fb_sl_vc
+      fields: time, state, observation, action, reward, terminal
+      style: meshup
+      variant: all
+      precision: 6
+      enabled: 0
   agent: 
     type: agent/master/sequential/additive
     agent1: 
@@ -63,8 +71,8 @@ experiment:
           type: agent/td
           policy: 
             type: mapping/policy/post/noise
-            sigma: [0.01]
-            theta: [0.1]
+            sigma: [0.005]
+            theta: [0.5]
             output_min: experiment/environment/task/action_min
             output_max: experiment/environment/task/action_max
             policy: 
@@ -146,4 +154,4 @@ experiment:
         agent: experiment/test_agent/agent2/agent1/agent
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  save_every: run
+  save_every: never

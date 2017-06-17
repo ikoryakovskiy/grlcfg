@@ -18,11 +18,10 @@ experiment:
         file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
-      target_dof: 4
       animation: immediate
       lower_height: 0.28
       upper_height: 0.35
-      precision: [0.01, 0.01]
+      precision: [0.01, 0.04]
       mode: vc
       sim_filtered: 0
       sub_sma_state: 
