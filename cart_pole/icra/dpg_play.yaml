@@ -1,0 +1,88 @@
+experiment: 
+  type: experiment/online_learning
+  runs: 1
+  trials: 0
+  steps: 0
+  rate: 20
+  test_interval: 0
+  output: cart_pendulum_dpg_play
+  environment: 
+    type: environment/modeled
+    model: 
+      type: model/dynamical
+      control_step: 0.05
+      integration_steps: 5
+      dynamics: 
+        type: dynamics/cart_pole
+    task: 
+      type: task/cart_pole/swingup
+      timeout: 9.99
+      randomization: 0
+      shaping: 0
+      gamma: 1
+      end_stop_penalty: 1
+  agent: 
+    type: agent/td
+    policy: 
+      type: mapping/policy/action
+      sigma: [5]
+      output_min: experiment/environment/task/action_min
+      output_max: experiment/environment/task/action_max
+      projector: 
+        type: projector/tile_coding
+        tilings: 16
+        memory: 8388608
+        safe: 0
+        resolution: [2.5, 0.157075, 2.5, 1.57075]
+        wrapping: [0, 6.283, 0, 0]
+      representation: 
+        type: representation/parameterized/linear
+        init_min: [0]
+        init_max: [0]
+        memory: experiment/agent/policy/projector/memory
+        outputs: experiment/environment/task/action_dims
+        output_min: experiment/environment/task/action_min
+        output_max: experiment/environment/task/action_max
+    predictor: 
+      type: predictor/dpg
+      alpha: 0.01
+      beta_v: 0.1
+      beta_a: 0.01
+      gamma: 0.97
+      lambda: 0.65
+      projector: experiment/agent/policy/projector
+      critic_representation: 
+        type: representation/parameterized/linear
+        init_min: [0]
+        init_max: [0]
+        memory: experiment/agent/predictor/projector/memory
+        outputs: 1
+        output_min: [  ]
+        output_max: [  ]
+      critic_trace: 
+        type: trace/enumerated/replacing
+      advantage_representation: 
+        type: representation/parameterized/linear
+        init_min: [0]
+        init_max: [0]
+        memory: experiment/agent/predictor/projector/memory
+        outputs: experiment/environment/task/action_dims
+        output_min: [  ]
+        output_max: [  ]
+      actor_representation: experiment/agent/policy/representation
+  test_agent: 
+    type: agent/fixed
+    policy: 
+      type: mapping/policy/action
+      sigma: []
+      output_min: experiment/environment/task/action_min
+      output_max: experiment/environment/task/action_max
+      projector: experiment/agent/policy/projector
+      representation: experiment/agent/policy/representation
+  load_file: cart_pendulum_dpg-run0
+  save_every: never
+visualizer: 
+  type: visualizer/glut
+visualization: 
+  type: visualization/cart_pole
+  state: experiment/environment/state

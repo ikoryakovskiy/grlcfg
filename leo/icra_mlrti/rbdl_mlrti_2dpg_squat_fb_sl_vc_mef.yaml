@@ -48,14 +48,6 @@ experiment:
       continue_after_fall: 0
       gamma: 0.97
       fixed_arm: 0
-    exporter: 
-      type: exporter/csv
-      file: rbdl_mlrti_2dpg_squat_fb_sl_vc_mef
-      fields: time, state, observation, action, reward, terminal
-      style: meshup
-      variant: all
-      precision: 6
-      enabled: 0
   agent: 
     type: agent/master/sequential/additive
     agent1: 

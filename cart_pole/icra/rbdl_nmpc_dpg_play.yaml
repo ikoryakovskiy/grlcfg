@@ -1,0 +1,120 @@
+experiment: 
+  type: experiment/online_learning
+  runs: 1
+  trials: 0
+  steps: 0
+  rate: 20
+  test_interval: 0
+  output: rbdl_cart_pendulum_nmpc_dpg_play
+  environment: 
+    type: environment/modeled
+    model: 
+      type: model/dynamical
+      control_step: 0.05
+      integration_steps: 5
+      dynamics: 
+        type: dynamics/rbdl
+        file: cart_pendulum.lua
+        options: friction=0.15
+    task: 
+      type: task/lua
+      file: cart_pendulum_swingup_balance_unwrap.lua
+    exporter: 
+      type: exporter/csv
+      file: rbdl_cart_pendulum_nmpc_ac_tc
+      style: meshup
+      variant: test
+      precision: 6
+      enabled: 0
+  agent: 
+    type: agent/master/sequential/additive
+    agent1: 
+      type: agent/fixed
+      policy: 
+        type: mapping/policy/nmpc
+        verbose: 0
+        initFeedback: 0
+        action_min: experiment/environment/task/action_min
+        action_max: experiment/environment/task/action_max
+        lua_model: cartpole_m1.lua
+        model_name: nmpc_cartpole
+        nmpc_model_name: nmpc_cartpole
+        feedback: non-threaded
+        n_iter: 5
+    agent2: 
+      type: agent/td
+      policy: 
+        type: mapping/policy/action
+        sigma: [5]
+        output_min: experiment/environment/task/action_min
+        output_max: experiment/environment/task/action_max
+        projector: 
+          type: projector/pre/peaked
+          peaking: [5, 5, 5, 5]
+          input_min: experiment/environment/task/observation_min
+          input_max: experiment/environment/task/observation_max
+          projector: 
+            type: projector/tile_coding
+            tilings: 16
+            memory: 67108864
+            safe: 1
+            resolution: [2.5, 0.157075, 2.5, 1.57075]
+            wrapping: [0, 0, 0, 0]
+        representation: 
+          type: representation/parameterized/linear
+          init_min: [0]
+          init_max: [0]
+          memory: experiment/agent/agent2/policy/projector/projector/memory
+          outputs: experiment/environment/task/action_dims
+          output_min: experiment/environment/task/action_min
+          output_max: experiment/environment/task/action_max
+      predictor: 
+        type: predictor/dpg
+        alpha: 0.01
+        beta_v: 0.1
+        beta_a: 0.01
+        gamma: 0.99
+        lambda: 0.65
+        projector: experiment/agent/agent2/policy/projector
+        critic_representation: 
+          type: representation/parameterized/linear
+          init_min: [0]
+          init_max: [0]
+          memory: experiment/agent/agent2/policy/projector/projector/memory
+          outputs: 1
+          output_min: []
+          output_max: []
+        critic_trace: 
+          type: trace/enumerated/replacing
+        advantage_representation: 
+          type: representation/parameterized/linear
+          init_min: [0]
+          init_max: [0]
+          memory: experiment/agent/agent2/policy/projector/projector/memory
+          outputs: experiment/environment/task/action_dims
+          output_min: []
+          output_max: []
+        actor_representation: experiment/agent/agent2/policy/representation
+    output_min: experiment/environment/task/action_min
+    output_max: experiment/environment/task/action_max
+  test_agent: 
+    type: agent/master/sequential/additive
+    agent1: experiment/agent/agent1
+    agent2: 
+      type: agent/leo/fixed
+      policy: 
+        type: mapping/policy/action
+        sigma: []
+        output_min: experiment/environment/task/action_min
+        output_max: experiment/environment/task/action_max
+        projector: experiment/agent/agent2/policy/projector
+        representation: experiment/agent/agent2/policy/representation
+    output_min: experiment/environment/task/action_min
+    output_max: experiment/environment/task/action_max
+  load_file: rbdl_cart_pendulum_nmpc_dpg-run0
+  save_every: never
+visualizer: 
+  type: visualizer/glut
+visualization: 
+  type: visualization/cart_pole
+  state: experiment/environment/state

@@ -4,7 +4,7 @@ experiment:
   trials: 1
   steps: 0
   rate: 30
-  test_interval: 10
+  test_interval: -1
   output: complex_rbdl_mlrti_2dpg_squat_fb_sl_vc_mef
   environment: 
     type: environment/sandbox

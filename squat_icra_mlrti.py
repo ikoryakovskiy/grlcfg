@@ -88,10 +88,10 @@ def main():
     L2 = rl_run_param2(args, configs, options)
 
     L = L1 + L2
-    #shuffle(L)
+    shuffle(L)
     print(L)
 
-    #do_multiprocessing_pool(args, L)
+    do_multiprocessing_pool(args, L)
 
 ######################################################################################
 def rl_run_param1(args, list_of_cfgs, options):

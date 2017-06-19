@@ -39,22 +39,22 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(2)
+    runs = range(3)
     power = [2]
     weight_nmpc = [0.0001]
     weight_nmpc_aux = [1]
     weight_nmpc_qd = [1.0]
     weight_shaping = [0]
-    sigma = [0.1]
-    model_types = [0, 1] # 0 -ideal, 1 - real
+    sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97]
+    model_types = [0, 1] # 0 -ideal, 1 - real
 
-    #model_types = [1] # 0 -ideal, 1 - real
     #gamma = [0.0, 0.4, 0.8]
+    #model_types = [1] # 0 -ideal, 1 - real
 
     # 1
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sigma, gamma, model_types, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     configs = [
@@ -63,9 +63,11 @@ def main():
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc.yaml",
                 "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc.yaml",
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef.yaml",
                 "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
               ]
 
     
@@ -74,18 +76,19 @@ def main():
     # 2
     weight_shaping = [0] # shaping is not applicable in single RL controller
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sigma, gamma, model_types, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     configs = [
                 #"leo/icra/rbdl_nmpc_dpg_squat_fb_sl_fa_vc_mef.yaml",
                 "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_vc_mef.yaml",
+                "leo/icra/rbdl_nmpc_dpg_ou_squat_fb_sl_vc_mef.yaml",
               ]
 
     L2 = rl_run_param2(args, configs, options)
 
     L = L1 + L2
-    #shuffle(L)
+    shuffle(L)
     print(L)
 
     do_multiprocessing_pool(args, L)
@@ -115,18 +118,13 @@ def rl_run_param1(args, list_of_cfgs, options):
             # modify options
             conf['experiment']['steps'] = 1000000
             conf['experiment']['test_interval'] = 30
-            conf['experiment']['environment']['model']['sim_filtered'] = 1
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
             conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
             conf['experiment']['environment']['task']['weight_shaping'] = o[4]
 
-            fa = fname.find("_fa_")
-            if fa == -1:
-                conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5]), float(o[5])]
-            else:
-                conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
+            conf['experiment']['environment']['sim_filtered'] = o[5]
 
             conf['experiment']['environment']['task']['gamma'] = o[6]
 
@@ -171,18 +169,13 @@ def rl_run_param2(args, list_of_cfgs, options):
             # modify options
             conf['experiment']['steps'] = 1000000
             conf['experiment']['test_interval'] = 30
-            conf['experiment']['environment']['model']['sim_filtered'] = 1
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
             conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
             conf['experiment']['environment']['task']['weight_shaping'] = o[4]
 
-            fa = fname.find("_fa_")
-            if fa == -1:
-                conf['experiment']['agent']['agent2']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5]), float(o[5])]
-            else:
-                conf['experiment']['agent']['agent2']['policy']['sigma'] = [float(o[5]), float(o[5]), float(o[5])]
+            conf['experiment']['environment']['sim_filtered'] = o[5]
 
             conf['experiment']['environment']['task']['gamma'] = o[6]
 

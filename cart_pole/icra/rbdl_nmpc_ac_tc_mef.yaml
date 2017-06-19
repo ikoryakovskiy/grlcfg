@@ -1,0 +1,135 @@
+experiment: 
+  type: experiment/online_learning
+  runs: 1
+  trials: 0
+  steps: 500000
+  rate: 0
+  test_interval: 10
+  output: rbdl_cart_pendulum_nmpc_ac_tc_mef
+  environment: 
+    type: environment/post/mef
+    environment: 
+      type: environment/modeled
+      model: 
+        type: model/dynamical
+        control_step: 0.05
+        integration_steps: 5
+        dynamics: 
+          type: dynamics/rbdl
+          file: cart_pendulum.lua
+          options: friction=0.15
+      task: 
+        type: task/lua
+        file: cart_pendulum_swingup_balance_unwrap.lua
+      exporter: 
+        type: exporter/csv
+        file: rbdl_cart_pendulum_nmpc_ac_tc_mef
+        style: meshup
+        variant: test
+        precision: 6
+        enabled: 0
+    task: experiment/environment/environment/task
+    state: experiment/environment/environment/state
+    nominal_model: 
+      type: model/dynamical
+      control_step: experiment/environment/environment/model/control_step
+      integration_steps: experiment/environment/environment/model/integration_steps
+      dynamics: 
+        type: dynamics/rbdl
+        file: experiment/environment/environment/model/dynamics/file
+        options: friction=0.0
+    sub_nominal_action: 
+      type: signal/vector
+  agent: 
+    type: agent/master/sequential/additive
+    agent1: 
+      type: agent/fixed
+      policy: 
+        type: mapping/policy/nmpc
+        verbose: 0
+        initFeedback: 0
+        action_min: experiment/environment/environment/task/action_min
+        action_max: experiment/environment/environment/task/action_max
+        lua_model: cartpole_m1.lua
+        model_name: nmpc_cartpole
+        nmpc_model_name: nmpc_cartpole
+        feedback: non-threaded
+        n_iter: 5
+    agent2: 
+      type: agent/td
+      policy: 
+        type: mapping/policy/action
+        sigma: [5]
+        output_min: experiment/environment/environment/task/action_min
+        output_max: experiment/environment/environment/task/action_max
+        projector: 
+          type: projector/pre/peaked
+          peaking: [5, 5, 5, 5]
+          input_min: experiment/environment/environment/task/observation_min
+          input_max: experiment/environment/environment/task/observation_max
+          projector: 
+            type: projector/tile_coding
+            tilings: 16
+            memory: 67108864
+            safe: 1
+            resolution: [2.5, 0.157075, 2.5, 1.57075]
+            wrapping: [0, 0, 0, 0]
+        representation: 
+          type: representation/parameterized/linear
+          init_min: [0]
+          init_max: [0]
+          memory: experiment/agent/agent2/policy/projector/projector/memory
+          outputs: experiment/environment/environment/task/action_dims
+          output_min: experiment/environment/environment/task/action_min
+          output_max: experiment/environment/environment/task/action_max
+      predictor: 
+        type: predictor/ac/action
+        alpha: 0.1
+        beta: 0.01
+        gamma: 0.99
+        lambda: 0.65
+        update_method: proportional
+        step_limit: []
+        critic_projector: 
+          type: projector/pre/peaked
+          peaking: experiment/agent/agent2/policy/projector/peaking
+          input_min: experiment/environment/environment/task/observation_min
+          input_max: experiment/environment/environment/task/observation_max
+          projector: 
+            type: projector/tile_coding
+            tilings: experiment/agent/agent2/policy/projector/projector/tilings
+            memory: experiment/agent/agent2/policy/projector/projector/memory
+            safe: experiment/agent/agent2/policy/projector/projector/safe
+            resolution: experiment/agent/agent2/policy/projector/projector/resolution
+            wrapping: experiment/agent/agent2/policy/projector/projector/wrapping
+        critic_representation: 
+          type: representation/parameterized/linear
+          init_min: [0]
+          init_max: [0]
+          memory: experiment/agent/agent2/policy/projector/projector/memory
+          outputs: 1
+          output_min: []
+          output_max: []
+        critic_trace: 
+          type: trace/enumerated/replacing
+        actor_projector: experiment/agent/agent2/policy/projector
+        actor_representation: experiment/agent/agent2/policy/representation
+    pub_action1: experiment/environment/sub_nominal_action
+    output_min: experiment/environment/environment/task/action_min
+    output_max: experiment/environment/environment/task/action_max
+  test_agent: 
+    type: agent/master/sequential/additive
+    agent1: experiment/agent/agent1
+    agent2: 
+      type: agent/leo/fixed
+      policy: 
+        type: mapping/policy/action
+        sigma: []
+        output_min: experiment/environment/environment/task/action_min
+        output_max: experiment/environment/environment/task/action_max
+        projector: experiment/agent/agent2/policy/projector
+        representation: experiment/agent/agent2/policy/representation
+    pub_action1: experiment/environment/sub_nominal_action
+    output_min: experiment/environment/environment/task/action_min
+    output_max: experiment/environment/environment/task/action_max
+  save_every: run

@@ -15,7 +15,7 @@ experiment:
       target_dof: 4
       dynamics: 
         type: dynamics/rbdl
-        file: leo_vc/leo_fb_sl_real.lua
+        file: leo_vc/leo_fb_sl.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       true_model: 
@@ -33,6 +33,7 @@ experiment:
       sim_filtered: 0
       sub_true_action: 
         type: signal/vector
+      timer_switch: 0
     task: 
       type: task/leo_squatting
       timeout: 10
