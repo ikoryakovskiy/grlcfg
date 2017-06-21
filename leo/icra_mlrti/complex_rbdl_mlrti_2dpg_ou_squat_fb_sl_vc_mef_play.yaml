@@ -3,9 +3,9 @@ experiment:
   runs: 1
   trials: 1
   steps: 0
-  rate: 30
+  rate: 33.333
   test_interval: -1
-  output: complex_rbdl_mlrti_2dpg_squat_fb_sl_vc_mef
+  output: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_play
   environment: 
     type: environment/sandbox
     model: 
@@ -40,7 +40,7 @@ experiment:
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
-      timeout: 18000
+      timeout: 5000
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1
@@ -54,14 +54,19 @@ experiment:
       fixed_arm: 0
     exporter: 
       type: exporter/csv
-      file: complex_rbdl_mlrti_2dpg_squat_fb_sl_vc_mef
+      file: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_play
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: all
       precision: 6
-      enabled: 0
+      enabled: 1
   agent: 
     type: agent/leo/sma
+    environment: experiment/environment
+    main_steps: 100000
+    main_timeout: 10.0
+    test_interval: 10
+    output: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_main_play
     action_min: experiment/environment/task/action_min
     action_max: experiment/environment/task/action_max
     agent_prepare: 
@@ -82,7 +87,7 @@ experiment:
         type: mapping/policy/parameterized/pid
         setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
         outputs: 4
-        p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0]
+        p: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         i: []
         d: []
         il: []
@@ -111,13 +116,13 @@ experiment:
             type: agent/td
             policy: 
               type: mapping/policy/action
-              sigma: [0.1, 0.1, 0.1, 0.1]
+              sigma: []
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
               projector: 
                 type: projector/tile_coding
                 tilings: 16
-                memory: 25165824
+                memory: 8388608
                 safe: 1
                 resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
                 wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -164,25 +169,7 @@ experiment:
       pub_action1: experiment/environment/model/sub_true_action
       output_min: experiment/environment/task/action_min
       output_max: experiment/environment/task/action_max
-    main_timeout: 10
-    upright_trigger: 
-      type: trigger
-      min: [0.8, -2.4, 1.0, -100, -100, -100, -100, -100, -100]
-      max: [1.3, -1.8, 1.6, 100, 100, 100, 100, 100, 100]
-      delay: 5
-    feet_on_trigger: 
-      type: trigger
-      min: [1]
-      max: [1]
-      delay: 5
-    pub_sma_state: experiment/environment/model/sub_sma_state
-  test_agent: 
-    type: agent/leo/sma
-    action_min: experiment/environment/task/action_min
-    action_max: experiment/environment/task/action_max
-    agent_prepare: experiment/agent/agent_prepare
-    agent_standup: experiment/agent/agent_standup
-    agent_main: 
+    agent_test: 
       type: agent/master/sequential/additive
       agent1: experiment/agent/agent_main/agent1
       agent2: 
@@ -205,12 +192,20 @@ experiment:
           type: agent/sub/compartmentalized
           min: experiment/agent/agent_main/agent2/agent2/min
           max: experiment/agent/agent_main/agent2/agent2/max
-          agent: experiment/test_agent/agent_main/agent2/agent1/agent
+          agent: experiment/agent/agent_test/agent2/agent1/agent
       pub_action1: experiment/environment/model/sub_true_action
       output_min: experiment/environment/task/action_min
       output_max: experiment/environment/task/action_max
-    main_timeout: experiment/agent/main_timeout
-    upright_trigger: experiment/agent/upright_trigger
-    feet_on_trigger: experiment/agent/feet_on_trigger
+    upright_trigger: 
+      type: trigger
+      min: [0.8, -2.4, 1.0, -100, -100, -100, -100, -100, -100]
+      max: [1.3, -1.8, 1.6, 100, 100, 100, 100, 100, 100]
+      delay: 5
+    feet_on_trigger: 
+      type: trigger
+      min: [1]
+      max: [1]
+      delay: 5
     pub_sma_state: experiment/environment/model/sub_sma_state
+  load_file: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_main-254
   save_every: never

@@ -34,6 +34,7 @@ experiment:
       sub_true_action: 
         type: signal/vector
       timer_switch: 0
+      idle_time: 0
     task: 
       type: task/leo_squatting
       timeout: 10
