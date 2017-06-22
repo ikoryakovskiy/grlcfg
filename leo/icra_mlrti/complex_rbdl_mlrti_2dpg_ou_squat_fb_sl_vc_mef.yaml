@@ -21,7 +21,7 @@ experiment:
       true_model: 
         type: model/dynamical
         control_step: experiment/environment/model/control_step
-        integration_steps: experiment/environment/model/integration_steps
+        integration_steps: 5
         dynamics: 
           type: dynamics/rbdl
           file: leo_vc/leo_fb_sl.lua
@@ -40,7 +40,7 @@ experiment:
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
-      timeout: 5000
+      timeout: 5500
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1
@@ -115,25 +115,31 @@ experiment:
           agent: 
             type: agent/td
             policy: 
-              type: mapping/policy/action
-              sigma: [0.1, 0.1, 0.1, 0.1]
+              type: mapping/policy/post/noise
+              sigma: [0.005]
+              theta: [0.5]
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
-              projector: 
-                type: projector/tile_coding
-                tilings: 16
-                memory: 8388608
-                safe: 1
-                resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
-                wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-              representation: 
-                type: representation/parameterized/linear
-                init_min: [0]
-                init_max: [0]
-                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/projector/memory
-                outputs: experiment/environment/task/action_dims
+              policy: 
+                type: mapping/policy/action
+                sigma: []
                 output_min: experiment/environment/task/action_min
                 output_max: experiment/environment/task/action_max
+                projector: 
+                  type: projector/tile_coding
+                  tilings: 16
+                  memory: 8388608
+                  safe: 1
+                  resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
+                  wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                representation: 
+                  type: representation/parameterized/linear
+                  init_min: [0]
+                  init_max: [0]
+                  memory: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector/memory
+                  outputs: experiment/environment/task/action_dims
+                  output_min: experiment/environment/task/action_min
+                  output_max: experiment/environment/task/action_max
             predictor: 
               type: predictor/dpg
               alpha: 0.01
@@ -141,12 +147,12 @@ experiment:
               beta_a: 0.01
               gamma: experiment/environment/task/gamma
               lambda: 0.65
-              projector: experiment/agent/agent_main/agent2/agent1/agent/policy/projector
+              projector: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector
               critic_representation: 
                 type: representation/parameterized/linear
                 init_min: [0]
                 init_max: [0]
-                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/projector/memory
+                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector/memory
                 outputs: 1
                 output_min: []
                 output_max: []
@@ -156,17 +162,24 @@ experiment:
                 type: representation/parameterized/linear
                 init_min: [0]
                 init_max: [0]
-                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/projector/memory
+                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector/memory
                 outputs: experiment/environment/task/action_dims
                 output_min: []
                 output_max: []
-              actor_representation: experiment/agent/agent_main/agent2/agent1/agent/policy/representation
+              actor_representation: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/representation
         agent2: 
           type: agent/sub/compartmentalized
           min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.27]
           max: [100, 100, 100, 100, 100, 100, 100, 100, 0.29]
           agent: experiment/agent/agent_main/agent2/agent1/agent
       pub_action1: experiment/environment/model/sub_true_action
+      exporter: 
+        type: exporter/csv
+        file: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_elements
+        style: meshup
+        variant: all
+        precision: 6
+        enabled: 1
       output_min: experiment/environment/task/action_min
       output_max: experiment/environment/task/action_max
     agent_test: 
@@ -181,12 +194,12 @@ experiment:
           agent: 
             type: agent/td
             policy: 
-              type: mapping/policy/action
+              type: mapping/policy/post/noise
               sigma: []
+              theta: []
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
-              projector: experiment/agent/agent_main/agent2/agent1/agent/policy/projector
-              representation: experiment/agent/agent_main/agent2/agent1/agent/policy/representation
+              policy: experiment/agent/agent_main/agent2/agent1/agent/policy/policy
             predictor: experiment/agent/agent_main/agent2/agent1/agent/predictor
         agent2: 
           type: agent/sub/compartmentalized
@@ -194,6 +207,7 @@ experiment:
           max: experiment/agent/agent_main/agent2/agent2/max
           agent: experiment/agent/agent_test/agent2/agent1/agent
       pub_action1: experiment/environment/model/sub_true_action
+      exporter: experiment/agent/agent_main/exporter
       output_min: experiment/environment/task/action_min
       output_max: experiment/environment/task/action_max
     upright_trigger: 

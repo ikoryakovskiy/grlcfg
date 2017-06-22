@@ -5,7 +5,7 @@ experiment:
   steps: 0
   rate: 33.333
   test_interval: -1
-  output: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_play
+  output: complex_rbdl_mlrti_2dpg_squat_fb_sl_vc_mef_play
   environment: 
     type: environment/sandbox
     model: 
@@ -40,7 +40,7 @@ experiment:
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
-      timeout: 5500
+      timeout: 5000
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1
@@ -54,7 +54,7 @@ experiment:
       fixed_arm: 0
     exporter: 
       type: exporter/csv
-      file: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_play
+      file: complex_rbdl_mlrti_2dpg_squat_fb_sl_vc_mef_play
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: all
@@ -66,7 +66,7 @@ experiment:
     main_steps: 100000
     main_timeout: 10.0
     test_interval: 10
-    output: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_main_play
+    output: complex_rbdl_mlrti_2dpg_squat_fb_sl_vc_mef_main_play
     action_min: experiment/environment/task/action_min
     action_max: experiment/environment/task/action_max
     agent_prepare: 
@@ -115,31 +115,25 @@ experiment:
           agent: 
             type: agent/td
             policy: 
-              type: mapping/policy/post/noise
+              type: mapping/policy/action
               sigma: []
-              theta: []
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
-              policy: 
-                type: mapping/policy/action
-                sigma: []
+              projector: 
+                type: projector/tile_coding
+                tilings: 16
+                memory: 8388608
+                safe: 1
+                resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
+                wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+              representation: 
+                type: representation/parameterized/linear
+                init_min: [0]
+                init_max: [0]
+                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/projector/memory
+                outputs: experiment/environment/task/action_dims
                 output_min: experiment/environment/task/action_min
                 output_max: experiment/environment/task/action_max
-                projector: 
-                  type: projector/tile_coding
-                  tilings: 16
-                  memory: 8388608
-                  safe: 1
-                  resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
-                  wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                representation: 
-                  type: representation/parameterized/linear
-                  init_min: [0]
-                  init_max: [0]
-                  memory: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector/memory
-                  outputs: experiment/environment/task/action_dims
-                  output_min: experiment/environment/task/action_min
-                  output_max: experiment/environment/task/action_max
             predictor: 
               type: predictor/dpg
               alpha: 0.01
@@ -147,12 +141,12 @@ experiment:
               beta_a: 0.01
               gamma: experiment/environment/task/gamma
               lambda: 0.65
-              projector: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector
+              projector: experiment/agent/agent_main/agent2/agent1/agent/policy/projector
               critic_representation: 
                 type: representation/parameterized/linear
                 init_min: [0]
                 init_max: [0]
-                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector/memory
+                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/projector/memory
                 outputs: 1
                 output_min: []
                 output_max: []
@@ -162,11 +156,11 @@ experiment:
                 type: representation/parameterized/linear
                 init_min: [0]
                 init_max: [0]
-                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector/memory
+                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/projector/memory
                 outputs: experiment/environment/task/action_dims
                 output_min: []
                 output_max: []
-              actor_representation: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/representation
+              actor_representation: experiment/agent/agent_main/agent2/agent1/agent/policy/representation
         agent2: 
           type: agent/sub/compartmentalized
           min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.27]
@@ -175,7 +169,7 @@ experiment:
       pub_action1: experiment/environment/model/sub_true_action
       exporter: 
         type: exporter/csv
-        file: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_elements_play
+        file: complex_rbdl_mlrti_2dpg_squat_fb_sl_vc_mef_elements_play
         style: meshup
         variant: all
         precision: 6
@@ -194,12 +188,12 @@ experiment:
           agent: 
             type: agent/td
             policy: 
-              type: mapping/policy/post/noise
+              type: mapping/policy/action
               sigma: []
-              theta: []
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
-              policy: experiment/agent/agent_main/agent2/agent1/agent/policy/policy
+              projector: experiment/agent/agent_main/agent2/agent1/agent/policy/projector
+              representation: experiment/agent/agent_main/agent2/agent1/agent/policy/representation
             predictor: experiment/agent/agent_main/agent2/agent1/agent/predictor
         agent2: 
           type: agent/sub/compartmentalized
@@ -221,5 +215,5 @@ experiment:
       max: [1]
       delay: 5
     pub_sma_state: experiment/environment/model/sub_sma_state
-  load_file: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_main-54
+  load_file: complex_rbdl_mlrti_2dpg_squat_fb_sl_vc_mef_main-254
   save_every: never
