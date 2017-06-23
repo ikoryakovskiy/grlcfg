@@ -62,6 +62,7 @@ experiment:
         lua_model: leo_fb_sl.lua
         model_name: nmpc_leo_squat_fb_sl_vc
         nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+        ninit: 10
     agent2: 
       type: agent/td
       policy: 

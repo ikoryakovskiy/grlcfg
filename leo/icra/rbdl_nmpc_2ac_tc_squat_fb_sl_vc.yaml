@@ -50,6 +50,7 @@ experiment:
         model_name: nmpc_leo_squat_fb_sl_vc
         nmpc_model_name: nmpc_leo_squat_fb_sl_vc
         feedback: non-threaded
+        ninit: 50
         n_iter: 1
     agent2: 
       type: agent/master/selective
