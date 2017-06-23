@@ -13,7 +13,6 @@ from random import shuffle
 import random
 from datetime import datetime
 
-counter = None
 counter_lock = multiprocessing.Lock()
 cores = 0;
 random.seed(datetime.now())
@@ -118,12 +117,9 @@ def rl_run_param(args, list_of_cfgs, options):
 def mp_run(cfg):
     # Multiple copies can be run on one computer at the same time, which results in the same seed for a random generator.
     # Thus we need to wait for a second or so between runs
-    global counter
     global cores
     with counter_lock:
-        #wait = counter.value
         wait = cores.value*random.random()
-        counter.value += 2
     sleep(wait)
     print 'wait finished {0}'.format(wait)
     # Run the experiment
@@ -138,20 +134,17 @@ def mp_run(cfg):
             f.close()
 
 ######################################################################################
-def init(cnt, num):
+def init(num):
     ''' store the counter for later use '''
-    global counter
     global cores
-    counter = cnt
     cores = num
 
 ######################################################################################
 def do_multiprocessing_pool(args, list_of_new_cfgs):
     """Do multiprocesing"""
-    counter = multiprocessing.Value('i', 0)
     cores = multiprocessing.Value('i', args.cores)
     print 'cores {0}'.format(cores.value)
-    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (counter, cores))
+    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (cores,))
     pool.map(mp_run, list_of_new_cfgs)
     pool.close()
 ######################################################################################
@@ -165,7 +158,7 @@ def prepare_multiprocessing():
 def read_cfg(cfg):
     """Read configuration file"""
     # check if file exists  
-    yfile = '%s' % cfg
+    yfile = '../qt-build/cfg/%s' % cfg
     if os.path.isfile(yfile) == False:
         print 'File %s not found' % yfile
         sys.exit()

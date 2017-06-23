@@ -9,10 +9,19 @@ from time import sleep
 import math
 import argparse
 import itertools
+from random import shuffle
+import random
+from datetime import datetime
 
-counter = None
 counter_lock = multiprocessing.Lock()
-proc_per_processor = 0;
+cores = 0;
+random.seed(datetime.now())
+
+def flatten(x):
+    if isinstance(x, collections.Iterable):
+        return [a for i in x for a in flatten(i)]
+    else:
+        return [x]
 
 def main():
     # parse arguments
@@ -83,15 +92,9 @@ def rl_run_param(args, list_of_cfgs, options):
 def mp_run(cfg):
     # Multiple copies can be run on one computer at the same time, which results in the same seed for a random generator.
     # Thus we need to wait for a second or so between runs
-    global counter
-    global proc_per_processor
+    global cores
     with counter_lock:
-        wait = counter.value
-        counter.value += 2
-    # wait for the specified number of seconds
-    #print 'floor {0}'.format(math.floor(wait / multiprocessing.cpu_count()))
-    #wait = wait % multiprocessing.cpu_count() + (1.0/proc_per_processor.value) * math.floor(wait / multiprocessing.cpu_count())
-    #print 'wait {0}'.format(wait)
+        wait = cores.value*random.random()
     sleep(wait)
     print 'wait finished {0}'.format(wait)
     # Run the experiment
@@ -106,20 +109,17 @@ def mp_run(cfg):
             f.close()
 
 ######################################################################################
-def init(cnt, num):
+def init(num):
     ''' store the counter for later use '''
-    global counter
-    global proc_per_processor
-    counter = cnt
-    proc_per_processor = num
+    global cores
+    cores = num
 
 ######################################################################################
 def do_multiprocessing_pool(args, list_of_new_cfgs):
     """Do multiprocesing"""
-    counter = multiprocessing.Value('i', 0)
-    proc_per_processor = multiprocessing.Value('d', math.ceil(len(list_of_new_cfgs)/args.cores))
-    print 'proc_per_processor {0}'.format(proc_per_processor.value)
-    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (counter, proc_per_processor))
+    cores = multiprocessing.Value('i', args.cores)
+    print 'cores {0}'.format(cores.value)
+    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (cores,))
     pool.map(mp_run, list_of_new_cfgs)
     pool.close()
 ######################################################################################

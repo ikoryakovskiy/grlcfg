@@ -1,0 +1,240 @@
+experiment: 
+  type: experiment/online_learning
+  runs: 1
+  trials: 1
+  steps: 0
+  rate: 0
+  test_interval: -1
+  output: complex_leo_mlrti_2dpg_ou_squat_fb_sl_vc_mef
+  environment: 
+    type: environment/sandbox
+    model: 
+      type: sandbox_model/leo_squatting
+      control_step: 0.03
+      integration_steps: 25
+      target_dof: 4
+      dynamics: 
+        type: dynamics/rbdl
+        file: leo_vc/leo_fb_sl.lua
+        points: tip_left, heel_left, root
+        auxiliary: mm, com, comv, am
+      true_model: 
+        type: model/dynamical
+        control_step: experiment/environment/model/control_step
+        integration_steps: 5
+        dynamics: 
+          type: dynamics/rbdl
+          file: leo_vc/leo_fb_sl.lua
+      animation: nope
+      target_env: 
+        type: environment/communicator
+        converter: 
+          type: converter/state_action_converter
+          state_in: ljHipLeftAngle, ljHipRightAngle, ljKneeLeftAngle, ljKneeRightAngle, ljAnkleLeftAngle, ljAnkleRightAngle, ljShoulderAngle, ljTorsoAngle, ljHipLeftAngleRate, ljHipRightAngleRate, ljKneeLeftAngleRate, ljKneeRightAngleRate, ljAnkleLeftAngleRate, ljAnkleRightAngleRate, ljShoulderAngleRate, ljTorsoAngleRate, lfToeRight, lfHeelRight, lfToeLeft, lfHeelLeft
+          state_out: ljAnkleLeftAngle, ljKneeLeftAngle, ljHipLeftAngle, ljShoulderAngle, ljAnkleLeftAngleRate, ljKneeLeftAngleRate, ljHipLeftAngleRate, ljShoulderAngleRate
+          action_in: ljAnkleLeftVoltage, ljKneeLeftVoltage, ljHipLeftVoltage, ljShoulderVoltage
+          action_out: ljHipLeftVoltage, ljHipLeftVoltage, ljKneeLeftVoltage, ljKneeLeftVoltage, ljAnkleLeftVoltage, ljAnkleLeftVoltage, ljShoulderVoltage
+        communicator: 
+          type: communicator/zeromq/request_reply
+          role: ZMQ_REP
+          sync: tcp://192.168.1.10:5560
+          addr: tcp://*:5561
+        target_obs_dims: 20
+        target_action_dims: 7
+        benchmark_delays: 0
+      lower_height: 0.28
+      upper_height: 0.35
+      precision: [0.01, 0.01]
+      mode: vc
+      sim_filtered: 0
+      sub_true_action: 
+        type: signal/vector
+      sub_sma_state: 
+        type: signal/vector
+      timer_switch: 0
+      idle_time: 0
+    task: 
+      type: task/leo_squatting
+      target_env: experiment/environment/model/target_env
+      timeout: 5500
+      randomize: 0
+      weight_nmpc: 0.0001
+      weight_nmpc_aux: 1
+      weight_nmpc_qd: 1
+      weight_shaping: 0
+      power: 2
+      use_mef: 1
+      setpoint_reward: 0
+      continue_after_fall: 1
+      gamma: 0
+      fixed_arm: 0
+    exporter: 
+      type: exporter/csv
+      file: complex_leo_mlrti_2dpg_ou_squat_fb_sl_vc_mef
+      fields: time, state, observation, action, reward, terminal
+      style: meshup
+      variant: all
+      precision: 6
+      enabled: 1
+  agent: 
+    type: agent/leo/sma
+    environment: experiment/environment
+    main_steps: 100000
+    main_timeout: 10.0
+    test_interval: 10
+    output: complex_leo_mlrti_2dpg_ou_squat_fb_sl_vc_mef_main
+    action_min: [ -5, -5, -5, -5]
+    action_max: [ 5, 5, 5, 5]
+    agent_prepare: 
+      type: agent/leo/fixed
+      policy: 
+        type: mapping/policy/parameterized/pid
+        setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
+        outputs: 4
+        p: [20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+        i: []
+        d: []
+        il: []
+        action_min: [ -3, -3, -3, -3]
+        action_max: [ 3, 3, 3, 3]
+    agent_standup: 
+      type: agent/leo/fixed
+      policy: 
+        type: mapping/policy/parameterized/pid
+        setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
+        outputs: 4
+        p: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        i: []
+        d: []
+        il: []
+        action_min: [ -3, -3, -3, -3]
+        action_max: [ 3, 3, 3, 3]
+    agent_main: 
+      type: agent/master/sequential/additive
+      agent1: 
+        type: agent/fixed
+        policy: 
+          type: mapping/policy/nmpc_mlrti
+          verbose: 0
+          initFeedback: 1
+          action_min: [ -5, -5, -5, -5]
+          action_max: [ 5, 5, 5, 5]
+          lua_model: leo_fb_sl.lua
+          model_name: nmpc_leo_squat_fb_sl_vc
+          nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+      agent2: 
+        type: agent/master/selective
+        agent1: 
+          type: agent/sub/compartmentalized
+          min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.34]
+          max: [100, 100, 100, 100, 100, 100, 100, 100, 0.36]
+          agent: 
+            type: agent/td
+            policy: 
+              type: mapping/policy/post/noise
+              sigma: [0.005]
+              theta: [0.5]
+              output_min: [ -5, -5, -5, -5]
+              output_max: [ 5, 5, 5, 5]
+              policy: 
+                type: mapping/policy/action
+                sigma: []
+                output_min: [ -5, -5, -5, -5]
+                output_max: [ 5, 5, 5, 5]
+                projector: 
+                  type: projector/tile_coding
+                  tilings: 16
+                  memory: 8388608
+                  safe: 1
+                  resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
+                  wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                representation: 
+                  type: representation/parameterized/linear
+                  init_min: [0]
+                  init_max: [0]
+                  memory: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector/memory
+                  outputs: experiment/environment/task/action_dims
+                  output_min: [ -5, -5, -5, -5]
+                  output_max: [ 5, 5, 5, 5]
+            predictor: 
+              type: predictor/dpg
+              alpha: 0.01
+              beta_v: 0.1
+              beta_a: 0.01
+              gamma: experiment/environment/task/gamma
+              lambda: 0.65
+              projector: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector
+              critic_representation: 
+                type: representation/parameterized/linear
+                init_min: [0]
+                init_max: [0]
+                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector/memory
+                outputs: 1
+                output_min: []
+                output_max: []
+              critic_trace: 
+                type: trace/enumerated/replacing
+              advantage_representation: 
+                type: representation/parameterized/linear
+                init_min: [0]
+                init_max: [0]
+                memory: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector/memory
+                outputs: experiment/environment/task/action_dims
+                output_min: []
+                output_max: []
+              actor_representation: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/representation
+        agent2: 
+          type: agent/sub/compartmentalized
+          min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.27]
+          max: [100, 100, 100, 100, 100, 100, 100, 100, 0.29]
+          agent: experiment/agent/agent_main/agent2/agent1/agent
+      pub_action1: experiment/environment/model/sub_true_action
+      exporter: 
+        type: exporter/csv
+        file: complex_leo_mlrti_2dpg_ou_squat_fb_sl_vc_mef_elements
+        style: meshup
+        variant: all
+        precision: 6
+        enabled: 1
+      output_min: [ -5, -5, -5, -5]
+      output_max: [ 5, 5, 5, 5]
+    agent_test: 
+      type: agent/master/sequential/additive
+      agent1: experiment/agent/agent_main/agent1
+      agent2: 
+        type: agent/master/selective
+        agent1: 
+          type: agent/sub/compartmentalized
+          min: experiment/agent/agent_main/agent2/agent1/min
+          max: experiment/agent/agent_main/agent2/agent1/max
+          agent: 
+            type: agent/td
+            policy: 
+              type: mapping/policy/post/noise
+              sigma: []
+              theta: []
+              output_min: [ -5, -5, -5, -5]
+              output_max: [ 5, 5, 5, 5]
+              policy: experiment/agent/agent_main/agent2/agent1/agent/policy/policy
+            predictor: experiment/agent/agent_main/agent2/agent1/agent/predictor
+        agent2: 
+          type: agent/sub/compartmentalized
+          min: experiment/agent/agent_main/agent2/agent2/min
+          max: experiment/agent/agent_main/agent2/agent2/max
+          agent: experiment/agent/agent_test/agent2/agent1/agent
+      pub_action1: experiment/environment/model/sub_true_action
+      exporter: experiment/agent/agent_main/exporter
+      output_min: [ -5, -5, -5, -5]
+      output_max: [ 5, 5, 5, 5]
+    upright_trigger: 
+      type: trigger
+      min: [0.8, -2.4, 1.0, -100, -100, -100, -100, -100, -100]
+      max: [1.3, -1.8, 1.6, 100, 100, 100, 100, 100, 100]
+      delay: 5
+    feet_on_trigger: 
+      type: trigger
+      min: [1]
+      max: [1]
+      delay: 5
+    pub_sma_state: experiment/environment/model/sub_sma_state
+  save_every: never
