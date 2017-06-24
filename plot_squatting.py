@@ -11,6 +11,7 @@ from enum import Enum
 import pylab
 from os.path import basename, isfile
 import pdb
+from butterworth import bw_tustin
 
 sys.path.append('/home/ivan/work/scripts/py')
 from my_csv.utils import *
@@ -105,6 +106,8 @@ def main():
     for i in ELeoJoint:
       for d in dd:
         axarr[i.value].plot(d['ts'], d['xc'][:, i.value])
+        #filtered = bw_tustin(d['xc'][:, i.value], order = 2, cutoff = 3.0, fs = 1/0.03)
+        #axarr[i.value].plot(d['ts'], filtered, color='green')
         if rl_provided:
           for r in rl:
             axarr[i.value].plot(r['ts'], r['rl'][:, i.value], color='red')

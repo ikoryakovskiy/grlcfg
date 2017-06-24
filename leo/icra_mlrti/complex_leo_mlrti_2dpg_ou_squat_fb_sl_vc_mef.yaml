@@ -89,7 +89,7 @@ experiment:
       type: agent/leo/fixed
       policy: 
         type: mapping/policy/parameterized/pid
-        setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
+        setpoint: [1.26, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
         outputs: 4
         p: [20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
         i: []
@@ -107,22 +107,29 @@ experiment:
         i: []
         d: []
         il: []
-        action_min: [ -3, -3, -3, -3]
-        action_max: [ 3, 3, 3, 3]
+        action_min: [ -2, -2, -2, -2]
+        action_max: [ 2, 2, 2, 2]
     agent_main: 
       type: agent/master/sequential/additive
       agent1: 
         type: agent/fixed
         policy: 
-          type: mapping/policy/nmpc_mlrti
-          verbose: 0
-          initFeedback: 1
-          action_min: [ -5, -5, -5, -5]
-          action_max: [ 5, 5, 5, 5]
-          lua_model: leo_fb_sl.lua
-          model_name: nmpc_leo_squat_fb_sl_vc
-          nmpc_model_name: nmpc_leo_squat_fb_sl_vc
-          ninit: 10
+          type: mapping/policy/post/lowpass
+          order: 1
+          sampling: 33.333333333
+          cutoff: 5
+          action_dims: experiment/environment/task/action_dims
+          magnitude: [1, 0, 0, 0]
+          policy: 
+            type: mapping/policy/nmpc_mlrti
+            verbose: 0
+            initFeedback: 1
+            action_min: [ -5, -5, -5, -5 ]
+            action_max: [ 5, 5, 5, 5 ]
+            lua_model: leo_fb_sl.lua
+            model_name: nmpc_leo_squat_fb_sl_vc
+            nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+            ninit: 10
       agent2: 
         type: agent/master/selective
         agent1: 
