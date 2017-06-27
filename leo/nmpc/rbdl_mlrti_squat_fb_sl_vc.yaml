@@ -24,6 +24,7 @@ experiment:
       precision: [0.01, 0.01]
       mode: vc
       sim_filtered: 0
+      timer_switch: 0
     task: 
       type: task/leo_squatting
       timeout: 10

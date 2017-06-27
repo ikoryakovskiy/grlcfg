@@ -3,7 +3,7 @@ experiment:
   runs: 1
   trials: 0
   steps: 500000
-  rate: 30
+  rate: 33.333
   test_interval: 10
   output: rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef
   environment: 
@@ -11,7 +11,7 @@ experiment:
     model: 
       type: sandbox_model/leo_squatting
       control_step: 0.03
-      integration_steps: 25
+      integration_steps: 5
       target_dof: 4
       dynamics: 
         type: dynamics/rbdl
@@ -51,18 +51,25 @@ experiment:
       fixed_arm: 0
   agent: 
     type: agent/master/sequential/additive
-    agent1: 
+    agent1:
       type: agent/fixed
-      policy: 
-        type: mapping/policy/nmpc_mlrti
-        verbose: 0
-        initFeedback: 1
-        action_min: experiment/environment/task/action_min
-        action_max: experiment/environment/task/action_max
-        lua_model: leo_fb_sl.lua
-        model_name: nmpc_leo_squat_fb_sl_vc
-        nmpc_model_name: nmpc_leo_squat_fb_sl_vc
-        ninit: 10
+      policy:
+        type: mapping/policy/post/lowpass
+        order: 1
+        sampling: 33.333333333
+        cutoff: 5
+        action_dims: experiment/environment/task/action_dims
+        magnitude: [1, 0, 0, 0]
+        policy:
+          type: mapping/policy/nmpc_mlrti
+          verbose: 0
+          initFeedback: 1
+          action_min: experiment/environment/task/action_min
+          action_max: experiment/environment/task/action_max
+          lua_model: leo_fb_sl.lua
+          model_name: nmpc_leo_squat_fb_sl_vc
+          nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+          ninit: 0
     agent2: 
       type: agent/master/selective
       agent1: 
@@ -85,7 +92,7 @@ experiment:
               projector: 
                 type: projector/tile_coding
                 tilings: 16
-                memory: 25165824
+                memory: 8388608
                 safe: 1
                 resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
                 wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]

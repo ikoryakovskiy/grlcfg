@@ -41,19 +41,37 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(10)
-    gamma = [0.95, 0.97, 0.997]
-    lambdaa = [0.75, 0.8582, 0.9, 0.96]
+    runs = range(1)
+    alpha = [0.5, 0.1, 0.05, 0.01]
+    beta_v  = [0.05, 0.1, 0.5, 1.0]
+    x_beta_a  = [ 0.05, 0.1, 0.5]
+    beta_va = []
+    for x in x_beta_a:
+      for y in beta_v:
+        beta_va.append((y, x*y))
+    gamma = [0.97, 0.99]
+    lmbda = [0.65] #[0.82, 0.65]
+
+    sigma   = [0.005, 0.01, 0.05, 0.1]
+    theta   = [0.1,  0.5,  1.0]
+
+    model_types = [1] # 0 -ideal, 1 - real
 
     options = []
-    for r in itertools.product(gamma, lambdaa, runs): options.append(r)
+    for r in itertools.product(alpha, beta_va, gamma, lmbda, sigma, theta, model_types, runs): options.append(r)
+    options = [flatten(tupl) for tupl in options]
 
-    # Main
-    rl_run_param(args, ["leo/squat_rl/rbdl_ac_tc_squat_fb_sl_fa.yaml"], options)
+    configs = [
+                "leo/icra_mlrti/rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef.yaml",
+              ]
+
+    L = rl_run_param1(args, configs, options)
+    shuffle(L)
+
+    do_multiprocessing_pool(args, L)
 
 ######################################################################################
-def rl_run_param(args, list_of_cfgs, options):
-    """Playing RL on a slope of x.xxx which were learnt for slope 0.004"""
+def rl_run_param1(args, list_of_cfgs, options):
     list_of_new_cfgs = []
 
     loc = "tmp"
@@ -75,8 +93,22 @@ def rl_run_param(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['agent']['predictor']['gamma'] = o[0]
-            conf['experiment']['agent']['predictor']['lambda'] = o[1]
+            conf['experiment']['steps'] = 21000
+            conf['experiment']['test_interval'] = 10
+
+            conf['experiment']['agent']['agent2']['agent1']['agent']['predictor']['alpha'] = o[0]
+            conf['experiment']['agent']['agent2']['agent1']['agent']['predictor']['beta_v'] = o[1]
+            conf['experiment']['agent']['agent2']['agent1']['agent']['predictor']['beta_a'] = o[2]
+            conf['experiment']['environment']['task']['gamma'] = o[3]
+            conf['experiment']['agent']['agent2']['agent1']['agent']['predictor']['lambda'] = o[4]
+            conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = o[5]
+            conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['theta'] = o[6]
+
+            if o[7] == 0:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
+            else:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
+
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
               conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
@@ -86,7 +118,7 @@ def rl_run_param(args, list_of_cfgs, options):
 
     #print list_of_new_cfgs
 
-    do_multiprocessing_pool(args, list_of_new_cfgs)
+    return list_of_new_cfgs
 
 ######################################################################################
 def mp_run(cfg):

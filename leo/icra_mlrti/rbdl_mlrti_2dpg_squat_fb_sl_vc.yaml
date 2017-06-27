@@ -3,7 +3,7 @@ experiment:
   runs: 1
   trials: 0
   steps: 500000
-  rate: 30
+  rate: 33.333
   test_interval: 10
   output: rbdl_mlrti_2dpg_squat_fb_sl_vc
   environment: 
@@ -68,7 +68,7 @@ experiment:
             projector: 
               type: projector/tile_coding
               tilings: 16
-              memory: 25165824
+              memory: 8388608
               safe: 1
               resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
               wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
