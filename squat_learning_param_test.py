@@ -41,19 +41,19 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(1)
-    alpha = [0.5, 0.1, 0.05, 0.01]
-    beta_v  = [0.05, 0.1, 0.5, 1.0]
-    x_beta_a  = [ 0.05, 0.1, 0.5]
+    runs = range(5)
+    alpha = [0.5]
+    beta_v  = [1.0]
+    x_beta_a  = [ 0.05, 0.075, 0.1, 0.25, 0.5]
     beta_va = []
     for x in x_beta_a:
       for y in beta_v:
         beta_va.append((y, x*y))
-    gamma = [0.97, 0.99]
-    lmbda = [0.65] #[0.82, 0.65]
+    gamma = [0.97]
+    lmbda = [0.65]
 
-    sigma   = [0.005, 0.01, 0.05, 0.1]
-    theta   = [0.1,  0.5,  1.0]
+    sigma   = [0.01]
+    theta   = [0.1]
 
     model_types = [1] # 0 -ideal, 1 - real
 
@@ -93,7 +93,7 @@ def rl_run_param1(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 21000
+            conf['experiment']['steps'] = 100000
             conf['experiment']['test_interval'] = 10
 
             conf['experiment']['agent']['agent2']['agent1']['agent']['predictor']['alpha'] = o[0]
