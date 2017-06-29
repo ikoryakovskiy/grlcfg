@@ -41,10 +41,10 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(5)
-    alpha = [0.1]
-    beta_v  = [0.5]
-    x_beta_a  = [ 0.1 ]
+    runs = range(3)
+    alpha = [0.1, 0.09, 0.08, 0.07, 0.06, 0.05]
+    beta_v  = [0.1]
+    x_beta_a  = [ 0.2, 0.1 ]
     beta_va = []
     for x in x_beta_a:
       for y in beta_v:
@@ -52,8 +52,8 @@ def main():
     gamma = [0.97]
     lmbda = [0.65]
 
-    sigma   = [0.01, 0.05]
-    theta   = [0.10, 0.50]
+    sigma   = [0.01]
+    theta   = [0.1]
 
     model_types = [1] # 0 -ideal, 1 - real
 
@@ -62,13 +62,13 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     configs = [
-                "leo/icra_mlrti/rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef.yaml",
+                "leo/icra_mlrti/rbdl_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef.yaml",
               ]
 
     L = rl_run_param1(args, configs, options)
     shuffle(L)
 
-    do_multiprocessing_pool(args, L)
+    #do_multiprocessing_pool(args, L)
 
 ######################################################################################
 def rl_run_param1(args, list_of_cfgs, options):
