@@ -32,11 +32,11 @@ def main():
       data = np.loadtxt(f, skiprows=hd_sz, delimiter=',')
       ts = data[:, 0]       # time
       xs = data[:, 1:9]     # states
-      tp = data[:, 19:20]   # temperature
+      tp = data[:, 10:11]   # temperature
       rz = data[:, 20:21]   # RootZ
       ss = data[:, 32:33]   # sma state
       xc = data[:, 44:48]   # controls
-      dd.append({'ts':ts, 'xs':xs, 'xc':xc, 'ss':ss})
+      dd.append({'ts':ts, 'xs':xs, 'xc':xc, 'ss':ss, 'tp':tp})
 
       rl_provided = True
       fe = re.sub('\-learn-0.csv$', '', f) + '_elements-all-1.csv'
@@ -103,7 +103,7 @@ def main():
     fig.canvas.set_window_title('vel')
 
 
-    f, axarr = plt.subplots(4, sharex=True)
+    f, axarr = plt.subplots(5, sharex=True)
     for i in ELeoJoint:
       for d in dd:
         axarr[i.value].plot(d['ts'], d['xc'][:, i.value])
@@ -115,6 +115,9 @@ def main():
       aname = str(i).rsplit('.', 1)[-1]
       axarr[i.value].set_ylabel(aname)
       axarr[i.value].grid(True)
+    axarr[4].plot(d['ts'], d['tp'])
+    axarr[4].set_ylabel('Temperature')
+    axarr[4].grid(True)
     axarr[0].set_title('u')
     fig = pylab.gcf()
     fig.canvas.set_window_title('u')

@@ -12,19 +12,13 @@ experiment:
       type: sandbox_model/leo_squatting
       control_step: 0.03
       integration_steps: 25
-      dynamics: 
-        type: dynamics/rbdl
-        file: leo_vc/leo_fb_sl.lua
-        points: tip_left, heel_left, root
-        auxiliary: mm, com, comv, am
       target_dof: 4
-      animation: full
       target_env: 
         type: environment/communicator
         converter: 
           type: converter/state_action_converter
-          state_in: ljHipLeftAngle, ljHipRightAngle, ljKneeLeftAngle, ljKneeRightAngle, ljAnkleLeftAngle, ljAnkleRightAngle, ljShoulderAngle, ljTorsoAngle, ljHipLeftAngleRate, ljHipRightAngleRate, ljKneeLeftAngleRate, ljKneeRightAngleRate, ljAnkleLeftAngleRate, ljAnkleRightAngleRate, ljShoulderAngleRate, ljTorsoAngleRate, lfToeRight, lfHeelRight, lfToeLeft, lfHeelLeft
-          state_out: ljAnkleLeftAngle, ljKneeLeftAngle, ljHipLeftAngle, ljShoulderAngle, ljAnkleLeftAngleRate, ljKneeLeftAngleRate, ljHipLeftAngleRate, ljShoulderAngleRate
+          state_in: ljHipLeftAngle, ljHipRightAngle, ljKneeLeftAngle, ljKneeRightAngle, ljAnkleLeftAngle, ljAnkleRightAngle, ljShoulderAngle, ljTorsoAngle, ljHipLeftAngleRate, ljHipRightAngleRate, ljKneeLeftAngleRate, ljKneeRightAngleRate, ljAnkleLeftAngleRate, ljAnkleRightAngleRate, ljShoulderAngleRate, ljTorsoAngleRate, lfToeRight, lfHeelRight, lfToeLeft, lfHeelLeft, lmTemperature
+          state_out: ljAnkleLeftAngle, ljKneeLeftAngle, ljHipLeftAngle, ljShoulderAngle, ljAnkleLeftAngleRate, ljKneeLeftAngleRate, ljHipLeftAngleRate, ljShoulderAngleRate, lmTemperature
           action_in: ljAnkleLeftVoltage, ljKneeLeftVoltage, ljHipLeftVoltage, ljShoulderVoltage
           action_out: ljHipLeftVoltage, ljHipLeftVoltage, ljKneeLeftVoltage, ljKneeLeftVoltage, ljAnkleLeftVoltage, ljAnkleLeftVoltage, ljShoulderVoltage
         communicator: 
@@ -32,75 +26,115 @@ experiment:
           role: ZMQ_REP
           sync: tcp://192.168.1.10:5560
           addr: tcp://*:5561
-        target_obs_dims: 20
+        target_obs_dims: 21
         target_action_dims: 7
         benchmark_delays: 0
-      precision: [0.01, 0.01]
+      dynamics: 
+        type: dynamics/rbdl
+        file: leo_vc/leo_fb_sl.lua
+        points: tip_left, heel_left, root
+        auxiliary: mm, com, comv, am
+      animation: nope
       lower_height: 0.28
       upper_height: 0.35
+      precision: [0.01, 0.01]
       mode: vc
+      sim_filtered: 0
+      sub_sma_state: 
+        type: signal/vector
+      timer_switch: 0
+      idle_time: 0
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
-      timeout: 5000
+      timeout: 5500
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1
       weight_nmpc_qd: 1
       weight_shaping: 0
       power: 2
+      use_mef: 0
       setpoint_reward: 0
       continue_after_fall: 1
-      gamma: 0
+      gamma: 0.97
       fixed_arm: 0
     exporter: 
       type: exporter/csv
       file: complex_leo_mlrti_squat_fb_sl_vc
       fields: time, state, observation, action, reward, terminal
       style: meshup
-      variant: test
+      variant: all
       precision: 6
       enabled: 1
   agent: 
     type: agent/leo/sma
-    action_min: [ -5, -5, -5, -5]
-    action_max: [ 5, 5, 5, 5]
+    environment: experiment/environment
+    main_steps: 100000
+    main_timeout: 10.0
+    test_interval: 0
+    output: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_main
+    action_min: [-10, -10, -10, -10]
+    action_max: [10, 10, 10, 10]
     agent_prepare: 
-      type: agent/leo/fixed
-      policy: 
-        type: mapping/policy/parameterized/pid
-        setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
-        outputs: 4
-        p: [25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
-        i: []
-        d: []
-        il: []
-        action_min: [ -3, -3, -3, -3]
-        action_max: [ 3, 3, 3, 3]
+      type: agent/master/selective
+      agent1: 
+        type: agent/sub/compartmentalized
+        min: [0.8, -100, -100, -100, -100, -100, -100, -100, -100, -100]
+        max: [100, -2.0, 100, 100, 100, 100, 100, 100, 100, 100]
+        agent: 
+          type: agent/fixed
+          policy: 
+            type: mapping/policy/parameterized/pid
+            setpoint: [1.1, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0, 0]
+            outputs: experiment/environment/task/action_dims
+            p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+            i: []
+            d: []
+            il: []
+            action_min: [-3, -3, -3, -3]
+            action_max: [3, 3, 3, 3]
+      agent2: 
+        type: agent/sub/compartmentalized
+        min: []
+        max: []
+        agent: 
+          type: agent/fixed
+          policy: 
+            type: mapping/policy/parameterized/pid
+            setpoint: [1.1, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0, 0]
+            outputs: experiment/environment/task/action_dims
+            p: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+            i: []
+            d: []
+            il: []
+            action_min: [-3, -3, -3, -3]
+            action_max: [3, 3, 3, 3]
     agent_standup: 
       type: agent/leo/fixed
       policy: 
         type: mapping/policy/parameterized/pid
-        setpoint: [0.8, -1.77, 1.69, -0.26, 0, 0, 0, 0, 0]
-        outputs: 4
-        p: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+        setpoint: [1.1, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0, 0]
+        outputs: experiment/environment/task/action_dims
+        p: []
         i: []
         d: []
         il: []
-        action_min: [ -3, -3, -3, -3]
-        action_max: [ 3, 3, 3, 3]
+        action_min: [-2, -2, -2, -2]
+        action_max: [2, 2, 2, 2]
     agent_main: 
       type: agent/fixed
       policy: 
         type: mapping/policy/nmpc_mlrti
         verbose: 0
         initFeedback: 1
-        action_min: [ -5, -5, -5, -5]
-        action_max: [ 5, 5, 5, 5]
+        action_min: [-10, -10, -10, -10]
+        action_max: [10, 10, 10, 10]
         lua_model: leo_fb_sl.lua
         model_name: nmpc_leo_squat_fb_sl_vc
         nmpc_model_name: nmpc_leo_squat_fb_sl_vc
-    main_timeout: 10
+        ninit: 0
+    agent_test: experiment/agent/agent_main
     upright_trigger: 
       type: trigger
       min: []
@@ -110,6 +144,7 @@ experiment:
       type: trigger
       min: [1]
       max: [1]
-      delay: 10
+      delay: 5
+    pub_sma_state: experiment/environment/model/sub_sma_state
   test_agent: experiment/agent
   save_every: never
