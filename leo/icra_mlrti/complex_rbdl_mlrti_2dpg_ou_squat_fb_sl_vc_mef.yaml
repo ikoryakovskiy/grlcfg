@@ -50,7 +50,7 @@ experiment:
       use_mef: 1
       setpoint_reward: 0
       continue_after_fall: 1
-      gamma: 0
+      gamma: 0.97
       fixed_arm: 0
     exporter: 
       type: exporter/csv
@@ -73,15 +73,15 @@ experiment:
       type: agent/master/selective
       agent1: 
         type: agent/sub/compartmentalized
-        min: [1.0, -100, 1.2, -100, -100, -100, -100, -100, -100]
-        max: [100, -2.0, 100, 100, 100, 100, 100, 100, 100]
+        min: [0.8, -100, -100, -100, -100, -100, -100, -100, -100, -100]
+        max: [100, -2.0, 100, 100, 100, 100, 100, 100, 100, 100]
         agent: 
           type: agent/fixed
           policy: 
             type: mapping/policy/parameterized/pid
-            setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
+            setpoint: [1.1, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0, 0]
             outputs: experiment/environment/task/action_dims
-            p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0]
+            p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
             i: []
             d: []
             il: []
@@ -95,9 +95,9 @@ experiment:
           type: agent/fixed
           policy: 
             type: mapping/policy/parameterized/pid
-            setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
+            setpoint: [1.1, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0, 0]
             outputs: experiment/environment/task/action_dims
-            p: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+            p: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
             i: []
             d: []
             il: []
@@ -107,7 +107,7 @@ experiment:
       type: agent/leo/fixed
       policy: 
         type: mapping/policy/parameterized/pid
-        setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
+        setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0, 0]
         outputs: experiment/environment/task/action_dims
         p: []
         i: []
@@ -140,14 +140,14 @@ experiment:
         type: agent/master/selective
         agent1: 
           type: agent/sub/compartmentalized
-          min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.34]
-          max: [100, 100, 100, 100, 100, 100, 100, 100, 0.36]
+          min: [-100, -100, -100, -100, -100, -100, -100, -100, -100, 0.34]
+          max: [100, 100, 100, 100, 100, 100, 100, 100, 100, 0.36]
           agent: 
             type: agent/td
             policy: 
               type: mapping/policy/post/noise
-              sigma: [0.005]
-              theta: [0.5]
+              sigma: [0.01]
+              theta: [0.1]
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
               policy: 
@@ -160,8 +160,8 @@ experiment:
                   tilings: 16
                   memory: 8388608
                   safe: 1
-                  resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
-                  wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                  resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 10, 0.01]
+                  wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 representation: 
                   type: representation/parameterized/linear
                   init_min: [0]
@@ -172,9 +172,9 @@ experiment:
                   output_max: experiment/environment/task/action_max
             predictor: 
               type: predictor/dpg
-              alpha: 0.01
-              beta_v: 0.1
-              beta_a: 0.01
+              alpha: 0.5
+              beta_v: 1.0
+              beta_a: 0.05
               gamma: experiment/environment/task/gamma
               lambda: 0.65
               projector: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector
@@ -199,8 +199,8 @@ experiment:
               actor_representation: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/representation
         agent2: 
           type: agent/sub/compartmentalized
-          min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.27]
-          max: [100, 100, 100, 100, 100, 100, 100, 100, 0.29]
+          min: [-100, -100, -100, -100, -100, -100, -100, -100, -100, 0.27]
+          max: [100, 100, 100, 100, 100, 100, 100, 100, 100, 0.29]
           agent: experiment/agent/agent_main/agent2/agent1/agent
       pub_action1: experiment/environment/model/sub_true_action
       exporter: 
@@ -242,8 +242,8 @@ experiment:
       output_max: experiment/environment/task/action_max
     upright_trigger: 
       type: trigger
-      min: [0.8, -2.4, 1.0, -100, -100, -100, -100, -100, -100]
-      max: [1.3, -1.8, 1.6, 100, 100, 100, 100, 100, 100]
+      min: [0.8, -2.4, 1.0, -100, -100, -100, -100, -100, -100, -100]
+      max: [1.3, -1.8, 1.6, 100, 100, 100, 100, 100, 100, 100]
       delay: 5
     feet_on_trigger: 
       type: trigger

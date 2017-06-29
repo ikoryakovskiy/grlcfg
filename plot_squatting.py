@@ -32,9 +32,10 @@ def main():
       data = np.loadtxt(f, skiprows=hd_sz, delimiter=',')
       ts = data[:, 0]       # time
       xs = data[:, 1:9]     # states
-      rz = data[:, 19:20]   # RootZ
-      ss = data[:, 31:32]   # sma state
-      xc = data[:, 42:46]   # controls
+      tp = data[:, 19:20]   # temperature
+      rz = data[:, 20:21]   # RootZ
+      ss = data[:, 32:33]   # sma state
+      xc = data[:, 44:48]   # controls
       dd.append({'ts':ts, 'xs':xs, 'xc':xc, 'ss':ss})
 
       rl_provided = True

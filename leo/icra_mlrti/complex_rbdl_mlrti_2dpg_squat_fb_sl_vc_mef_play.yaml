@@ -40,7 +40,7 @@ experiment:
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
-      timeout: 5000
+      timeout: 5500
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1
@@ -50,7 +50,7 @@ experiment:
       use_mef: 1
       setpoint_reward: 0
       continue_after_fall: 1
-      gamma: 0
+      gamma: 0.97
       fixed_arm: 0
     exporter: 
       type: exporter/csv

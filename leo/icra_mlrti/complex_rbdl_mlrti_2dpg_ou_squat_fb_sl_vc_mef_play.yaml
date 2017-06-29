@@ -21,7 +21,7 @@ experiment:
       true_model: 
         type: model/dynamical
         control_step: experiment/environment/model/control_step
-        integration_steps: experiment/environment/model/integration_steps
+        integration_steps: 5
         dynamics: 
           type: dynamics/rbdl
           file: leo_vc/leo_fb_sl.lua
@@ -50,7 +50,7 @@ experiment:
       use_mef: 1
       setpoint_reward: 0
       continue_after_fall: 1
-      gamma: 0
+      gamma: 0.97
       fixed_arm: 0
     exporter: 
       type: exporter/csv
@@ -70,24 +70,46 @@ experiment:
     action_min: experiment/environment/task/action_min
     action_max: experiment/environment/task/action_max
     agent_prepare: 
-      type: agent/leo/fixed
-      policy: 
-        type: mapping/policy/parameterized/pid
-        setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
-        outputs: 4
-        p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0]
-        i: []
-        d: []
-        il: []
-        action_min: experiment/environment/task/action_min
-        action_max: experiment/environment/task/action_max
+      type: agent/master/selective
+      agent1: 
+        type: agent/sub/compartmentalized
+        min: [0.8, -100, -100, -100, -100, -100, -100, -100, -100, -100]
+        max: [100, -2.0, 100, 100, 100, 100, 100, 100, 100, 100]
+        agent: 
+          type: agent/fixed
+          policy: 
+            type: mapping/policy/parameterized/pid
+            setpoint: [1.1, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0, 0]
+            outputs: experiment/environment/task/action_dims
+            p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+            i: []
+            d: []
+            il: []
+            action_min: experiment/environment/task/action_min
+            action_max: experiment/environment/task/action_max
+      agent2: 
+        type: agent/sub/compartmentalized
+        min: []
+        max: []
+        agent: 
+          type: agent/fixed
+          policy: 
+            type: mapping/policy/parameterized/pid
+            setpoint: [1.1, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0, 0]
+            outputs: experiment/environment/task/action_dims
+            p: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+            i: []
+            d: []
+            il: []
+            action_min: experiment/environment/task/action_min
+            action_max: experiment/environment/task/action_max
     agent_standup: 
       type: agent/leo/fixed
       policy: 
         type: mapping/policy/parameterized/pid
-        setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0]
-        outputs: 4
-        p: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        setpoint: [1.06, -2.13, 1.27, -0.26, 0, 0, 0, 0, 0, 0]
+        outputs: experiment/environment/task/action_dims
+        p: []
         i: []
         d: []
         il: []
@@ -98,21 +120,28 @@ experiment:
       agent1: 
         type: agent/fixed
         policy: 
-          type: mapping/policy/nmpc_mlrti
-          verbose: 0
-          initFeedback: 1
-          action_min: experiment/environment/task/action_min
-          action_max: experiment/environment/task/action_max
-          lua_model: leo_fb_sl.lua
-          model_name: nmpc_leo_squat_fb_sl_vc
-          nmpc_model_name: nmpc_leo_squat_fb_sl_vc
-          ninit: 10
+          type: mapping/policy/post/lowpass
+          order: 1
+          sampling: 33.333333333
+          cutoff: 5
+          action_dims: experiment/environment/task/action_dims
+          magnitude: [1, 0, 0, 0]
+          policy: 
+            type: mapping/policy/nmpc_mlrti
+            verbose: 0
+            initFeedback: 1
+            action_min: experiment/environment/task/action_min
+            action_max: experiment/environment/task/action_max
+            lua_model: leo_fb_sl.lua
+            model_name: nmpc_leo_squat_fb_sl_vc
+            nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+            ninit: 0
       agent2: 
         type: agent/master/selective
         agent1: 
           type: agent/sub/compartmentalized
-          min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.34]
-          max: [100, 100, 100, 100, 100, 100, 100, 100, 0.36]
+          min: [-100, -100, -100, -100, -100, -100, -100, -100, -100, 0.34]
+          max: [100, 100, 100, 100, 100, 100, 100, 100, 100, 0.36]
           agent: 
             type: agent/td
             policy: 
@@ -131,8 +160,8 @@ experiment:
                   tilings: 16
                   memory: 8388608
                   safe: 1
-                  resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
-                  wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                  resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 10, 0.01]
+                  wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 representation: 
                   type: representation/parameterized/linear
                   init_min: [0]
@@ -143,9 +172,9 @@ experiment:
                   output_max: experiment/environment/task/action_max
             predictor: 
               type: predictor/dpg
-              alpha: 0.01
-              beta_v: 0.1
-              beta_a: 0.01
+              alpha: 0.5
+              beta_v: 1.0
+              beta_a: 0.05
               gamma: experiment/environment/task/gamma
               lambda: 0.65
               projector: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/projector
@@ -170,8 +199,8 @@ experiment:
               actor_representation: experiment/agent/agent_main/agent2/agent1/agent/policy/policy/representation
         agent2: 
           type: agent/sub/compartmentalized
-          min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.27]
-          max: [100, 100, 100, 100, 100, 100, 100, 100, 0.29]
+          min: [-100, -100, -100, -100, -100, -100, -100, -100, -100, 0.27]
+          max: [100, 100, 100, 100, 100, 100, 100, 100, 100, 0.29]
           agent: experiment/agent/agent_main/agent2/agent1/agent
       pub_action1: experiment/environment/model/sub_true_action
       exporter: 
@@ -213,8 +242,8 @@ experiment:
       output_max: experiment/environment/task/action_max
     upright_trigger: 
       type: trigger
-      min: [0.8, -2.4, 1.0, -100, -100, -100, -100, -100, -100]
-      max: [1.3, -1.8, 1.6, 100, 100, 100, 100, 100, 100]
+      min: [0.8, -2.4, 1.0, -100, -100, -100, -100, -100, -100, -100]
+      max: [1.3, -1.8, 1.6, 100, 100, 100, 100, 100, 100, 100]
       delay: 5
     feet_on_trigger: 
       type: trigger
@@ -222,5 +251,5 @@ experiment:
       max: [1]
       delay: 5
     pub_sma_state: experiment/environment/model/sub_sma_state
-  load_file: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_main-54
+  load_file: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef_main-329
   save_every: never
