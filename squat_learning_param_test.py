@@ -42,9 +42,9 @@ def main():
 
     # Parameters
     runs = range(5)
-    alpha = [0.5]
-    beta_v  = [1.0]
-    x_beta_a  = [ 0.05, 0.075, 0.1, 0.25, 0.5]
+    alpha = [0.1]
+    beta_v  = [0.5]
+    x_beta_a  = [ 0.1 ]
     beta_va = []
     for x in x_beta_a:
       for y in beta_v:
@@ -52,8 +52,8 @@ def main():
     gamma = [0.97]
     lmbda = [0.65]
 
-    sigma   = [0.01]
-    theta   = [0.1]
+    sigma   = [0.01, 0.05]
+    theta   = [0.10, 0.50]
 
     model_types = [1] # 0 -ideal, 1 - real
 

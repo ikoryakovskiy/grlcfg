@@ -146,8 +146,8 @@ experiment:
             type: agent/td
             policy: 
               type: mapping/policy/post/noise
-              sigma: [0.01]
-              theta: [0.1]
+              sigma: [0.05]
+              theta: [0.5]
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
               policy: 
@@ -172,8 +172,8 @@ experiment:
                   output_max: experiment/environment/task/action_max
             predictor: 
               type: predictor/dpg
-              alpha: 0.5
-              beta_v: 1.0
+              alpha: 0.1
+              beta_v: 0.5
               beta_a: 0.05
               gamma: experiment/environment/task/gamma
               lambda: 0.65
@@ -249,6 +249,6 @@ experiment:
       type: trigger
       min: [1]
       max: [1]
-      delay: 5
+      delay: 3
     pub_sma_state: experiment/environment/model/sub_sma_state
   save_every: never
