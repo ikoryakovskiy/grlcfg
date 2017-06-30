@@ -30,7 +30,7 @@ experiment:
       upper_height: 0.35
       precision: [0.01, 0.01]
       mode: vc
-      sim_filtered: 0
+      sim_filtered: 1
       sub_true_action: 
         type: signal/vector
       sub_sma_state: 
@@ -172,7 +172,7 @@ experiment:
                   output_max: experiment/environment/task/action_max
             predictor: 
               type: predictor/dpg
-              alpha: 0.05
+              alpha: 0.06
               beta_v: 0.1
               beta_a: 0.01
               gamma: experiment/environment/task/gamma

@@ -30,10 +30,8 @@ experiment:
       upper_height: 0.35
       precision: [0.01, 0.01]
       mode: vc
-      sim_filtered: 0
+      sim_filtered: 1
       sub_true_action: 
-        type: signal/vector
-      sub_sma_state: 
         type: signal/vector
       timer_switch: 0
       idle_time: 0
