@@ -68,7 +68,7 @@ def main():
     L = rl_run_param1(args, configs, options)
     shuffle(L)
 
-    #do_multiprocessing_pool(args, L)
+    do_multiprocessing_pool(args, L)
 
 ######################################################################################
 def rl_run_param1(args, list_of_cfgs, options):

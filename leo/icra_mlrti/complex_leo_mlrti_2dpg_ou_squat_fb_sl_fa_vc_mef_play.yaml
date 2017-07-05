@@ -5,7 +5,7 @@ experiment:
   steps: 0
   rate: 0
   test_interval: -1
-  output: complex_leo_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef
+  output: complex_leo_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef_play
   environment: 
     type: environment/sandbox
     model: 
@@ -70,7 +70,7 @@ experiment:
       fixed_arm: 1
     exporter: 
       type: exporter/csv
-      file: complex_leo_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef
+      file: complex_leo_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef_play
       fields: time, state, observation, action, reward, terminal
       style: meshup
       variant: all
@@ -80,7 +80,7 @@ experiment:
     type: agent/leo/sma
     environment: experiment/environment
     main_steps: 200000
-    main_timeout: 15.0
+    main_timeout: 60000.0
     test_interval: 10
     output: complex_leo_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef_main
     action_min: [-10, -10, -10]
@@ -221,7 +221,7 @@ experiment:
       pub_action1: experiment/environment/model/sub_true_action
       exporter: 
         type: exporter/csv
-        file: complex_leo_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef_elements
+        file: complex_leo_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef_elements_play
         style: meshup
         variant: all
         precision: 6
@@ -267,5 +267,5 @@ experiment:
       max: [1]
       delay: 3
     pub_sma_state: experiment/environment/model/sub_sma_state
-  load_file: 2017_07_04_exp_3
+  load_file: 2017_07_05_exp_1
   save_every: never

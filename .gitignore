@@ -37,3 +37,6 @@
 bayes
 bayes.c
 cython_debug/
+
+# Temporary
+*~
