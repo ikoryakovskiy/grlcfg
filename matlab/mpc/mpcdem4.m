@@ -4,7 +4,7 @@ function perf = mpcdem4()
 %====================
 % Choose model 0 - no friction, 1 - with friction
 %====================
-arg.model = 0; 
+arg.model = 1; 
 
 %====================
 % Set MPC parameters:
@@ -12,15 +12,15 @@ arg.model = 0;
 
 Hp = 5;                 % prediction horizon
 Hc = 2;                 % control horizon
-rho = diag(1);          % input weighting matrix
-P = diag(0.05);          % output weighting matrix
+rho = diag(2);          % input weighting matrix
+P = diag(0.05);         % output weighting matrix
 
 %===============================
 % Generate the reference signal:
 %===============================
 
-Sl = 30;                % step length
-r = [5*ones(1,Sl) 0*ones(1,Sl) 5*ones(1,Sl) 0*ones(1,Sl)]';% 5*ones(1,Sl) 0*ones(1,Sl)]';
+Sl = 100;                % step length
+r = [5*ones(1,Sl)]';% 0*ones(1,Sl) 5*ones(1,Sl) 0*ones(1,Sl)]';% 5*ones(1,Sl) 0*ones(1,Sl)]';
 
 %==================
 % Constraints

@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 2500
+  trials: 25000
   steps: 0
   rate: 0
   test_interval: 10
@@ -15,18 +15,18 @@ experiment:
       model: 
         type: model/1dss/car
         mass: 1
-        coulomb: 0.05
+        coulomb: 0.1
         viscous: 1
       task: 
         type: task/1dss/regulator
         start: [0, 0]
         goal: [5, 0]
         stddev: [0, 0]
-        q: [0.1, 0]
+        q: [0.2, 0]
         r: [2]
         function: quadratic
         smoothing: 0.0
-        timeout: 15
+        timeout: 45
       exporter: 
         type: exporter/csv
         file: matlab_mpc_mef
@@ -58,8 +58,8 @@ experiment:
       type: agent/td
       policy: 
         type: mapping/policy/post/noise
-        sigma: [0.0]
-        theta: [1.0]
+        sigma: [0.01]
+        theta: [0.5]
         output_min: experiment/environment/task/action_min
         output_max: experiment/environment/task/action_max
         policy: 

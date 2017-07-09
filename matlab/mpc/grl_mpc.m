@@ -6,11 +6,6 @@ function grl_mpc()
 % Initialize ZeroMQ
 %====================
 
-% javaclasspath('/home/ivan/matlab/3rdparty/jeromq-0.4.3-SNAPSHOT.jar')
-% import org.zeromq.*
-% ctx = zmq.Ctx();
-% socket = ctx.createSocket(ZMQ.REP);
-% socket.bind('tcp://*:7577');
 if count(py.sys.path,'') == 0
     insert(py.sys.path,int32(0),'/home/ivan/work/Project/Software/mpc/');
 end
@@ -31,7 +26,7 @@ P = diag(0.05);          % output weighting matrix
 % Generate the reference signal:
 %===============================
 
-Sl = 30;                % step length
+Sl = 50;                % step length
 r = 5*ones(1,Sl)';
 
 %==================
@@ -52,26 +47,34 @@ dyc =  [-inf inf		%   rate  - first output
 % Define the system matrices:
 %==================
 
-Ts = 0.1;
-tau = 0.1111;
-km = 18.65;
-%G = tf(km,[tau 1 0]);
+% Ts = 0.1;
+% tau = 0.1111;
+% km = 18.65;
 
-% state-space model
-A = [0 1; 0 -1/tau];
-B = [0; km/tau];
+% % state-space model
+% A = [0 1; 0 -1/tau];
+% B = [0; km/tau];
+% C = [1 0];
+% sys = ss(A,B,C,0);
+% sysd = c2d(sys,Ts);
+% A = sysd.A;
+% B = sysd.B;
+% C = sysd.C;
+
+% A car with viscous friction
+Ts = 1;
+m  = 1;
+rr = 1.0;
+ve = exp(-rr*Ts/m);
+A = [1 m*(1-ve)/rr; 0 ve];
+B = [Ts/rr - m*(1-ve)/(rr*rr); (1-ve)/rr];
 C = [1 0];
-sys = ss(A,B,C,0);
-sysd = c2d(sys,Ts);
-A = sysd.A;
-B = sysd.B;
-C = sysd.C;
 
 %====================
 % Call the optimizer:
 %====================
 
-trials = 25;
+trials = 25000;
 test_interval = 10;
 perf = zeros(trials, 1);
 for tt = 1:trials
@@ -102,21 +105,21 @@ y = y(1:size(y,1),:);
 %==================
 % PLOT RESULTS
 %==================
-figure;
-for tt = 1:size(u,2),
-  subplot(size(u,2),1,tt); 
-  [xx,yy] = stairs(Ts*(1:size(u,1)),u(:,tt));
-  plot(xx,yy);
-end;
-
-figure;
-for tt = 1:size(y,2),
-  subplot(size(y,2),1,tt); 
-  [xx,yy] = stairs(Ts*(1:size(y,1)),r(:,tt));
-  plot(xx,yy,'r'); hold on;
-  [xx,yy] = stairs(Ts*(1:size(y,1)),y(:,tt));
-  plot(xx,yy,'b'); hold off;
-end;
+% figure;
+% for tt = 1:size(u,2),
+%   subplot(size(u,2),1,tt); 
+%   [xx,yy] = stairs(Ts*(1:size(u,1)),u(:,tt));
+%   plot(xx,yy);
+% end;
+% 
+% figure;
+% for tt = 1:size(y,2),
+%   subplot(size(y,2),1,tt); 
+%   [xx,yy] = stairs(Ts*(1:size(y,1)),r(:,tt));
+%   plot(xx,yy,'r'); hold on;
+%   [xx,yy] = stairs(Ts*(1:size(y,1)),y(:,tt));
+%   plot(xx,yy,'b'); hold off;
+% end;
 
 % % Simulation
 % sz = size(y) - [1 0];

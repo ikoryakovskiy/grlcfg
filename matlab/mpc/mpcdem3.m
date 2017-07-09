@@ -4,7 +4,7 @@ function perf = mpcdem3()
 %====================
 % Choose model 0 - no friction, 1 - with friction
 %====================
-arg.model = 1; 
+arg.model = 0; 
 
 %====================
 % Set MPC parameters:
