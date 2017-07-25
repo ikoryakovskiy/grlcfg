@@ -27,6 +27,7 @@ experiment:
       sub_sma_state: 
         type: signal/vector
       timer_switch: 1
+      idle_time: 0
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
@@ -42,6 +43,7 @@ experiment:
       continue_after_fall: 1
       gamma: 0
       fixed_arm: 0
+      friction_compensation: 0
     exporter: 
       type: exporter/csv
       file: complex_rbdl_nmpc_squat_fb_sl_vc_ts
@@ -52,6 +54,9 @@ experiment:
       enabled: 1
   agent: 
     type: agent/leo/sma
+    main_steps: 0
+    main_timeout: 30.0
+    test_interval: -1
     action_min: experiment/environment/task/action_min
     action_max: experiment/environment/task/action_max
     agent_prepare: 
@@ -89,9 +94,9 @@ experiment:
         lua_model: leo_fb_sl.lua
         model_name: nmpc_leo_squat_fb_sl_vc
         nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+        ninit: 50
         feedback: non-threaded
         n_iter: 1
-    main_timeout: 30.0
     upright_trigger: 
       type: trigger
       min: []

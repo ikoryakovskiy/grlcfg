@@ -43,6 +43,7 @@ experiment:
       sub_sma_state: 
         type: signal/vector
       timer_switch: 1
+      idle_time: 0
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
@@ -58,6 +59,7 @@ experiment:
       continue_after_fall: 1
       gamma: 0
       fixed_arm: 0
+      friction_compensation: 1
     exporter: 
       type: exporter/csv
       file: complex_leo_nmpc_squat_fb_sl_vc_ts
