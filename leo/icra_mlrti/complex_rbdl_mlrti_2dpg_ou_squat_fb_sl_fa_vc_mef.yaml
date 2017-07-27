@@ -64,7 +64,7 @@ experiment:
     type: agent/leo/sma
     environment: experiment/environment
     main_steps: 200000
-    main_timeout: 10.0
+    main_timeout: 15.0
     test_interval: 10
     output: complex_rbdl_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef_main
     action_min: experiment/environment/task/action_min
@@ -81,7 +81,7 @@ experiment:
             type: mapping/policy/parameterized/pid
             setpoint: [1.1, -2.13, 1.27, 0, 0, 0, 0, 0]
             outputs: experiment/environment/task/action_dims
-            p: [40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0]
+            p: [45, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0]
             i: []
             d: []
             il: []
@@ -97,7 +97,7 @@ experiment:
             type: mapping/policy/parameterized/pid
             setpoint: [1.1, -2.13, 1.27, 0, 0, 0, 0, 0]
             outputs: experiment/environment/task/action_dims
-            p: [10, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0]
+            p: [12, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0]
             i: []
             d: []
             il: []

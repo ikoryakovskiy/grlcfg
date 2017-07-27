@@ -267,5 +267,4 @@ experiment:
       max: [1]
       delay: 3
     pub_sma_state: experiment/environment/model/sub_sma_state
-  load_file: 2017_07_04_exp_3
   save_every: never
