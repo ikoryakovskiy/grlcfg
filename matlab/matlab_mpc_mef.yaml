@@ -10,7 +10,7 @@ experiment:
     type: environment/post/mef
     sub_nominal_action: 
       type: signal/vector
-    weights: [ 10.0, 1.0 ]
+    weights: [ 10.0, 0.0 ]
     environment: 
       type: environment/modeled
       model: 
@@ -23,7 +23,7 @@ experiment:
         type: task/1dss/regulator
         start: [0, 0]
         goal: [3.14159265359, 0]
-        stddev: [0.01, 0.01]
+        stddev: [0.1, 0.1]
         q: [1, 0]
         r: [10]
         function: quadratic
@@ -88,10 +88,10 @@ experiment:
             output_max: [0.5]
       predictor: 
         type: predictor/dpg
-        alpha: 0.1
+        alpha: 0.02
         beta_v: 0.2
-        beta_a: 0.1
-        gamma: 0.99
+        beta_a: 0.02
+        gamma: 0.97
         lambda: 0.65
         projector: experiment/agent/agent2/policy/policy/projector
         critic_representation: 
