@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 10000
+  trials: 60000
   steps: 0
   rate: 0
   test_interval: 10
@@ -10,24 +10,25 @@ experiment:
     type: environment/post/mef
     sub_nominal_action: 
       type: signal/vector
+    weights: [ 10.0, 1.0 ]
     environment: 
       type: environment/modeled
       model: 
         type: model/1dss/generic
-        control_step: 0.1
-        coulomb: 0.3
-        A: [1.0, 0.0659, 0, 0.4065]
-        B: [0.6353, 11.0682]
+        control_step: 0.01
+        coulomb: 0.1
+        A: [1.0, 0.009563159243439, 0, 0.913922959104962]
+        B: [0.008147080109868, 1.60533681269246]
       task: 
         type: task/1dss/regulator
         start: [0, 0]
-        goal: [5, 0]
-        stddev: [0, 0]
-        q: [0.1, 0]
-        r: [4]
+        goal: [3.14159265359, 0]
+        stddev: [0.01, 0.01]
+        q: [1, 0]
+        r: [10]
         function: quadratic
         smoothing: 0.0
-        timeout: 2.5
+        timeout: 0.9
       exporter: 
         type: exporter/csv
         file: matlab_mpc_mef
@@ -51,6 +52,7 @@ experiment:
         type: communicator/zeromq/request_reply
         role: ZMQ_REQ
         addr: tcp://localhost:5557
+        recvtimeo: -1
       observation_dims: experiment/environment/task/observation_dims
       action_dims: experiment/environment/task/action_dims
       action_min: experiment/environment/task/action_min
@@ -60,10 +62,10 @@ experiment:
       type: agent/td
       policy: 
         type: mapping/policy/post/noise
-        sigma: [0.001]
-        theta: [0.5]
-        output_min: experiment/environment/task/action_min
-        output_max: experiment/environment/task/action_max
+        sigma: 0.1
+        theta: 0.5
+        output_min: [-0.5]
+        output_max: [0.5]
         policy: 
           type: mapping/policy/action
           sigma: []
@@ -71,25 +73,25 @@ experiment:
           output_max: experiment/environment/task/action_max
           projector: 
             type: projector/tile_coding
-            tilings: 16
+            tilings: 1
             memory: 16777216
             safe: 1
-            resolution: [0.1, 1]
+            resolution: [0.05, 0.01]
             wrapping: [0, 0]
           representation: 
             type: representation/parameterized/linear
-            init_min: [0]
-            init_max: [0]
+            init_min: [0.0]
+            init_max: [0.0]
             memory: experiment/agent/agent2/policy/policy/projector/memory
             outputs: experiment/environment/task/action_dims
-            output_min: experiment/environment/task/action_min
-            output_max: experiment/environment/task/action_max
+            output_min: [-0.5]
+            output_max: [0.5]
       predictor: 
         type: predictor/dpg
-        alpha: 0.02
+        alpha: 0.1
         beta_v: 0.2
-        beta_a: 0.02
-        gamma: 0.97
+        beta_a: 0.1
+        gamma: 0.99
         lambda: 0.65
         projector: experiment/agent/agent2/policy/policy/projector
         critic_representation: 
@@ -129,8 +131,8 @@ experiment:
       policy: 
         type: mapping/policy/action
         sigma: []
-        output_min: experiment/environment/task/action_min
-        output_max: experiment/environment/task/action_max
+        output_min: [-0.5]
+        output_max: [0.5]
         projector: experiment/agent/agent2/policy/policy/projector
         representation: experiment/agent/agent2/policy/policy/representation
     pub_action1: experiment/environment/sub_nominal_action

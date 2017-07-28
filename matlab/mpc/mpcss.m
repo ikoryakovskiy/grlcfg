@@ -1,4 +1,4 @@
-function [u,y,x] = mpcss(A,B,C,x,u,r,Hp,Hc,P,rho,uc,duc,yc,dyc, arg)
+function [u,y,x,f] = mpcss(A,B,C,x,u,r,Hp,Hc,P,rho,uc,duc,yc,dyc, arg)
 % MPCSS model-based predictive control in MIMO state-space form
 %        for the time being, only deterministic model
 %
@@ -215,9 +215,8 @@ H = 2*(Ru'*P*Ru + rho);
 %==================
 
 uu = u(:,1);
-Url = u(:,1);
 
-%B = B / 1.0;
+f = zeros(size(u));
 
 for k=1:size(r,1)-Hp+1
 
@@ -270,7 +269,8 @@ for k=1:size(r,1)-Hp+1
     uf  = u(:,k);
 
     if arg.model == 1 % real system
-        uf = uf - friction(x(2,k), uf, 0.3);
+        f(:, k) = friction_new(x(2,k), uf, 0.3);
+        uf = uf - f(:, k);
     end
 
     x(:,k+1) = A*x(:,k)+B*uf;
@@ -280,21 +280,47 @@ for k=1:size(r,1)-Hp+1
     ye(:, k+1) = y(:,k+1);
 
 end;
-u = u'; x = x'; y = y';
+u = u'; x = x'; y = y'; f = f';
 end
 
 
 function F = friction(xd, uc, kc)
 
-zero_tolerance = 1E-11;
+    zero_tolerance = 1E-11;
+    
+    if (xd > zero_tolerance || (abs(xd) <= zero_tolerance && uc > kc))
+        F = kc;
+    elseif (xd < -zero_tolerance || (abs(xd) <= zero_tolerance && uc < -kc))
+        F = -kc;
+    elseif (abs(xd) <= zero_tolerance && abs(uc) <= kc)
+        F = uc;
+    else
+        error('unexpected condition');
+    end
+    
+end
 
-if (xd > zero_tolerance || (abs(xd) <= zero_tolerance && uc > kc))
-    F = kc;
-elseif (xd < -zero_tolerance || (abs(xd) <= zero_tolerance && uc < -kc))
-    F = -kc;
-elseif (abs(xd) <= zero_tolerance && abs(uc) <= kc)
-    F = uc;
-else
-    error('unexpected condition');
+
+function F = friction_new(xd, uc, kc)
+
+    zero_tolerance = 1E-11;
+
+    ridge = 0.1;
+    if (abs(xd) < ridge)
+        alpha = abs(xd)/ridge;
+    else
+        alpha = 1;
+    end
+    
+    if (xd > zero_tolerance || (abs(xd) <= zero_tolerance && uc > kc))
+        F = kc*alpha;
+    elseif (xd < -zero_tolerance || (abs(xd) <= zero_tolerance && uc < -kc))
+        F = -kc*alpha;
+    elseif (abs(xd) <= zero_tolerance && abs(uc) <= kc)
+        F = uc;
+    else
+        error('unexpected condition');
+    end
+    
 end
-end
+
