@@ -16,7 +16,7 @@ experiment:
       model: 
         type: model/1dss/generic
         control_step: 0.01
-        coulomb: 0.1
+        coulomb: 0.5
         A: [1.0, 0.009563159243439, 0, 0.913922959104962]
         B: [0.008147080109868, 1.60533681269246]
       task: 
