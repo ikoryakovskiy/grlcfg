@@ -15,14 +15,14 @@ arg.model = 1;
 Hp = 30;                 % prediction horizon
 Hc = 2;                 % control horizon
 P = diag(1);         % output (state) weighting matrix
-rho = diag(1);        % input (control) weighting matrix
+rho = diag(10);        % input (control) weighting matrix
 
 
 %===============================
 % Generate the reference signal:
 %===============================
 
-Sl = 120;                % step length
+Sl = 1200;                % step length
 r = pi * ones(Sl, 1);
 
 %==================
@@ -34,7 +34,7 @@ uc  =  [-inf inf		%   level - first input
 duc =  [-inf inf		% -0.1 0.1		%   rate  - first input
         ];	%   rate  - second input
 
-yc  =  [-10 10		%   level - first output
+yc  =  [-inf inf		%   level - first output
         ];	%   level - first output
 dyc =  [-inf inf		%   rate  - first output
         ];	%   rate  - first output
@@ -58,7 +58,7 @@ A = sysd.A;
 B = sysd.B;
 C = sysd.C;
 
-x0 = [0 0.0001]';        % initial state
+x0 = [0 0]';        % initial state
 u0 = [0]';		    % intial control input (required for rate constraints)
 
 %====================

@@ -1,4 +1,4 @@
-function grl_mpc()
+function grl_mpc(varargin)
 % MPCSS doing steps using zmq communication to environment
 
 close all
@@ -7,11 +7,16 @@ close all
 % Initialize ZeroMQ
 %====================
 
-if count(py.sys.path,'') == 0
-    insert(py.sys.path,int32(0),'/home/ivan/work/Project/Software/mpc/');
+% if count(py.sys.path,'') == 0
+%     insert(py.sys.path,int32(0),'/home/ivan/work/Project/Software/mpc/');
+% end
+
+port = '5557';
+if nargin == 1
+    port = num2str(varargin{1});
 end
 
-socket = py.pyzmq.bind(); % do not block receive
+socket = py.pyzmq.bind(port); % do not block receive
 
 
 %====================
