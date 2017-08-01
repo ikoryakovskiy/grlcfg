@@ -305,7 +305,7 @@ function F = friction_new(xd, uc, kc)
 
     zero_tolerance = 1E-11;
 
-    ridge = 0.025;
+    ridge = 0.1;
     if (abs(xd) < ridge)
         alpha = abs(xd)/ridge;
     else
