@@ -23,17 +23,17 @@ socket = py.pyzmq.bind(port); % do not block receive
 % Set MPC parameters:
 %====================
 
-Hp = 30;                 % prediction horizon
+Hp = 100;                 % prediction horizon
 Hc = 2;                 % control horizon
 P = diag(1);         % output (state) weighting matrix
-rho = diag(10);        % input (control) weighting matrix
+rho = diag(5);        % input (control) weighting matrix
 
 
 %===============================
 % Generate the reference signal:
 %===============================
 
-Sl = 120;                % step length
+Sl = 500;                % step length
 r = pi * ones(Sl, 1);
 
 %==================
@@ -54,7 +54,7 @@ dyc =  [-inf inf		%   rate  - first output
 % Define the system matrices:
 %==================
 
-Ts = 0.01;
+Ts = 0.002;
 tau = 0.1111;
 km = 18.65;
 
@@ -81,7 +81,7 @@ C = sysd.C;
 % Call the optimizer:
 %====================
 
-trials = 60000;
+trials = 50000;
 test_interval = 10;
 perf = zeros(trials, 1);
 for tt = 1:trials
@@ -92,13 +92,13 @@ for tt = 1:trials
     % run single episode
     [u,y,x, Url] = grl_mpcss(A,B,C,x0,u0,r(2:length(r),:),Hp,Hc,P,rho,uc,duc,yc,dyc, socket);
     
-    rr = r(1:size(y,1),:);
-    perf(tt) = sum(sum(sqrt((rr-y)*P.*(rr-y)))); % do not account for action since matlab does not know the actual one applied to the system
-    if mod(tt-1, test_interval+1) == test_interval
-        disp(['> ' num2str(perf(tt))])
-    else
-        disp(perf(tt))
-    end
+%     rr = r(1:size(y,1),:);
+%     perf(tt) = sum(sum(sqrt((rr-y)*P.*(rr-y)))); % do not account for action since matlab does not know the actual one applied to the system
+%     if mod(tt-1, test_interval+1) == test_interval
+%         disp(['> ' num2str(perf(tt))])
+%     else
+%         disp(perf(tt))
+%     end
 end
 
 disp(perf)

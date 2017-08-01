@@ -269,7 +269,7 @@ for k=1:size(r,1)-Hp+1
     uf  = u(:,k);
 
     if arg.model == 1 % real system
-        f(:, k) = friction_new(x(2,k), uf, 0.4);
+        f(:, k) = friction_new(x(2,k), uf, 0.5);
         uf = uf - f(:, k);
     end
 
@@ -305,7 +305,7 @@ function F = friction_new(xd, uc, kc)
 
     zero_tolerance = 1E-11;
 
-    ridge = 0.001;
+    ridge = 0.025;
     if (abs(xd) < ridge)
         alpha = abs(xd)/ridge;
     else
