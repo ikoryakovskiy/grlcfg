@@ -12,17 +12,17 @@ arg.model = 1;
 % Set MPC parameters:
 %====================
 
-Hp = 100;                 % prediction horizon
+Hp = 30;                 % prediction horizon
 Hc = 2;                 % control horizon
 P = diag(1);         % output (state) weighting matrix
-rho = diag(5);        % input (control) weighting matrix
+rho = diag(1);        % input (control) weighting matrix
 
 
 %===============================
 % Generate the reference signal:
 %===============================
 
-Sl = 500;                % step length
+Sl = 430;                % step length
 r = pi * ones(Sl, 1);
 
 %==================
