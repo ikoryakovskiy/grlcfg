@@ -1,10 +1,10 @@
 experiment: 
-  type: experiment/online_learning
+  type: experiment/leo/online_learning/squatting
   runs: 1
   trials: 0
   steps: 500000
   rate: 33.333
-  test_interval: 10
+  test_interval: 11
   output: rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef
   environment: 
     type: environment/sandbox
@@ -15,7 +15,7 @@ experiment:
       target_dof: 4
       dynamics: 
         type: dynamics/rbdl
-        file: leo_vc/leo_fb_sl.lua
+        file: leo_vc/leo_fb_sl_real.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       true_model: 
@@ -54,22 +54,15 @@ experiment:
     agent1:
       type: agent/fixed
       policy:
-        type: mapping/policy/post/lowpass
-        order: 1
-        sampling: 33.333333333
-        cutoff: 5
-        action_dims: experiment/environment/task/action_dims
-        magnitude: [1, 0, 0, 0]
-        policy:
-          type: mapping/policy/nmpc_mlrti
-          verbose: 0
-          initFeedback: 1
-          action_min: experiment/environment/task/action_min
-          action_max: experiment/environment/task/action_max
-          lua_model: leo_fb_sl.lua
-          model_name: nmpc_leo_squat_fb_sl_vc
-          nmpc_model_name: nmpc_leo_squat_fb_sl_vc
-          ninit: 0
+        type: mapping/policy/nmpc_mlrti
+        verbose: 0
+        initFeedback: 1
+        action_min: experiment/environment/task/action_min
+        action_max: experiment/environment/task/action_max
+        lua_model: leo_fb_sl.lua
+        model_name: nmpc_leo_squat_fb_sl_vc
+        nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+        ninit: 0
     agent2: 
       type: agent/master/selective
       agent1: 
@@ -106,9 +99,9 @@ experiment:
                 output_max: experiment/environment/task/action_max
           predictor: 
             type: predictor/dpg
-            alpha: 0.5
-            beta_v: 1.0
-            beta_a: 0.05
+            alpha: 0.06
+            beta_v: 0.1
+            beta_a: 0.01
             gamma: experiment/environment/task/gamma
             lambda: 0.65
             projector: experiment/agent/agent2/agent1/agent/policy/policy/projector

@@ -1,10 +1,10 @@
 experiment: 
-  type: experiment/online_learning
+  type: experiment/leo/online_learning/squatting
   runs: 1
   trials: 0
   steps: 500000
   rate: 33.333
-  test_interval: 10
+  test_interval: 11
   output: rbdl_mlrti_2dpg_squat_fb_sl_vc_mef
   environment: 
     type: environment/sandbox

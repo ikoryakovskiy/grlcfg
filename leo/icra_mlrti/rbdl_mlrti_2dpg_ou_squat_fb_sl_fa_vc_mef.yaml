@@ -106,7 +106,7 @@ experiment:
                 output_max: experiment/environment/task/action_max
           predictor: 
             type: predictor/dpg
-            alpha: 0.05
+            alpha: 0.06
             beta_v: 0.1
             beta_a: 0.01
             gamma: experiment/environment/task/gamma
