@@ -2,6 +2,7 @@ function grl_mpc(varargin)
 % MPCSS doing steps using zmq communication to environment
 
 close all
+%warning off
 
 maxNumCompThreads(3)
 
@@ -92,7 +93,7 @@ for tt = 1:trials
     u0 = [0]';		    % intial control input (required for rate constraints)
     
     % run single episode
-    [u,y,x, Url] = grl_mpcss(A,B,C,x0,u0,r(2:length(r),:),Hp,Hc,P,rho,uc,duc,yc,dyc, socket);
+    [u,y,x] = grl_mpcss(A,B,C,x0,u0,r(2:length(r),:),Hp,Hc,P,rho,uc,duc,yc,dyc, socket);
     
 %     rr = r(1:size(y,1),:);
 %     perf(tt) = sum(sum(sqrt((rr-y)*P.*(rr-y)))); % do not account for action since matlab does not know the actual one applied to the system
