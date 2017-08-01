@@ -64,8 +64,8 @@ experiment:
         type: mapping/policy/post/noise
         sigma: 0.1
         theta: 0.5
-        output_min: [-0.5]
-        output_max: [0.5]
+        output_min: [-1.0]
+        output_max: [1.0]
         policy: 
           type: mapping/policy/action
           sigma: []
@@ -84,13 +84,13 @@ experiment:
             init_max: [0.0]
             memory: experiment/agent/agent2/policy/policy/projector/memory
             outputs: experiment/environment/task/action_dims
-            output_min: [-0.5]
-            output_max: [0.5]
+            output_min: [-1.0]
+            output_max: [1.0]
       predictor: 
         type: predictor/dpg
-        alpha: 0.02
-        beta_v: 0.2
-        beta_a: 0.02
+        alpha: 0.002
+        beta_v: 0.02
+        beta_a: 0.002
         gamma: 0.97
         lambda: 0.65
         projector: experiment/agent/agent2/policy/policy/projector
@@ -131,8 +131,8 @@ experiment:
       policy: 
         type: mapping/policy/action
         sigma: []
-        output_min: [-0.5]
-        output_max: [0.5]
+        output_min: [-1.0]
+        output_max: [1.0]
         projector: experiment/agent/agent2/policy/policy/projector
         representation: experiment/agent/agent2/policy/policy/representation
     pub_action1: experiment/environment/sub_nominal_action

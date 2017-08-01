@@ -42,7 +42,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(3)
+    runs = range(5)
 
     # Main
     options = []
@@ -102,7 +102,7 @@ def mp_run(cfg):
     # Thus we need to wait for a second or so between runs
     global cores
     with counter_lock:
-        wait = cores.value*random.random()
+        wait = 3*cores.value*random.random()
     sleep(wait)
     print 'wait finished {0}'.format(wait)
 
