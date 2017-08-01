@@ -3,6 +3,8 @@ function grl_mpc(varargin)
 
 close all
 
+maxNumCompThreads(3)
+
 %====================
 % Initialize ZeroMQ
 %====================

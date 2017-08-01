@@ -42,7 +42,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(5)
+    runs = range(3)
 
     # Main
     options = []
