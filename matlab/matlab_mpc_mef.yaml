@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 50000
+  trials: 60000
   steps: 0
   rate: 0
   test_interval: 10

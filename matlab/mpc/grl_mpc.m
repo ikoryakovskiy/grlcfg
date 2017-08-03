@@ -4,7 +4,7 @@ function grl_mpc(varargin)
 close all
 %warning off
 
-maxNumCompThreads(3)
+maxNumCompThreads(4)
 
 %====================
 % Initialize ZeroMQ
@@ -84,7 +84,7 @@ C = sysd.C;
 % Call the optimizer:
 %====================
 
-trials = 50000;
+trials = 60000;
 test_interval = 10;
 perf = zeros(trials, 1);
 for tt = 1:trials

@@ -109,9 +109,7 @@ def mp_run(cfg):
     print 'running {} ====== {}'.format('./grld {}'.format(cfg[0]), ['{}/cfg/matlab/mpc/run_matlab_grl.sh'.format(os.getcwd()), 'grl_mpc {}'.format(cfg[1])])
     # Run the experiment
     p1 = subprocess.Popen(['./grld', cfg[0]])
-    print "OK1"
     p2 = subprocess.Popen(['{}/cfg/matlab/mpc/run_matlab_grl.sh'.format(os.getcwd()), 'grl_mpc {}'.format(cfg[1])], cwd='{}/cfg/matlab/mpc'.format(os.getcwd()))
-    print "OK2"
     exit_codes = [p.wait() for p in p1, p2]
 
     if not any(exit_codes) == 0:
