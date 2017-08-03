@@ -22,7 +22,7 @@ rho = diag(1);        % input (control) weighting matrix
 % Generate the reference signal:
 %===============================
 
-Sl = 430;                % step length
+Sl = 830;                % step length
 r = pi * ones(Sl, 1);
 
 %==================

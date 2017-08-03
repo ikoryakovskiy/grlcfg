@@ -269,7 +269,7 @@ for k=1:size(r,1)-Hp+1
     uf  = u(:,k);
 
     if arg.model == 1 % real system
-        f(:, k) = friction_new(x(2,k), uf, 0.5);
+        f(:, k) = friction_tanh(x(2,k), uf, 0.5);
         uf = uf - f(:, k);
     end
 
@@ -311,6 +311,25 @@ function F = friction_new(xd, uc, kc)
     else
         alpha = 1;
     end
+    
+    if (xd > zero_tolerance || (abs(xd) <= zero_tolerance && uc > kc))
+        F = kc*alpha;
+    elseif (xd < -zero_tolerance || (abs(xd) <= zero_tolerance && uc < -kc))
+        F = -kc*alpha;
+    elseif (abs(xd) <= zero_tolerance && abs(uc) <= kc)
+        F = uc;
+    else
+        error('unexpected condition');
+    end
+    
+end
+
+function F = friction_tanh(xd, uc, kc)
+
+    zero_tolerance = 1E-11;
+
+    ridge = 2000;
+    alpha = tanh(ridge*xd);
     
     if (xd > zero_tolerance || (abs(xd) <= zero_tolerance && uc > kc))
         F = kc*alpha;
