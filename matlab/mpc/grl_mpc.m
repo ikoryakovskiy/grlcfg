@@ -84,7 +84,7 @@ C = sysd.C;
 % Call the optimizer:
 %====================
 
-trials = 60000;
+trials = 180000;
 test_interval = 10;
 perf = zeros(trials, 1);
 for tt = 1:trials

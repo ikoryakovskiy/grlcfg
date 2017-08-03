@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 60000
+  trials: 180000
   steps: 0
   rate: 0
   test_interval: 10
@@ -33,7 +33,7 @@ experiment:
         type: exporter/csv
         file: matlab_mpc_mef
         style: meshup
-        variant: all
+        variant: test
         precision: 6
         enabled: 1
     state: experiment/environment/environment/state
@@ -114,13 +114,6 @@ experiment:
           output_max: []
         actor_representation: experiment/agent/agent2/policy/policy/representation
     pub_action1: experiment/environment/sub_nominal_action
-    exporter: 
-      type: exporter/csv
-      file: matlab_mpc_mef_elements
-      style: meshup
-      variant: learn
-      precision: 6
-      enabled: 1
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
   test_agent: 
