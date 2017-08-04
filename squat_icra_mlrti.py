@@ -47,9 +47,9 @@ def main():
     weight_nmpc_aux = [1]
     weight_nmpc_qd = [1.0]
     weight_shaping = [0]
-    sim_filtered = [0, 1] # 0 - simulate normal, 1 - simulated filtered velocities
+    sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97]
-    model_types = [0, 1] # 0 -ideal, 1 - real
+    model_types = [1] # 0 -ideal, 1 - real
 
     #gamma = [0.0, 0.4, 0.8]
     #model_types = [1] # 0 -ideal, 1 - real
@@ -119,7 +119,7 @@ def rl_run_param1(args, list_of_cfgs, options):
 
             # modify options
             conf['experiment']['steps'] = 100000
-            conf['experiment']['test_interval'] = 10
+            conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
@@ -170,7 +170,7 @@ def rl_run_param2(args, list_of_cfgs, options):
 
             # modify options
             conf['experiment']['steps'] = 100000
-            conf['experiment']['test_interval'] = 10
+            conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
             conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]

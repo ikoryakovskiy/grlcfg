@@ -1,10 +1,10 @@
 experiment: 
-  type: experiment/online_learning
+  type: experiment/leo/online_learning/squatting
   runs: 1
   trials: 0
   steps: 1000000
   rate: 0
-  test_interval: 10
+  test_interval: 0
   output: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef
   environment: 
     type: environment/sandbox
@@ -15,7 +15,7 @@ experiment:
       target_dof: 4
       dynamics: 
         type: dynamics/rbdl
-        file: leo_vc/leo_fb_sl.lua
+        file: leo_vc/leo_fb_sl_real.lua
         points: tip_left, heel_left, root
         auxiliary: mm, com, comv, am
       true_model: 
@@ -34,9 +34,10 @@ experiment:
       sub_true_action: 
         type: signal/vector
       timer_switch: 0
+      idle_time: 0
     task: 
       type: task/leo_squatting
-      timeout: 10
+      timeout: 15
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1.0
@@ -48,6 +49,9 @@ experiment:
       continue_after_fall: 0
       gamma: 0.97
       fixed_arm: 0
+      lower_height: experiment/environment/model/lower_height
+      upper_height: experiment/environment/model/upper_height
+      friction_compensation: 0
   agent: 
     type: agent/master/sequential/additive
     agent1: 
@@ -68,14 +72,14 @@ experiment:
       type: agent/master/selective
       agent1: 
         type: agent/sub/compartmentalized
-        min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.34]
-        max: [100, 100, 100, 100, 100, 100, 100, 100, 0.36]
+        min: [-100, -100, -100, -100, -100, -100, -100, -100, -100, 0.34]
+        max: [100, 100, 100, 100, 100, 100, 100, 100, 100, 0.36]
         agent: 
           type: agent/td
           policy: 
             type: mapping/policy/post/noise
-            sigma: [0.005]
-            theta: [0.5]
+            sigma: [0.01]
+            theta: [0.1]
             output_min: experiment/environment/task/action_min
             output_max: experiment/environment/task/action_max
             policy: 
@@ -86,10 +90,10 @@ experiment:
               projector: 
                 type: projector/tile_coding
                 tilings: 16
-                memory: 25165824
+                memory: 8388608
                 safe: 1
-                resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 0.01]
-                wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                resolution: [0.28, 0.28, 0.28, 0.28, 10, 10, 10, 10, 10, 0.01]
+                wrapping: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
               representation: 
                 type: representation/parameterized/linear
                 init_min: [0]
@@ -100,7 +104,7 @@ experiment:
                 output_max: experiment/environment/task/action_max
           predictor: 
             type: predictor/dpg
-            alpha: 0.01
+            alpha: 0.06
             beta_v: 0.1
             beta_a: 0.01
             gamma: experiment/environment/task/gamma
@@ -127,8 +131,8 @@ experiment:
             actor_representation: experiment/agent/agent2/agent1/agent/policy/policy/representation
       agent2: 
         type: agent/sub/compartmentalized
-        min: [-100, -100, -100, -100, -100, -100, -100, -100, 0.27]
-        max: [100, 100, 100, 100, 100, 100, 100, 100, 0.29]
+        min: [-100, -100, -100, -100, -100, -100, -100, -100, -100, 0.27]
+        max: [100, 100, 100, 100, 100, 100, 100, 100, 100, 0.29]
         agent: experiment/agent/agent2/agent1/agent
     pub_action1: experiment/environment/model/sub_true_action
     output_min: experiment/environment/task/action_min

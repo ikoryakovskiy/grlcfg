@@ -4,7 +4,7 @@ experiment:
   trials: 0
   steps: 500000
   rate: 33.333
-  test_interval: 11
+  test_interval: 10
   output: rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef
   environment: 
     type: environment/sandbox
@@ -30,14 +30,14 @@ experiment:
       upper_height: 0.35
       precision: [0.01, 0.01]
       mode: vc
-      sim_filtered: 1
+      sim_filtered: 0
       sub_true_action: 
         type: signal/vector
       timer_switch: 0
       idle_time: 0
     task: 
       type: task/leo_squatting
-      timeout: 10
+      timeout: 15
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1.0
@@ -49,11 +49,14 @@ experiment:
       continue_after_fall: 0
       gamma: 0.97
       fixed_arm: 0
+      lower_height: experiment/environment/model/lower_height
+      upper_height: experiment/environment/model/upper_height
+      friction_compensation: 0
   agent: 
     type: agent/master/sequential/additive
-    agent1:
+    agent1: 
       type: agent/fixed
-      policy:
+      policy: 
         type: mapping/policy/nmpc_mlrti
         verbose: 0
         initFeedback: 1
