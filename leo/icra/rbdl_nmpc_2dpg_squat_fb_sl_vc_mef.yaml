@@ -1,5 +1,5 @@
 experiment: 
-  type: experiment/online_learning
+  type: experiment/leo/online_learning/squatting
   runs: 1
   trials: 0
   steps: 1000000
