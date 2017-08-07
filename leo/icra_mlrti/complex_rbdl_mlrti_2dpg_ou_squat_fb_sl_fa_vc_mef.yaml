@@ -30,7 +30,7 @@ experiment:
       upper_height: 0.35
       precision: [0.01, 0.01]
       mode: vc
-      sim_filtered: 1
+      sim_filtered: 0
       sub_true_action: 
         type: signal/vector
       sub_sma_state: 
@@ -147,7 +147,7 @@ experiment:
             policy: 
               type: mapping/policy/post/noise
               sigma: [0.01]
-              theta: [0.1]
+              theta: [0.01]
               output_min: experiment/environment/task/action_min
               output_max: experiment/environment/task/action_max
               policy: 

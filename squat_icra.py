@@ -64,11 +64,11 @@ def main():
 #                "leo/icra/rbdl_nmpc_2ac_tc_squat_fb_sl_vc.yaml",
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc.yaml",
-                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml",
+#                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml",
                 "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc.yaml",
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef.yaml",
-                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
+#                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
                 "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
               ]
 
@@ -83,7 +83,7 @@ def main():
 
     configs = [
                 #"leo/icra/rbdl_nmpc_dpg_squat_fb_sl_fa_vc_mef.yaml",
-                "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_vc_mef.yaml",
+#                "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_vc_mef.yaml",
                 "leo/icra/rbdl_nmpc_dpg_ou_squat_fb_sl_vc_mef.yaml",
               ]
 

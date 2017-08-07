@@ -72,8 +72,8 @@ experiment:
       type: agent/td
       policy: 
         type: mapping/policy/post/noise
-        sigma: [0.01]
-        theta: [0.1]
+        sigma: [0.005]
+        theta: [0.05]
         output_min: experiment/environment/task/action_min
         output_max: experiment/environment/task/action_max
         policy: 
@@ -98,7 +98,7 @@ experiment:
             output_max: experiment/environment/task/action_max
       predictor: 
         type: predictor/dpg
-        alpha: 0.06
+        alpha: 0.01
         beta_v: 0.1
         beta_a: 0.01
         gamma: experiment/environment/task/gamma
