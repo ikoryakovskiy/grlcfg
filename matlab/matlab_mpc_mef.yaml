@@ -1,7 +1,7 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 180000
+  trials: 50000
   steps: 0
   rate: 0
   test_interval: 10
@@ -10,7 +10,7 @@ experiment:
     type: environment/post/mef
     sub_nominal_action: 
       type: signal/vector
-    weights: [ 10.0, 0.0 ]
+    weights: [ 1.0, 0.0 ]
     environment: 
       type: environment/modeled
       model: 
@@ -76,7 +76,7 @@ experiment:
             tilings: 16
             memory: 16777216
             safe: 1
-            resolution: [0.5, 0.1]
+            resolution: [1.0, 0.5]
             wrapping: [0, 0]
           representation: 
             type: representation/parameterized/linear
@@ -88,9 +88,9 @@ experiment:
             output_max: [1.0]
       predictor: 
         type: predictor/dpg
-        alpha: 0.002
-        beta_v: 0.02
-        beta_a: 0.002
+        alpha: 0.05
+        beta_v: 0.1
+        beta_a: 0.01
         gamma: 0.97
         lambda: 0.65
         projector: experiment/agent/agent2/policy/policy/projector
@@ -138,4 +138,4 @@ experiment:
       enabled: 1
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  save_every: never
+  save_every: run
