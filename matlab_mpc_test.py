@@ -15,7 +15,7 @@ from datetime import datetime
 import subprocess
 
 counter_lock = multiprocessing.Lock()
-cores = 0;
+cores = 0
 random.seed(datetime.now())
 
 def flatten(x):
@@ -83,9 +83,10 @@ def rl_run(args, list_of_cfgs, options):
             #conf['experiment']['trials'] = 1
             conf['experiment']['output'] = "{}-mp{}".format(fname, o[-1])
             conf['experiment']['environment']['environment']['exporter']['file'] = "{}{}".format(fname, str_o)
-            conf['experiment']['agent']['exporter']['file'] = "{}_elements{}".format(fname, str_o)
+            #conf['experiment']['agent']['exporter']['file'] = "{}_elements{}".format(fname, str_o)
             conf['experiment']['test_agent']['exporter']['file'] = "{}_elements{}".format(fname, str_o)
             conf['experiment']['agent']['agent1']['communicator']['addr'] = "tcp://localhost:{}".format(port)
+            conf['experiment']['load_file'] = "matlab_matlab_mpc_mef-mp{}-run0".format(o[-1])
 
             conf = remove_viz(conf)
             write_cfg(list_of_new_cfgs[-1][0], conf)
@@ -100,9 +101,11 @@ def rl_run(args, list_of_cfgs, options):
 def mp_run(cfg):
     # Multiple copies can be run on one computer at the same time, which results in the same seed for a random generator.
     # Thus we need to wait for a second or so between runs
+    global counter
     global cores
     with counter_lock:
-        wait = 3*cores.value*random.random()
+        wait = counter.value
+        counter.value += 1
     sleep(wait)
     print 'wait finished {0}'.format(wait)
 
@@ -122,17 +125,20 @@ def mp_run(cfg):
             f.close()
 
 ######################################################################################
-def init(num):
+def init(cnt, num):
     ''' store the counter for later use '''
+    global counter
     global cores
+    counter = cnt
     cores = num
 
 ######################################################################################
 def do_multiprocessing_pool(args, list_of_new_cfgs):
     """Do multiprocesing"""
+    counter = multiprocessing.Value('i', 0)
     cores = multiprocessing.Value('i', args.cores)
     print 'cores {0}'.format(cores.value)
-    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (cores,))
+    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (counter, cores))
     pool.map(mp_run, list_of_new_cfgs)
     pool.close()
 ######################################################################################
