@@ -133,7 +133,7 @@ def rl_run_param1(args, list_of_cfgs, options):
             if o[7] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
             else:
-                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
@@ -205,7 +205,7 @@ def mp_run(cfg):
     global cores
     with counter_lock:
         wait = counter.value
-        counter.value += 1
+        counter.value += 2
     sleep(wait)
     print 'wait finished {0}'.format(wait)
     # Run the experiment

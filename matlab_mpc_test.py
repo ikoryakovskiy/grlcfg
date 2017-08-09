@@ -105,7 +105,7 @@ def mp_run(cfg):
     global cores
     with counter_lock:
         wait = counter.value
-        counter.value += 1
+        counter.value += 5
     sleep(wait)
     print 'wait finished {0}'.format(wait)
 
