@@ -14,6 +14,7 @@ import pdb
 from butterworth import bw_tustin
 
 sys.path.append('/home/ivan/work/scripts/py')
+sys.path.append('/home/ikoryakovskiy/musgrl/grl/qt-build/brl/py')
 from my_csv.utils import *
 
 class ELeoJoint(Enum):

@@ -56,7 +56,7 @@ experiment:
     task: 
       type: task/leo_squatting
       target_env: experiment/environment/model/target_env
-      timeout: 10000
+      timeout: 360000
       randomize: 0
       weight_nmpc: 0.0001
       weight_nmpc_aux: 1
@@ -79,7 +79,7 @@ experiment:
   agent: 
     type: agent/leo/sma
     environment: experiment/environment
-    main_steps: 200000
+    main_steps: 10800000
     main_timeout: 15.0
     test_interval: 10
     output: complex_leo_mlrti_2dpg_ou_squat_fb_sl_fa_vc_mef_main
@@ -97,7 +97,7 @@ experiment:
             type: mapping/policy/parameterized/pid
             setpoint: [1.1, -2.13, 1.27, 0, 0, 0, 0, 0]
             outputs: experiment/environment/task/action_dims
-            p: [45, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0]
+            p: [50, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0]
             i: []
             d: []
             il: []
@@ -113,7 +113,7 @@ experiment:
             type: mapping/policy/parameterized/pid
             setpoint: [1.1, -2.13, 1.27, 0, 0, 0, 0, 0]
             outputs: experiment/environment/task/action_dims
-            p: [12, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0]
+            p: [15, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0]
             i: []
             d: []
             il: []
@@ -163,7 +163,7 @@ experiment:
             policy: 
               type: mapping/policy/post/noise
               sigma: [0.01]
-              theta: [0.1]
+              theta: [0.05]
               output_min: [-5, -5, -5]
               output_max: [5, 5, 5]
               policy: 
