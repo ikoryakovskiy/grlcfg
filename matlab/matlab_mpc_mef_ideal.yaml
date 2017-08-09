@@ -1,39 +1,39 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 50000
+  trials: 1
   steps: 0
   rate: 0
-  test_interval: 10
-  output: matlab_mpc_mef
+  test_interval: 0
+  output: matlab_mpc_mef_ideal
   environment: 
     type: environment/post/mef
     sub_nominal_action: 
       type: signal/vector
-    weights: [ 1.0, 0.0 ]
+    weights: [ 10.0, 0.0 ]
     environment: 
       type: environment/modeled
       model: 
         type: model/1dss/generic
-        control_step: 0.002
-        coulomb: 0.5
-        A: [1.0, 0.001982105737022, 0, 0.982159264293227]
-        B: [0.000333728004531, 0.332729720931312]
+        control_step: 0.01
+        coulomb: 0.0
+        A: [1.0, 0.009563159243439, 0, 0.913922959104962]
+        B: [0.008147080109868, 1.60533681269246]
       task: 
         type: task/1dss/regulator
         start: [0, 0]
         goal: [3.14159265359, 0]
         stddev: [0.1, 0.1]
         q: [1, 0]
-        r: [1]
+        r: [10]
         function: quadratic
         smoothing: 0.0
-        timeout: 0.8
+        timeout: 0.9
       exporter: 
         type: exporter/csv
-        file: matlab_mpc_mef
+        file: matlab_mpc_mef_ideal
         style: meshup
-        variant: test
+        variant: all
         precision: 6
         enabled: 1
     state: experiment/environment/environment/state
@@ -62,10 +62,10 @@ experiment:
       type: agent/td
       policy: 
         type: mapping/policy/post/noise
-        sigma: 0.1
-        theta: 0.5
-        output_min: [-1.0]
-        output_max: [1.0]
+        sigma: 0
+        theta: 1
+        output_min: [-0.5]
+        output_max: [0.5]
         policy: 
           type: mapping/policy/action
           sigma: []
@@ -73,10 +73,10 @@ experiment:
           output_max: experiment/environment/task/action_max
           projector: 
             type: projector/tile_coding
-            tilings: 16
+            tilings: 1
             memory: 16777216
             safe: 1
-            resolution: [1.0, 0.5]
+            resolution: [0.05, 0.01]
             wrapping: [0, 0]
           representation: 
             type: representation/parameterized/linear
@@ -84,13 +84,13 @@ experiment:
             init_max: [0.0]
             memory: experiment/agent/agent2/policy/policy/projector/memory
             outputs: experiment/environment/task/action_dims
-            output_min: [-1.0]
-            output_max: [1.0]
+            output_min: [-0.5]
+            output_max: [0.5]
       predictor: 
         type: predictor/dpg
-        alpha: 0.05
-        beta_v: 0.1
-        beta_a: 0.01
+        alpha: 0.02
+        beta_v: 0.2
+        beta_a: 0.02
         gamma: 0.97
         lambda: 0.65
         projector: experiment/agent/agent2/policy/policy/projector
@@ -114,6 +114,13 @@ experiment:
           output_max: []
         actor_representation: experiment/agent/agent2/policy/policy/representation
     pub_action1: experiment/environment/sub_nominal_action
+    exporter: 
+      type: exporter/csv
+      file: matlab_mpc_mef_ideal_elements
+      style: meshup
+      variant: learn
+      precision: 6
+      enabled: 1
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
   test_agent: 
@@ -124,18 +131,18 @@ experiment:
       policy: 
         type: mapping/policy/action
         sigma: []
-        output_min: [-1.0]
-        output_max: [1.0]
+        output_min: [-0.5]
+        output_max: [0.5]
         projector: experiment/agent/agent2/policy/policy/projector
         representation: experiment/agent/agent2/policy/policy/representation
     pub_action1: experiment/environment/sub_nominal_action
     exporter: 
       type: exporter/csv
-      file: matlab_mpc_mef_elements
+      file: matlab_mpc_mef_ideal_elements
       style: meshup
       variant: test
       precision: 6
       enabled: 1
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  save_every: run
+  save_every: never

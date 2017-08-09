@@ -12,6 +12,7 @@ import itertools
 from random import shuffle
 import random
 from datetime import datetime
+import subprocess
 
 counter_lock = multiprocessing.Lock()
 cores = 0
@@ -42,67 +43,28 @@ def main():
 
     # Parameters
     runs = range(3)
-    power = [2]
-    weight_nmpc = [0.0001]
-    weight_nmpc_aux = [1]
-    weight_nmpc_qd = [1.0]
-    weight_shaping = [0]
-    sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
-    gamma = [0.97]
-    model_types = [1] # 0 -ideal, 1 - real
 
-    #gamma = [0.0, 0.4, 0.8]
-    #model_types = [1] # 0 -ideal, 1 - real
-
-    # 1
+    # Main
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
+    for r in itertools.product(runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
-    configs = [
-                #"leo/icra_mlrti/rbdl_mlrti_2ac_tc_squat_fb_sl_fa_vc.yaml",
-                #"leo/icra_mlrti/rbdl_mlrti_2ac_tc_squat_fb_sl_vc.yaml",
-                #
-                #"leo/icra_mlrti/rbdl_mlrti_2dpg_squat_fb_sl_fa_vc.yaml",
-                "leo/icra_mlrti/rbdl_mlrti_2dpg_squat_fb_sl_vc.yaml",
-                "leo/icra_mlrti/rbdl_mlrti_2dpg_ou_squat_fb_sl_vc.yaml",
-                #
-                #"leo/icra_mlrti/rbdl_mlrti_2dpg_squat_fb_sl_fa_vc_mef.yaml",
-                "leo/icra_mlrti/rbdl_mlrti_2dpg_squat_fb_sl_vc_mef.yaml",
-                "leo/icra_mlrti/rbdl_mlrti_2dpg_ou_squat_fb_sl_vc_mef.yaml",
-              ]
-
-    
-    L1 = rl_run_param1(args, configs, options)
-
-    # 2
-    weight_shaping = [0] # shaping is not applicable in single RL controller
-    options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
-    options = [flatten(tupl) for tupl in options]
-
-    configs = [
-                #"leo/icra_mlrti/rbdl_mlrti_dpg_squat_fb_sl_fa_vc_mef.yaml",
-                "leo/icra_mlrti/rbdl_mlrti_dpg_squat_fb_sl_vc_mef.yaml",
-                "leo/icra_mlrti/rbdl_mlrti_dpg_ou_squat_fb_sl_vc_mef.yaml",
-              ]
-
-    L2 = rl_run_param2(args, configs, options)
-
-    L = L1 + L2
-    shuffle(L)
-    print(L)
+    L = rl_run(args, ["matlab/matlab_mpc_mef.yaml"], options)
+    print L
 
     do_multiprocessing_pool(args, L)
 
+    return L
+
 ######################################################################################
-def rl_run_param1(args, list_of_cfgs, options):
+def rl_run(args, list_of_cfgs, options):
     list_of_new_cfgs = []
 
     loc = "tmp"
     if not os.path.exists(loc):
         os.makedirs(loc)
 
+    port = 5557
     for cfg in list_of_cfgs:
         conf = read_cfg(cfg)
 
@@ -115,83 +77,21 @@ def rl_run_param1(args, list_of_cfgs, options):
             print "Generating parameters: {}".format(str_o)
 
             # create local filename
-            list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
+            list_of_new_cfgs.append( ("{}/{}{}{}".format(loc, fname, str_o, fext), port) )
 
             # modify options
-            conf['experiment']['steps'] = 100000
-            conf['experiment']['test_interval'] = 30
-            conf['experiment']['environment']['task']['power'] = o[0]
-            conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
-            conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
-            conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
-            conf['experiment']['environment']['task']['weight_shaping'] = o[4]
-
-            conf['experiment']['environment']['sim_filtered'] = o[5]
-
-            conf['experiment']['environment']['task']['gamma'] = o[6]
-
-            if o[7] == 0:
-                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
-            else:
-                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
-
-            conf['experiment']['output'] = "{}-{}".format(fname, str_o)
-            if "exporter" in conf['experiment']['environment']:
-              conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
+            #conf['experiment']['trials'] = 1
+            conf['experiment']['output'] = "{}-mp{}".format(fname, o[-1])
+            conf['experiment']['environment']['environment']['exporter']['file'] = "{}{}".format(fname, str_o)
+            #conf['experiment']['agent']['exporter']['file'] = "{}_elements{}".format(fname, str_o)
+            conf['experiment']['test_agent']['exporter']['file'] = "{}_elements{}".format(fname, str_o)
+            conf['experiment']['agent']['agent1']['communicator']['addr'] = "tcp://localhost:{}".format(port)
+            conf['experiment']['load_file'] = "matlab_matlab_mpc_mef-mp{}-run0".format(o[-1])
 
             conf = remove_viz(conf)
-            write_cfg(list_of_new_cfgs[-1], conf)
+            write_cfg(list_of_new_cfgs[-1][0], conf)
 
-    #print list_of_new_cfgs
-
-    return list_of_new_cfgs
-
-######################################################################################
-def rl_run_param2(args, list_of_cfgs, options):
-    list_of_new_cfgs = []
-
-    loc = "tmp"
-    if not os.path.exists(loc):
-        os.makedirs(loc)
-
-    for cfg in list_of_cfgs:
-        conf = read_cfg(cfg)
-
-        # after reading cfg can do anything with the name
-        fname, fext = os.path.splitext( cfg.replace("/", "_") )
-
-        for o in options:
-            str_o = "-".join(map(lambda x : "{:05d}".format(int(round(10000*x))), o[:-1]))  # last element in 'o' is reserved for mp
-            str_o += "-mp{}".format(o[-1])
-            print "Generating parameters: {}".format(str_o)
-
-            # create local filename
-            list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
-
-            # modify options
-            conf['experiment']['steps'] = 100000
-            conf['experiment']['test_interval'] = 30
-            conf['experiment']['environment']['task']['power'] = o[0]
-            conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
-            conf['experiment']['environment']['task']['weight_nmpc_aux'] = o[2]
-            conf['experiment']['environment']['task']['weight_nmpc_qd'] = o[3]
-            conf['experiment']['environment']['task']['weight_shaping'] = o[4]
-
-            conf['experiment']['environment']['sim_filtered'] = o[5]
-
-            conf['experiment']['environment']['task']['gamma'] = o[6]
-
-            if o[7] == 0:
-                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
-            else:
-                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
-
-            conf['experiment']['output'] = "{}-{}".format(fname, str_o)
-            if "exporter" in conf['experiment']['environment']:
-              conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
-
-            conf = remove_viz(conf)
-            write_cfg(list_of_new_cfgs[-1], conf)
+            port = port + 1
 
     #print list_of_new_cfgs
 
@@ -205,12 +105,17 @@ def mp_run(cfg):
     global cores
     with counter_lock:
         wait = counter.value
-        counter.value += 2
+        counter.value += 5
     sleep(wait)
     print 'wait finished {0}'.format(wait)
+
+    print 'running {} ====== {}'.format('./grld {}'.format(cfg[0]), ['{}/cfg/matlab/mpc/run_matlab_grl.sh'.format(os.getcwd()), 'grl_mpc {}'.format(cfg[1])])
     # Run the experiment
-    code = os.system('./grld %s' % cfg)
-    if not code == 0:
+    p1 = subprocess.Popen(['./grld', cfg[0]])
+    p2 = subprocess.Popen(['{}/cfg/matlab/mpc/run_matlab_grl.sh'.format(os.getcwd()), 'grl_mpc {}'.format(cfg[1])], cwd='{}/cfg/matlab/mpc'.format(os.getcwd()))
+    exit_codes = [p.wait() for p in p1, p2]
+
+    if not any(exit_codes) == 0:
         errorString = "Exit code is '{0}' ({1})".format(code, cfg)
         print errorString
         f = open("bailing.out", "a")

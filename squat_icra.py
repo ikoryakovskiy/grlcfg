@@ -14,7 +14,7 @@ import random
 from datetime import datetime
 
 counter_lock = multiprocessing.Lock()
-cores = 0;
+cores = 0
 random.seed(datetime.now())
 
 def flatten(x):
@@ -49,7 +49,7 @@ def main():
     weight_shaping = [0]
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97]
-    model_types = [0, 1] # 0 -ideal, 1 - real
+    model_types = [0, 2] # 0 -ideal, 1 - real, 2 - coulomb
 
     #gamma = [0.0, 0.4, 0.8]
     #model_types = [1] # 0 -ideal, 1 - real
@@ -64,11 +64,11 @@ def main():
 #                "leo/icra/rbdl_nmpc_2ac_tc_squat_fb_sl_vc.yaml",
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc.yaml",
-                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml",
+#                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml",
                 "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc.yaml",
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef.yaml",
-                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
+#                "leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
                 "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
               ]
 
@@ -83,7 +83,7 @@ def main():
 
     configs = [
                 #"leo/icra/rbdl_nmpc_dpg_squat_fb_sl_fa_vc_mef.yaml",
-                "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_vc_mef.yaml",
+#                "leo/icra/rbdl_nmpc_dpg_squat_fb_sl_vc_mef.yaml",
                 "leo/icra/rbdl_nmpc_dpg_ou_squat_fb_sl_vc_mef.yaml",
               ]
 
@@ -132,8 +132,10 @@ def rl_run_param1(args, list_of_cfgs, options):
 
             if o[7] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
-            else:
+            elif o[7] == 1:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
+            else:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
@@ -183,8 +185,10 @@ def rl_run_param2(args, list_of_cfgs, options):
 
             if o[7] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
-            else:
+            elif o[7] == 1:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
+            else:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
@@ -201,9 +205,11 @@ def rl_run_param2(args, list_of_cfgs, options):
 def mp_run(cfg):
     # Multiple copies can be run on one computer at the same time, which results in the same seed for a random generator.
     # Thus we need to wait for a second or so between runs
+    global counter
     global cores
     with counter_lock:
-        wait = cores.value*random.random()
+        wait = counter.value
+        counter.value += 2
     sleep(wait)
     print 'wait finished {0}'.format(wait)
     # Run the experiment
@@ -218,17 +224,20 @@ def mp_run(cfg):
             f.close()
 
 ######################################################################################
-def init(num):
+def init(cnt, num):
     ''' store the counter for later use '''
+    global counter
     global cores
+    counter = cnt
     cores = num
 
 ######################################################################################
 def do_multiprocessing_pool(args, list_of_new_cfgs):
     """Do multiprocesing"""
+    counter = multiprocessing.Value('i', 0)
     cores = multiprocessing.Value('i', args.cores)
     print 'cores {0}'.format(cores.value)
-    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (cores,))
+    pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (counter, cores))
     pool.map(mp_run, list_of_new_cfgs)
     pool.close()
 ######################################################################################

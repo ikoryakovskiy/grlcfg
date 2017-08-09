@@ -3,11 +3,11 @@ import time
 import sys
 import struct
 
-def bind():
-  port = "5557"
+def bind(port = "5557"):
   context = zmq.Context()
   socket = context.socket(zmq.REP)
   socket.bind("tcp://*:%s" % port)
+  print "Binding to tcp://*:{}".format(port)
   return socket
 
 def recv(socket):

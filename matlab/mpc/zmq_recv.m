@@ -6,6 +6,6 @@ function data = zmq_recv(socket)
             data = typecast(uint8(data) ,'double');
             break;
         end
+        pause(0.001);
     end
-
 end

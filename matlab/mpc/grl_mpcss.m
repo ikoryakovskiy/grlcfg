@@ -1,4 +1,4 @@
-function [u,y,x, Url] = grl_mpcss(A,B,C,x,u,r,Hp,Hc,P,rho,uc,duc,yc,dyc, socket)
+function [u,y,x] = grl_mpcss(A,B,C,x,u,r,Hp,Hc,P,rho,uc,duc,yc,dyc, socket)
 % MPCSS model-based predictive control in MIMO state-space form
 %        for the time being, only deterministic model
 %
@@ -211,9 +211,23 @@ H = 2*(Ru'*P*Ru + rho);
 %==================
 
 uu = u(:,1);
-Url = u(:,1);
 
-for k=1:size(r,1)-Hp+1
+len = size(r,1)-Hp+1;
+
+x = zeros([n, len]);
+y = zeros([m, len]);
+
+xe = zeros([n, len]);
+ye = zeros([m, len]);
+
+du_op = zeros([n, len]);
+
+u = zeros([m, len]);
+
+opt = optimset;
+opt.Display = 'off';
+    
+for k=1:len
     
     w = r(k:k+Hp-1,:)';
 
@@ -243,9 +257,7 @@ for k=1:size(r,1)-Hp+1
     % Calculate the Controller output
     %------
     %  du_op(:,k)=qp(H,c,Gamma,Omega);
-    opt = optimset;
-    opt.Display = 'off';
-    warning off;
+
     ind = ~isinf(Omega);
     Omega1 = Omega(ind,:);
     Gamma1 = Gamma(ind,:);
@@ -277,7 +289,7 @@ end;
 % dummy send enable GRL finish episode
 py.pyzmq.send(socket, typecast(u(:,k),'uint8'));
 
-u = u'; x = x'; y = y'; Url = Url';
+u = u'; x = x'; y = y';
 
 end
 

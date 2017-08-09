@@ -23,8 +23,8 @@ experiment:
         type: environment/communicator
         converter: 
           type: converter/state_action_converter
-          state_in: ljHipLeftAngle, ljHipRightAngle, ljKneeLeftAngle, ljKneeRightAngle, ljAnkleLeftAngle, ljAnkleRightAngle, ljShoulderAngle, ljTorsoAngle, ljHipLeftAngleRate, ljHipRightAngleRate, ljKneeLeftAngleRate, ljKneeRightAngleRate, ljAnkleLeftAngleRate, ljAnkleRightAngleRate, ljShoulderAngleRate, ljTorsoAngleRate, lfToeRight, lfHeelRight, lfToeLeft, lfHeelLeft
-          state_out: ljAnkleLeftAngle, ljKneeLeftAngle, ljHipLeftAngle, ljShoulderAngle, ljAnkleLeftAngleRate, ljKneeLeftAngleRate, ljHipLeftAngleRate, ljShoulderAngleRate
+          state_in: ljHipLeftAngle, ljHipRightAngle, ljKneeLeftAngle, ljKneeRightAngle, ljAnkleLeftAngle, ljAnkleRightAngle, ljShoulderAngle, ljTorsoAngle, ljHipLeftAngleRate, ljHipRightAngleRate, ljKneeLeftAngleRate, ljKneeRightAngleRate, ljAnkleLeftAngleRate, ljAnkleRightAngleRate, ljShoulderAngleRate, ljTorsoAngleRate, lfToeRight, lfHeelRight, lfToeLeft, lfHeelLeft, lmTemperature
+          state_out: ljAnkleLeftAngle, ljKneeLeftAngle, ljHipLeftAngle, ljShoulderAngle, ljAnkleLeftAngleRate, ljKneeLeftAngleRate, ljHipLeftAngleRate, ljShoulderAngleRate, lmTemperature
           action_in: ljAnkleLeftVoltage, ljKneeLeftVoltage, ljHipLeftVoltage, ljShoulderVoltage
           action_out: ljHipLeftVoltage, ljHipLeftVoltage, ljKneeLeftVoltage, ljKneeLeftVoltage, ljAnkleLeftVoltage, ljAnkleLeftVoltage, ljShoulderVoltage
         communicator: 
@@ -32,7 +32,7 @@ experiment:
           role: ZMQ_REP
           sync: tcp://192.168.1.10:5560
           addr: tcp://*:5561
-        target_obs_dims: 20
+        target_obs_dims: 21
         target_action_dims: 7
         benchmark_delays: 0
       lower_height: 0.28
