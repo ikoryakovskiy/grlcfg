@@ -49,7 +49,7 @@ def main():
     weight_shaping = [0]
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97]
-    model_types = [0, 1] # 0 -ideal, 1 - real
+    model_types = [0, 2] # 0 -ideal, 1 - real, 2 - coulomb
 
     #gamma = [0.0, 0.4, 0.8]
     #model_types = [1] # 0 -ideal, 1 - real
@@ -132,6 +132,8 @@ def rl_run_param1(args, list_of_cfgs, options):
 
             if o[7] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
+            elif o[7] == 1:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
             else:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
 
@@ -183,8 +185,10 @@ def rl_run_param2(args, list_of_cfgs, options):
 
             if o[7] == 0:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl.lua"
-            else:
+            elif o[7] == 1:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
+            else:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
