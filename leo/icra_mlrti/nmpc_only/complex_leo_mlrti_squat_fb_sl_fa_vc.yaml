@@ -4,7 +4,7 @@ experiment:
   trials: 1
   steps: 0
   rate: 0
-  test_interval: 0
+  test_interval: -1
   output: complex_leo_mlrti_squat_fb_sl_fa_vc
   environment: 
     type: environment/sandbox
@@ -26,7 +26,6 @@ experiment:
           role: ZMQ_REP
           sync: tcp://192.168.1.10:5560
           addr: tcp://*:5561
-          recvtimeo: -1
         target_obs_dims: 21
         target_action_dims: 7
         benchmark_delays: 0
@@ -58,8 +57,10 @@ experiment:
       use_mef: 0
       setpoint_reward: 0
       continue_after_fall: 1
-      gamma: 0
+      gamma: 0.97
       fixed_arm: 1
+      lower_height: 0.28
+      upper_height: 0.35
       friction_compensation: 0
     exporter: 
       type: exporter/csv
@@ -135,7 +136,7 @@ experiment:
         lua_model: leo_fb_sl_fa.lua
         model_name: nmpc_leo_squat_fb_sl_fa_vc
         nmpc_model_name: nmpc_leo_squat_fb_sl_fa_vc
-        ninit: 50
+        ninit: 0
     agent_test: experiment/agent/agent_main
     upright_trigger: 
       type: trigger

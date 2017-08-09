@@ -41,7 +41,7 @@ experiment:
       use_mef: 0
       setpoint_reward: 0
       continue_after_fall: 1
-      gamma: 0.97
+      gamma: 0
       fixed_arm: 0
     exporter: 
       type: exporter/csv
