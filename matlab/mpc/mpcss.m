@@ -217,6 +217,7 @@ H = 2*(Ru'*P*Ru + rho);
 uu = u(:,1);
 
 f = zeros(size(u));
+y = C*x(:, 1);
 
 for k=1:size(r,1)-Hp+1
 

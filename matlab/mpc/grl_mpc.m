@@ -26,18 +26,18 @@ socket = py.pyzmq.bind(port); % do not block receive
 % Set MPC parameters:
 %====================
 
-Hp = 30;                 % prediction horizon
+Hp = 20;                 % prediction horizon
 Hc = 2;                 % control horizon
 P = diag(1);         % output (state) weighting matrix
-rho = diag(1);        % input (control) weighting matrix
+rho = diag(0);        % input (control) weighting matrix
 
 
 %===============================
 % Generate the reference signal:
 %===============================
 
-Sl = 430;                % step length
-r = pi * ones(Sl, 1);
+Sl = 30;                % step length
+r = 1 * ones(Sl, 1);
 
 %==================
 % Constraints
@@ -48,7 +48,7 @@ uc  =  [-inf inf		%   level - first input
 duc =  [-inf inf		% -0.1 0.1		%   rate  - first input
         ];	%   rate  - second input
 
-yc  =  [-10 10		%   level - first output
+yc  =  [-inf inf		%   level - first output
         ];	%   level - first output
 dyc =  [-inf inf		%   rate  - first output
         ];	%   rate  - first output
@@ -57,19 +57,19 @@ dyc =  [-inf inf		%   rate  - first output
 % Define the system matrices:
 %==================
 
-Ts = 0.002;
-tau = 0.1111;
-km = 18.65;
-
-% state-space model
-A = [0 1; 0 -1/tau];
-B = [0; km/tau];
-C = [1 0];
-sys = ss(A,B,C,0);
-sysd = c2d(sys,Ts);
-A = sysd.A;
-B = sysd.B;
-C = sysd.C;
+% Ts = 0.002;
+% tau = 0.1111;
+% km = 18.65;
+% 
+% % state-space model
+% A = [0 1; 0 -1/tau];
+% B = [0; km/tau];
+% C = [1 0];
+% sys = ss(A,B,C,0);
+% sysd = c2d(sys,Ts);
+% A = sysd.A;
+% B = sysd.B;
+% C = sysd.C;
 
 % % A car with viscous friction
 % Ts = 1;
@@ -80,11 +80,18 @@ C = sysd.C;
 % B = [Ts/rr - m*(1-ve)/(rr*rr); (1-ve)/rr];
 % C = [1 0];
 
+% A car without friction
+Ts = 1;
+m  = 1;
+A = [1 Ts; 0 1];
+B = [Ts*Ts/(2*m); Ts/m];
+C = [1 0];
+
 %====================
 % Call the optimizer:
 %====================
 
-trials = 180000;
+trials = 300000;
 test_interval = 10;
 perf = zeros(trials, 1);
 for tt = 1:trials

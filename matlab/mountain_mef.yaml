@@ -1,0 +1,152 @@
+experiment: 
+  type: experiment/online_learning
+  runs: 1
+  trials: 300000
+  steps: 0
+  rate: 0
+  test_interval: 10
+  output: mountain_mef
+  environment: 
+    type: environment/post/mef
+    sub_nominal_action: 
+      type: signal/vector
+    weights: [ 1, 0.1 ]
+    environment: 
+      type: environment/modeled
+      model: 
+        type: model/dynamical
+        control_step: 1
+        integration_steps: 5
+        dynamics: 
+          type: dynamics/rbdl
+          file: mountain.lua
+      task: 
+        type: task/lua
+        file: mountain_ride.lua
+      exporter: 
+        type: exporter/csv
+        file: mountain_mef
+        style: meshup
+        variant: all
+        precision: 6
+        enabled: 1
+    state: experiment/environment/environment/state
+    task: 
+      type: task/1dss/regulator
+      start: [ -1, 0 ]
+      goal: [ 1, 0 ]
+      stddev: [ 0, 0 ]
+      q: [ 1, 0 ]
+      r: [ 0 ]
+      function: quadratic
+      smoothing: 0.0
+      timeout: 10
+    model: 
+      type: model/1dss/car
+      control_step: experiment/environment/environment/model/control_step
+      coulomb: 0
+      mass: 1
+      viscous: 0
+  agent: 
+    type: agent/master/sequential/additive
+    agent1: 
+      type: agent/communicator
+      communicator: 
+        type: communicator/zeromq/request_reply
+        role: ZMQ_REQ
+        addr: tcp://localhost:5557
+        recvtimeo: -1
+      observation_dims: experiment/environment/task/observation_dims
+      action_dims: experiment/environment/task/action_dims
+      action_min: experiment/environment/task/action_min
+      action_max: experiment/environment/task/action_max
+      test: 0
+    agent2: 
+      type: agent/td
+      policy: 
+        type: mapping/policy/post/noise
+        sigma: [0.001]
+        theta: [0.5]
+        output_min: experiment/environment/task/action_min
+        output_max: experiment/environment/task/action_max
+        policy: 
+          type: mapping/policy/action
+          sigma: []
+          output_min: experiment/environment/task/action_min
+          output_max: experiment/environment/task/action_max
+          projector: 
+            type: projector/tile_coding
+            tilings: 16
+            memory: 1048576
+            safe: 1
+            resolution: [0.03, 0.1]
+            wrapping: [0, 0]
+          representation: 
+            type: representation/parameterized/linear
+            init_min: [0]
+            init_max: [0]
+            memory: experiment/agent/agent2/policy/policy/projector/memory
+            outputs: experiment/environment/task/action_dims
+            output_min: experiment/environment/task/action_min
+            output_max: experiment/environment/task/action_max
+      predictor: 
+        type: predictor/dpg
+        alpha: 0.01
+        beta_v: 0.1
+        beta_a: 0.01
+        gamma: 0.97
+        lambda: 0.65
+        projector: experiment/agent/agent2/policy/policy/projector
+        critic_representation: 
+          type: representation/parameterized/linear
+          init_min: [0]
+          init_max: [0]
+          memory: experiment/agent/agent2/policy/policy/projector/memory
+          outputs: 1
+          output_min: []
+          output_max: []
+        critic_trace: 
+          type: trace/enumerated/replacing
+        advantage_representation: 
+          type: representation/parameterized/linear
+          init_min: [0]
+          init_max: [0]
+          memory: experiment/agent/agent2/policy/policy/projector/memory
+          outputs: experiment/environment/task/action_dims
+          output_min: []
+          output_max: []
+        actor_representation: experiment/agent/agent2/policy/policy/representation
+    pub_action1: experiment/environment/sub_nominal_action
+    exporter: 
+      type: exporter/csv
+      file: mountain_mef_elements
+      style: meshup
+      variant: learn
+      precision: 6
+      enabled: 1
+    output_min: experiment/environment/task/action_min
+    output_max: experiment/environment/task/action_max
+  test_agent: 
+    type: agent/master/sequential/additive
+    agent1: experiment/agent/agent1
+    agent2: 
+      type: agent/fixed
+      policy: 
+        type: mapping/policy/action
+        sigma: []
+        output_min: experiment/environment/task/action_min
+        output_max: experiment/environment/task/action_max
+        projector: experiment/agent/agent2/policy/policy/projector
+        representation: experiment/agent/agent2/policy/policy/representation
+    pub_action1: experiment/environment/sub_nominal_action
+    exporter: 
+      type: exporter/csv
+      file: mountain_mef_elements
+      style: meshup
+      variant: test
+      precision: 6
+      enabled: 1
+    output_min: experiment/environment/task/action_min
+    output_max: experiment/environment/task/action_max
+  load_file: mountain_mef-run0
+  save_every: run

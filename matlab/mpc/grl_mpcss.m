@@ -214,11 +214,12 @@ uu = u(:,1);
 
 len = size(r,1)-Hp+1;
 
-x = zeros([n, len]);
-y = zeros([m, len]);
+x = [x zeros([n, len-1])];
+y = C*x(:, 1);
+y = [y zeros([m, len-1])];
 
-xe = zeros([n, len]);
-ye = zeros([m, len]);
+xe = [xe zeros([n, len])];
+ye = [ye zeros([m, len])];
 
 du_op = zeros([n, len]);
 
@@ -277,6 +278,9 @@ for k=1:len
     
     % obtain next state
     next = zmq_recv(socket);
+    
+    x1 = A*x(:,k)+B*u(:,k);
+    y1 = C*x1;
     
     x(:,k+1) = next(2:3);
     y(:,k+1) = C*x(:,k+1);

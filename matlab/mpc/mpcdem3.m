@@ -9,18 +9,19 @@ arg.model = 0;
 %====================
 % Set MPC parameters:
 %====================
+close all
 
-Hp = 5;                 % prediction horizon
+Hp = 20;                 % prediction horizon
 Hc = 2;                 % control horizon
-rho = diag(1);          % input weighting matrix
-P = diag(0.1);          % output weighting matrix
+rho = diag(0);          % input weighting matrix
+P = diag(1);          % output weighting matrix
 
 %===============================
 % Generate the reference signal:
 %===============================
 
 Sl = 30;                % step length
-r = [5*ones(1,Sl) 0*ones(1,Sl) 5*ones(1,Sl) 0*ones(1,Sl)]';% 5*ones(1,Sl) 0*ones(1,Sl)]';
+r = 1*ones(Sl, 1); % 0*ones(1,Sl) 5*ones(1,Sl) 0*ones(1,Sl)]';
 
 %==================
 % Constraints
@@ -31,7 +32,7 @@ uc  =  [-inf inf		%   level - first input
 duc =  [-inf inf		% -0.1 0.1		%   rate  - first input
         ];	%   rate  - second input
 
-yc  =  [-10 10		%   level - first output
+yc  =  [-inf inf		%   level - first output
         ];	%   level - first output
 dyc =  [-inf inf		%   rate  - first output
         ];	%   rate  - first output
@@ -43,18 +44,18 @@ dyc =  [-inf inf		%   rate  - first output
 Ts = 1;                 % sample time
 m  = 1;
 % no viscous friction
-%A = [1 Ts; 0 1];
-%B = [Ts*Ts/(2*m); Ts/m];
+A = [1 Ts; 0 1];
+B = [Ts*Ts/(2*m); Ts/m];
 
 % with viscous friction
-rr = 1.0;
-ve = exp(-rr*Ts/m);
-A = [1 m*(1-ve)/rr; 0 ve];
-B = [Ts/rr - m*(1-ve)/(rr*rr); (1-ve)/rr];
+%rr = 1.0;
+%ve = exp(-rr*Ts/m);
+%A = [1 m*(1-ve)/rr; 0 ve];
+%B = [Ts/rr - m*(1-ve)/(rr*rr); (1-ve)/rr];
 
 C = [1 0];
 
-x0 = [0 0]';        % initial state
+x0 = [-1 0]';        % initial state
 u0 = [0]';		    % intial control input (required for rate constraints)
 
 %====================

@@ -1,0 +1,56 @@
+experiment: 
+  type: experiment/leo/online_learning/squatting
+  runs: 1
+  trials: 2
+  steps: 0
+  rate: 0
+  test_interval: 0
+  output: rbdl_nmpc_squat_fb_sl_vc_real
+  environment: 
+    type: environment/sandbox
+    model: 
+      type: sandbox_model/leo_squatting
+      control_step: 0.03
+      integration_steps: 25
+      target_dof: 4
+      dynamics: 
+        type: dynamics/rbdl
+        file: leo_vc/leo_fb_sl_coulomb.lua
+        points: tip_left, heel_left, root
+        auxiliary: mm, com, comv, am
+      animation: nope
+      lower_height: 0.28
+      upper_height: 0.35
+      precision: [0.01, 0.01]
+      mode: vc
+      sim_filtered: 0
+      timer_switch: 0
+    task: 
+      type: task/leo_squatting
+      timeout: 15
+      randomize: 0
+      weight_nmpc: 0.0001
+      weight_nmpc_aux: 1.0
+      weight_nmpc_qd: 1.0
+      weight_shaping: 0.0
+      power: 2.0
+      use_mef: 0
+      setpoint_reward: 0
+      continue_after_fall: 0
+      gamma: 0.97
+      fixed_arm: 0
+  agent: 
+    type: agent/fixed
+    policy: 
+      type: mapping/policy/nmpc
+      verbose: 0
+      initFeedback: 1
+      action_min: experiment/environment/task/action_min
+      action_max: experiment/environment/task/action_max
+      lua_model: leo_fb_sl.lua
+      model_name: nmpc_leo_squat_fb_sl_vc
+      nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+      feedback: non-threaded
+      n_iter: 1
+  test_agent: experiment/agent
+  save_every: never
