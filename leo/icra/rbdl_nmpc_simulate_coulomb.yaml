@@ -13,7 +13,7 @@ experiment:
       type: environment/leo/phantom
       importer: 
         type: importer/csv
-        file: /home/ivan/work/Project/Software/grl/qt-build/leo_icra_rbdl_nmpc_2dpg_ou_squat_fb_sl_vc-20000-00010-10000-10000-00000-00000-09700-00000-mp0-test-0_in
+        file: /home/ivan/work/Project/Software/grl/qt-build/leo_icra_rbdl_nmpc_2dpg_ou_squat_fb_sl_vc-20000-00010-10000-10000-00000-00000-09700-20000-mp0-test-0_in
         fields: time, state0, state1, action, reward, terminal, transition_type, contact
     model: 
       type: model/dynamical
@@ -29,7 +29,7 @@ experiment:
       file: rbdl_nmpc_simulate_real
       style: meshup
       variant: test
-      precision: 6
+      precision: 8
       enabled: 1
   agent: 
     type: agent/fixed
