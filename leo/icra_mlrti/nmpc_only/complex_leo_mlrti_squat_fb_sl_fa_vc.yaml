@@ -68,6 +68,9 @@ experiment:
       continue_after_fall: 1
       gamma: 0
       fixed_arm: 1
+      lower_height: 0.28
+      upper_height: 0.35
+      friction_compensation: 0
     exporter: 
       type: exporter/csv
       file: complex_leo_mlrti_squat_fb_sl_fa_vc

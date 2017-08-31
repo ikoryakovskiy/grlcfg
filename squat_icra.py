@@ -48,7 +48,7 @@ def main():
     weight_nmpc_qd = [1.0]
     weight_shaping = [0]
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
-    gamma = [0.99, 0.97]
+    gamma = [0.97]
     model_types = [0, 2] # 0 -ideal, 1 - real, 2 - coulomb
 
     #gamma = [0.0, 0.4, 0.8]
@@ -65,11 +65,11 @@ def main():
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc.yaml",
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml",
-                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc.yaml",
+#                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc.yaml",
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef.yaml",
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
-#                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
               ]
 
     

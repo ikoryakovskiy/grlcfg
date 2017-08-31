@@ -1,0 +1,49 @@
+experiment: 
+  type: experiment/leo/online_learning/squatting
+  runs: 1
+  trials: 1
+  steps: 0
+  rate: 0
+  test_interval: 0
+  output: rbdl_nmpc_simulate_ideal
+  environment: 
+    type: environment/post/mpml
+    weights: [1, 1, 1, 1, 0, 0, 0, 0, 0]
+    environment: 
+      type: environment/leo/phantom
+      importer: 
+        type: importer/csv
+        file: /home/ivan/work/Project/Software/grl/qt-build/leo_icra_rbdl_nmpc_2dpg_ou_squat_fb_sl_vc-20000-00010-10000-10000-00000-00000-09700-00000-mp0-test-0_in
+        fields: time, state0, state1, action, reward, terminal, transition_type, contact
+    model: 
+      type: model/dynamical
+      control_step: 0.03
+      integration_steps: 25
+      dynamics: 
+        type: dynamics/rbdl
+        file: leo_vc/leo_fb_sl.lua
+        points: tip_left, heel_left, root
+        auxiliary: mm, com, comv, am
+    exporter: 
+      type: exporter/csv
+      file: rbdl_nmpc_simulate_ideal
+      style: meshup
+      variant: test
+      precision: 6
+      enabled: 1
+  agent: 
+    type: agent/fixed
+    policy: 
+      type: mapping/policy/nmpc
+      verbose: 0
+      initFeedback: 1
+      action_min: [-10.7745, -10.7745, -10.7745, -10.7745]
+      action_max: [10.7745, 10.7745, 10.7745, 10.7745]
+      lua_model: leo_fb_sl.lua
+      model_name: nmpc_leo_squat_fb_sl_vc
+      nmpc_model_name: nmpc_leo_squat_fb_sl_vc
+      ninit: 1
+      feedback: non-threaded
+      n_iter: 1
+  test_agent: experiment/agent
+  save_every: never
