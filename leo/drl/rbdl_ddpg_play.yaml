@@ -1,10 +1,10 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 0
-  steps: 210000
+  trials: 1
+  steps: 0
   rate: 0
-  test_interval: 10
+  test_interval: 0
   output: rbdl_ddpg_play
   environment: 
     type: environment/sandbox
@@ -18,12 +18,12 @@ experiment:
         file: leo_vc/leo_ff_dl.lua
         points: tip_left, tip_right, heel_left, heel_right
         auxiliary: ptpos, ptvel, com
-      animation: nope
+      animation: full
       mode: vc
     task: 
       type: task/leo_walking
       timeout: 20
-      randomize: 1
+      randomize: 0
       measurement_noise: 0
   agent: 
     type: agent/communicator/ext_state_provider
@@ -49,4 +49,5 @@ experiment:
     action_min: experiment/environment/task/action_min
     action_max: experiment/environment/task/action_max
     test: 1
-  save_every: run
+  load_file: model-leo-rbdl-PoolWorker-1
+  save_every: never
