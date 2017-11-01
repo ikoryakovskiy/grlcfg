@@ -59,7 +59,8 @@ def rl_run_param1(args, list_of_cfgs):
     if not os.path.exists(loc):
         os.makedirs(loc)
 
-    in_csvs = glob.glob('../qt-build/cfg/data/icra2018_in_rmse/in_leo_icra_rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef*.csv')
+    #in_csvs = glob.glob('../qt-build/cfg/data/icra2018_in_rmse/in_leo_icra_rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef*.csv')
+    in_csvs = glob.glob('../qt-build/cfg/data/icra2018_in_rmse/in_rbdl_nmpc_squat_fb_sl_vc-test-0.csv')
     
     for csv in in_csvs:
       print(csv)
