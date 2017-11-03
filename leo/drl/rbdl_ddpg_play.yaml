@@ -49,5 +49,5 @@ experiment:
     action_min: experiment/environment/task/action_min
     action_max: experiment/environment/task/action_max
     test: 1
-  load_file: model-leo-rbdl-1.ckpt
+  load_file: leo_drl_rbdl_ddpg-mp4
   save_every: never
