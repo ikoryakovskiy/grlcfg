@@ -1,0 +1,53 @@
+experiment: 
+  type: experiment/online_learning
+  runs: 1
+  trials: 0
+  steps: 300000
+  rate: 0
+  test_interval: 50
+  output: rbdl_walking
+  environment: 
+    type: environment/sandbox
+    model: 
+      type: sandbox_model/leo_walk
+      control_step: 0.0003
+      integration_steps: 1
+      target_dof: 9
+      dynamics: 
+        type: dynamics/rbdl
+        file: leo_vc/leo_ff_dl.lua
+        points: tip_left, tip_right, heel_left, heel_right
+        auxiliary: ptpos, ptvel, com
+      animation: nope
+      mode: vc
+    task: 
+      type: task/leo_walking
+      timeout: 20
+      randomize: 1
+      measurement_noise: 0
+      knee_mode: fail_and_restart
+  agent: 
+    type: agent/communicator/ext_state_provider
+    communicator: 
+      type: communicator/zeromq/request_reply
+      role: ZMQ_REQ
+      addr: tcp://localhost:5555
+      recvtimeo: -1
+    observation_dims: experiment/environment/task/observation_dims
+    action_dims: experiment/environment/task/action_dims
+    action_min: experiment/environment/task/action_min
+    action_max: experiment/environment/task/action_max
+    test: 0
+  test_agent: 
+    type: agent/communicator/ext_state_provider
+    communicator: 
+      type: communicator/zeromq/request_reply
+      role: ZMQ_REQ
+      addr: tcp://localhost:5555
+      recvtimeo: -1
+    observation_dims: experiment/environment/task/observation_dims
+    action_dims: experiment/environment/task/action_dims
+    action_min: experiment/environment/task/action_min
+    action_max: experiment/environment/task/action_max
+    test: 1
+  save_every: run

@@ -1,11 +1,11 @@
 experiment: 
   type: experiment/online_learning
   runs: 1
-  trials: 1
-  steps: 0
+  trials: 0
+  steps: 50000
   rate: 0
-  test_interval: 0
-  output: rbdl_ddpg_play
+  test_interval: 50
+  output: rbdl_balancing
   environment: 
     type: environment/sandbox
     model: 
@@ -18,13 +18,14 @@ experiment:
         file: leo_vc/leo_ff_dl.lua
         points: tip_left, tip_right, heel_left, heel_right
         auxiliary: ptpos, ptvel, com
-      animation: full
+      animation: nope
       mode: vc
     task: 
-      type: task/leo_walking
+      type: task/leo_balancing
       timeout: 20
       randomize: 0
       measurement_noise: 0
+      knee_mode: fail_and_restart
   agent: 
     type: agent/communicator/ext_state_provider
     communicator: 
@@ -49,5 +50,4 @@ experiment:
     action_min: experiment/environment/task/action_min
     action_max: experiment/environment/task/action_max
     test: 1
-  load_file: leo_drl_rbdl_ddpg-mp4
-  save_every: never
+  save_every: run
