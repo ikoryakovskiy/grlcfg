@@ -5,7 +5,7 @@ experiment:
   steps: 300000
   rate: 0
   test_interval: 100
-  output: rbdl_walking
+  output: rbdl_walking_after_balancing
   environment: 
     type: environment/sandbox
     model: 
