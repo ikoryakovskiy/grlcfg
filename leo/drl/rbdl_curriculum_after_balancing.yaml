@@ -54,4 +54,4 @@ experiment:
   load_file: leo_drl_rbdl_balancing-mp4-last
   save_every: run
   updates: 10
-  rwForward: [0.0, 300.0]
+  rwForward: [ 10.0, 300.0 ]
