@@ -23,7 +23,7 @@ experiment:
     task: 
       type: task/leo_balancing
       timeout: 20
-      randomize: 0
+      randomize: 1
       measurement_noise: 0
       knee_mode: fail_and_restart
   agent: 
