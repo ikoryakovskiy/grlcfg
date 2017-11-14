@@ -2,7 +2,7 @@ experiment:
   type: experiment/online_learning
   runs: 1
   trials: 0
-  steps: 300000
+  steps: 500000
   rate: 0
   test_interval: 100
   output: rbdl_walking
@@ -25,7 +25,8 @@ experiment:
       timeout: 20
       randomize: 1
       measurement_noise: 0
-      knee_mode: fail_and_restart
+      knee_mode: punish_and_continue
+      rwForward: 300
   agent: 
     type: agent/communicator/ext_state_provider
     communicator: 

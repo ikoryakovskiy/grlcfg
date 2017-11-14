@@ -25,7 +25,8 @@ experiment:
       timeout: 20
       randomize: 1
       measurement_noise: 0
-      knee_mode: fail_and_restart
+      knee_mode: punish_and_continue
+      rwForward: 0
   agent: 
     type: agent/communicator/ext_state_provider
     communicator: 
