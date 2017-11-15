@@ -4,7 +4,7 @@ experiment:
   trials: 0
   steps: 50000
   rate: 0
-  test_interval: 100
+  test_interval: 10
   output: rbdl_balancing
   environment: 
     type: environment/sandbox
@@ -20,13 +20,14 @@ experiment:
         auxiliary: ptpos, ptvel, com
       animation: nope
       mode: vc
+      knee_mode: continue
     task: 
       type: task/leo_balancing
       timeout: 20
       randomize: 1
       measurement_noise: 0
-      knee_mode: punish_and_continue
       rwForward: 0
+      knee_mode: experiment/environment/model/knee_mode
   agent: 
     type: agent/communicator/ext_state_provider
     communicator: 
