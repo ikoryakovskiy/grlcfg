@@ -5,7 +5,7 @@ experiment:
   steps: 50000
   rate: 0
   test_interval: 10
-  output: rbdl_balancing
+  output: rbdl_balancing_hack
   environment: 
     type: environment/sandbox
     model: 
@@ -20,7 +20,7 @@ experiment:
         auxiliary: ptpos, ptvel, com
       animation: nope
       mode: vc
-      knee_mode: punish_and_continue
+      knee_mode: continue
     task: 
       type: task/leo_balancing
       timeout: 20
