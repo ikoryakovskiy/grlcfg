@@ -5,7 +5,7 @@ experiment:
   steps: 1000000
   rate: 0
   test_interval: 10
-  output: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef
+  output: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_knee
   environment: 
     type: environment/sandbox
     model: 
@@ -47,14 +47,14 @@ experiment:
       use_mef: 1
       setpoint_reward: 0
       continue_after_fall: 0
-      gamma: 0.97
+      gamma: 0.0
       fixed_arm: 0
       lower_height: experiment/environment/model/lower_height
       upper_height: experiment/environment/model/upper_height
       friction_compensation: 0
     exporter: 
       type: exporter/csv
-      file: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef
+      file: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_knee
       style: meshup
       variant: all
       precision: 6
@@ -87,13 +87,13 @@ experiment:
             type: mapping/policy/post/noise
             sigma: [0.005]
             theta: [0.5]
-            output_min: experiment/environment/task/action_min
-            output_max: experiment/environment/task/action_max
+            output_min: [-10.7745, -10.7745, -10.7745, -10.7745]
+            output_max: [10.7745, 0.0, 10.7745, 10.7745]
             policy: 
               type: mapping/policy/action
               sigma: []
-              output_min: experiment/environment/task/action_min
-              output_max: experiment/environment/task/action_max
+              output_min: experiment/agent/agent2/agent1/agent/policy/output_min
+              output_max: experiment/agent/agent2/agent1/agent/policy/output_max
               projector: 
                 type: projector/tile_coding
                 tilings: 16
@@ -107,8 +107,8 @@ experiment:
                 init_max: [0]
                 memory: experiment/agent/agent2/agent1/agent/policy/policy/projector/memory
                 outputs: experiment/environment/task/action_dims
-                output_min: experiment/environment/task/action_min
-                output_max: experiment/environment/task/action_max
+                output_min: experiment/agent/agent2/agent1/agent/policy/output_min
+                output_max: experiment/agent/agent2/agent1/agent/policy/output_max
           predictor: 
             type: predictor/dpg
             alpha: 0.01
@@ -144,7 +144,7 @@ experiment:
     pub_action1: experiment/environment/model/sub_true_action
     exporter: 
       type: exporter/csv
-      file: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_elements
+      file: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_knee_elements
       style: meshup
       variant: all
       precision: 6
@@ -165,8 +165,8 @@ experiment:
           policy: 
             type: mapping/policy/action
             sigma: []
-            output_min: experiment/environment/task/action_min
-            output_max: experiment/environment/task/action_max
+            output_min: experiment/agent/agent2/agent1/agent/policy/output_min
+            output_max: experiment/agent/agent2/agent1/agent/policy/output_max
             projector: experiment/agent/agent2/agent1/agent/policy/policy/projector
             representation: experiment/agent/agent2/agent1/agent/policy/policy/representation
       agent2: 

@@ -5,13 +5,10 @@ import re
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from collections import OrderedDict
 import argparse
 from enum import Enum
 import pylab
-from os.path import basename, isfile
 import pdb
-from butterworth import bw_tustin
 
 sys.path.append('/home/ivan/work/scripts/py')
 from my_csv.utils import *
@@ -20,6 +17,7 @@ class ELeoJoint(Enum):
     Ankle, Knee, Hip, Arm = range(4)
 
 def main():
+    plt.close('all')
     parser = argparse.ArgumentParser()
     parser.add_argument('file', nargs='+')
 
@@ -51,6 +49,7 @@ def main():
 
         data = np.loadtxt(fe, skiprows=hd_sz, delimiter=',')
         te = data[:, 0]
+        xn = data[:, 1:5]     # nmpc controls
         xr = data[:, 5:9]     # rl controls
         eb = np.where(te == 0)[0] # starting times of rl+nmpc
 
@@ -58,20 +57,33 @@ def main():
         mb = np.where(ss45)[0] + 1  # begin and end indexes of learning
         mb = mb[::2] # begin only
 
-
-        if eb.size != mb.size:
-          pdb.set_trace()
-      
-        for k in range(0, eb[:-1].size):
-          mbi0 = mb[k]
-          mbi1 = mb[k+1]
-          ebi0 = eb[k]
-          ebi1 = eb[k+1]
-          if mbi1-mbi0 < ebi1-ebi0:
+        if mb.size != 0:
+          if eb.size != mb.size:
             pdb.set_trace()
-          rl.append({'ts':ts[mbi0:mbi0+ebi1-ebi0], 'rl':xr[ebi0:ebi1,:]})
 
-    plt.close('all')
+          for k in range(0, eb[:-1].size):
+            mbi0 = mb[k]
+            mbi1 = mb[k+1]
+            ebi0 = eb[k]
+            ebi1 = eb[k+1]
+            if mbi1-mbi0 < ebi1-ebi0:
+              pdb.set_trace()
+            rl.append({'ts':ts[mbi0:mbi0+ebi1-ebi0], 'rl':xr[ebi0:ebi1,:]})
+        else:
+          print ('SMA state was not published')
+          rl_provided = False
+          te_fixed = range(te.size)
+          f, axarr = plt.subplots(4, sharex=True)
+          for i in ELeoJoint:
+            for d in dd:
+              axarr[i.value].plot(te_fixed, xn[:, i.value])
+              axarr[i.value].plot(te_fixed, xr[:, i.value], color='red')
+              aname = str(i).rsplit('.', 1)[-1]
+              axarr[i.value].set_ylabel(aname)
+              axarr[i.value].grid(True)
+          axarr[0].set_title('nmpc+rl')
+          fig = pylab.gcf()
+          fig.canvas.set_window_title('nmpc+rl')
 
     f, axarr = plt.subplots(6, sharex=True)
     for i in ELeoJoint:
