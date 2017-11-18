@@ -41,7 +41,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(10)
+    runs = range(2)
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
@@ -49,11 +49,12 @@ def main():
     weight_shaping = [0]
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97, 0.00]
-
-    # 1: Stiff spring at the hip
     model_types = [3] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
+    stiffness = [14, 18, 22, 26]
+    
+    # Spring at the hip
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, stiffness, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     configs = [
@@ -61,23 +62,25 @@ def main():
               ]
     
     L1 = rl_run_param1(args, configs, options)
-
-    # 2: Prohibit RL to pump in positive voltage to the knee
+    
+    # 2
     model_types = [2] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
     options = []
     for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     configs = [
-                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_knee.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_knee3.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_knee4.yaml",
               ]
     
-    L2 = rl_run_param1(args, configs, options)
+    L2 = rl_run_param2(args, configs, options)
 
+    #########
     L = L1 + L2
     shuffle(L)
     print(L)
-
+    
     do_multiprocessing_pool(args, L)
 
 ######################################################################################
@@ -121,8 +124,8 @@ def rl_run_param1(args, list_of_cfgs, options):
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
             elif o[7] == 2:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
-            else:
-                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_spring.lua"
+            elif o[7] == 3:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_spring_{}.lua".format(o[8])
                 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
