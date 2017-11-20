@@ -15,9 +15,9 @@ experiment:
       target_dof: 4
       dynamics: 
         type: dynamics/rbdl
-        file: leo_vc/leo_fb_sl.lua
+        file: leo_vc/leo_fb_sl_coulomb.lua
         points: tip_left, heel_left, root
-        auxiliary: mm, com, comv, am
+        auxiliary: ptpos, mm, com, comv, am
       true_model: 
         type: model/dynamical
         control_step: experiment/environment/model/control_step
@@ -56,8 +56,8 @@ experiment:
       type: exporter/csv
       file: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc
       style: meshup
-      variant: test
-      precision: 8
+      variant: all
+      precision: 6
       enabled: 1
   agent: 
     type: agent/master/sequential/additive
@@ -142,6 +142,13 @@ experiment:
         max: [100, 100, 100, 100, 100, 100, 100, 100, 100, 0.29]
         agent: experiment/agent/agent2/agent1/agent
     pub_action1: experiment/environment/model/sub_true_action
+    exporter: 
+      type: exporter/csv
+      file: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_elements
+      style: meshup
+      variant: all
+      precision: 6
+      enabled: 1
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
   test_agent: 
@@ -168,6 +175,7 @@ experiment:
         max: experiment/agent/agent2/agent2/max
         agent: experiment/test_agent/agent2/agent1/agent
     pub_action1: experiment/environment/model/sub_true_action
+    exporter: experiment/agent/exporter
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
   save_every: never

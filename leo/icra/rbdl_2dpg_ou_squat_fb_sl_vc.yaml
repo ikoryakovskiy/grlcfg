@@ -2,9 +2,9 @@ experiment:
   type: experiment/leo/online_learning/squatting
   runs: 1
   trials: 0
-  steps: 10000000
+  steps: 1000000
   rate: 0
-  test_interval: 50
+  test_interval: 10
   output: rbdl_2dpg_ou_squat_fb_sl_vc
   environment: 
     type: environment/sandbox
@@ -15,9 +15,9 @@ experiment:
       target_dof: 4
       dynamics: 
         type: dynamics/rbdl
-        file: leo_vc/leo_fb_sl.lua
+        file: leo_vc/leo_fb_sl_coulomb.lua
         points: tip_left, heel_left, root
-        auxiliary: mm, com, comv, am
+        auxiliary: ptpos, mm, com, comv, am
       animation: nope
       lower_height: 0.28
       upper_height: 0.35
@@ -43,6 +43,13 @@ experiment:
       lower_height: experiment/environment/model/lower_height
       upper_height: experiment/environment/model/upper_height
       friction_compensation: 0
+    exporter: 
+      type: exporter/csv
+      file: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc
+      style: meshup
+      variant: all
+      precision: 6
+      enabled: 1
   agent: 
     type: agent/master/selective
     agent1: 
@@ -129,4 +136,4 @@ experiment:
       min: experiment/agent/agent2/min
       max: experiment/agent/agent2/max
       agent: experiment/test_agent/agent1/agent
-  save_every: run
+  save_every: never

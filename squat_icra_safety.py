@@ -34,7 +34,6 @@ def main():
         args.cores = min(multiprocessing.cpu_count(), 32)
     print 'Using {} cores.'.format(args.cores)
 
-    prepare_multiprocessing()
     # for walking with yaml files
     _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
     yaml.add_representer(collections.OrderedDict, dict_representer)
@@ -50,13 +49,11 @@ def main():
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97]
     model_types = [2] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
-
-    #gamma = [0.0, 0.4, 0.8]
-    #model_types = [1] # 0 -ideal, 1 - real
+    sigma = [0.005, 0.02, 0.1]
 
     # 1
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, sigma, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     configs = [
@@ -65,7 +62,7 @@ def main():
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc.yaml",
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc.yaml",
-#                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc.yaml",
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef.yaml",
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
@@ -76,24 +73,22 @@ def main():
     L1 = rl_run_param1(args, configs, options)
 
     # 2
-    weight_shaping = [0] # shaping is not applicable in single RL controller
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, sigma, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     configs = [
-                #"leo/icra/rbdl_nmpc_dpg_squat_fb_sl_fa_vc_mef.yaml",
-                #"leo/icra/rbdl_nmpc_dpg_squat_fb_sl_vc_mef.yaml",
-                #"leo/icra/rbdl_nmpc_dpg_ou_squat_fb_sl_vc_mef.yaml",
+                "leo/icra/rbdl_2dpg_ou_squat_fb_sl_vc.yaml",
               ]
 
     L2 = rl_run_param2(args, configs, options)
 
+    ###
     L = L1 + L2
     shuffle(L)
     print(L)
 
-    #do_multiprocessing_pool(args, L)
+    do_multiprocessing_pool(args, L)
 
 ######################################################################################
 def rl_run_param1(args, list_of_cfgs, options):
@@ -118,7 +113,7 @@ def rl_run_param1(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 1000000
+            conf['experiment']['steps'] = 100000
             conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
@@ -138,11 +133,17 @@ def rl_run_param1(args, list_of_cfgs, options):
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
             else:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_spring.lua"
-                
+            
+            conf['experiment']['agent']['agent2']['agent1']['agent']['policy']['sigma'] = [ o[8] ]
+            
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
               conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
-
+              conf['experiment']['environment']['exporter']['enabled'] = 0
+            if "exporter" in conf['experiment']['agent']:
+              conf['experiment']['agent']['exporter']['file'] = "{}-{}_elements".format(fname, str_o)
+              conf['experiment']['agent']['exporter']['enabled'] = 0
+              
             conf = remove_viz(conf)
             write_cfg(list_of_new_cfgs[-1], conf)
 
@@ -173,7 +174,7 @@ def rl_run_param2(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 1000000
+            conf['experiment']['steps'] = 100000
             conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
@@ -191,10 +192,16 @@ def rl_run_param2(args, list_of_cfgs, options):
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_real.lua"
             else:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
+                
+            conf['experiment']['agent']['agent1']['agent']['policy']['sigma'] = [ o[8] ]
 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
               conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
+              conf['experiment']['environment']['exporter']['enabled'] = 0
+            if "exporter" in conf['experiment']['agent']:
+              conf['experiment']['agent']['exporter']['file'] = "{}-{}_elements".format(fname, str_o)
+              conf['experiment']['agent']['exporter']['enabled'] = 0
 
             conf = remove_viz(conf)
             write_cfg(list_of_new_cfgs[-1], conf)
@@ -242,12 +249,6 @@ def do_multiprocessing_pool(args, list_of_new_cfgs):
     pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (counter, cores))
     pool.map(mp_run, list_of_new_cfgs)
     pool.close()
-######################################################################################
-
-def prepare_multiprocessing():
-    # clean bailing.out file
-    f = open("bailing.out", "w")
-    f.close()
 ######################################################################################
 
 def read_cfg(cfg):
