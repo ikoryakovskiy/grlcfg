@@ -84,7 +84,7 @@ def main():
     #L2 = rl_run_param2(args, configs, options)
 
     ###
-    L = L1 + L2
+    L = L1# + L2
     shuffle(L)
     print(L)
 
@@ -113,7 +113,7 @@ def rl_run_param1(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 100000
+            conf['experiment']['steps'] = 1000000
             conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
