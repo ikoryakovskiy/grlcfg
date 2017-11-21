@@ -40,7 +40,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(10)
+    runs = range(1)
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
@@ -66,7 +66,7 @@ def main():
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef.yaml",
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
-#                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
               ]
 
     
@@ -81,7 +81,7 @@ def main():
                 "leo/icra/rbdl_2dpg_ou_squat_fb_sl_vc.yaml",
               ]
 
-    L2 = rl_run_param2(args, configs, options)
+    #L2 = rl_run_param2(args, configs, options)
 
     ###
     L = L1 + L2
@@ -174,7 +174,7 @@ def rl_run_param2(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 15000000
+            conf['experiment']['steps'] = 1000000
             conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
