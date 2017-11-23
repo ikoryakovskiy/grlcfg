@@ -40,7 +40,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(1)
+    runs = range(1, 10)
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
@@ -66,7 +66,7 @@ def main():
                 #
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_fa_vc_mef.yaml",
                 #"leo/icra/rbdl_nmpc_2dpg_squat_fb_sl_vc_mef.yaml",
-#                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
               ]
 
     
