@@ -40,7 +40,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(1, 5)
+    runs = range(5, 10)
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
