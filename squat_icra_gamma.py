@@ -34,7 +34,6 @@ def main():
         args.cores = min(multiprocessing.cpu_count(), 32)
     print 'Using {} cores.'.format(args.cores)
 
-    prepare_multiprocessing()
     # for walking with yaml files
     _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
     yaml.add_representer(collections.OrderedDict, dict_representer)
@@ -60,6 +59,7 @@ def main():
     configs = [
 #                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_spring.yaml",
               ]
+
     
     L1 = rl_run_param1(args, configs, options)
     
@@ -73,14 +73,14 @@ def main():
                 "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_all_019.yaml",
 #                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_all_0195.yaml",
               ]
-    
+
     L2 = rl_run_param2(args, configs, options)
 
     #########
     L = L2[::2] + L2[1::2]
     #shuffle(L)
     print(L)
-    
+
     do_multiprocessing_pool(args, L)
 
 ######################################################################################
@@ -130,8 +130,10 @@ def rl_run_param1(args, list_of_cfgs, options):
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
               conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
+              conf['experiment']['environment']['exporter']['enabled'] = 0
             if "exporter" in conf['experiment']['agent']:
               conf['experiment']['agent']['exporter']['file'] = "{}-{}_elements".format(fname, str_o)
+              conf['experiment']['agent']['exporter']['enabled'] = 0
               
             conf = remove_viz(conf)
             write_cfg(list_of_new_cfgs[-1], conf)
@@ -185,9 +187,11 @@ def rl_run_param2(args, list_of_cfgs, options):
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
               conf['experiment']['environment']['exporter']['file'] = "{}-{}".format(fname, str_o)
+              conf['experiment']['environment']['exporter']['enabled'] = 0
             if "exporter" in conf['experiment']['agent']:
               conf['experiment']['agent']['exporter']['file'] = "{}-{}_elements".format(fname, str_o)
-              
+              conf['experiment']['agent']['exporter']['enabled'] = 0
+
             conf = remove_viz(conf)
             write_cfg(list_of_new_cfgs[-1], conf)
 
@@ -234,12 +238,6 @@ def do_multiprocessing_pool(args, list_of_new_cfgs):
     pool = multiprocessing.Pool(args.cores, initializer = init, initargs = (counter, cores))
     pool.map(mp_run, list_of_new_cfgs)
     pool.close()
-######################################################################################
-
-def prepare_multiprocessing():
-    # clean bailing.out file
-    f = open("bailing.out", "w")
-    f.close()
 ######################################################################################
 
 def read_cfg(cfg):

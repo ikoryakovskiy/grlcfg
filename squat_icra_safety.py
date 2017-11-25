@@ -78,13 +78,13 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     configs = [
-                "leo/icra/rbdl_2dpg_ou_squat_fb_sl_vc.yaml",
+#                "leo/icra/rbdl_2dpg_ou_squat_fb_sl_vc.yaml",
               ]
 
-    #L2 = rl_run_param2(args, configs, options)
+    L2 = rl_run_param2(args, configs, options)
 
-    ###
-    L = L1# + L2
+    #########
+    L = L1 + L2
     shuffle(L)
     print(L)
 
