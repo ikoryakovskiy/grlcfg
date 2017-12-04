@@ -40,7 +40,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(1, 10)
+    runs = range(10)
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
@@ -64,23 +64,26 @@ def main():
     L1 = rl_run_param1(args, configs, options)
     
     # 2
+    runs = [3, 0, 10, 2, 4]
+    gamma = [0.00]
     model_types = [2] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
     options = []
     for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
-
-    configs = [
-                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_all_019.yaml",
-#                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_all_0195.yaml",
-              ]
-
+    configs = [ "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_all_019.yaml" ]
     L2 = rl_run_param2(args, configs, options)
 
-    #########
-    L = L2[::2] + L2[1::2]
-    #shuffle(L)
-    print(L)
-
+    #3
+    runs = [5, 3, 4, 7, 0]
+    gamma = [0.97]
+    model_types = [2] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
+    options = []
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
+    options = [flatten(tupl) for tupl in options]
+    configs = [ "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_all_019.yaml" ]
+    L3 = rl_run_param2(args, configs, options)
+    
+    L = L2 + L3
     do_multiprocessing_pool(args, L)
 
 ######################################################################################
@@ -165,7 +168,7 @@ def rl_run_param2(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-#            conf['experiment']['steps'] = 1000000
+            conf['experiment']['steps'] = 1000000
             conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
@@ -191,6 +194,8 @@ def rl_run_param2(args, list_of_cfgs, options):
             if "exporter" in conf['experiment']['agent']:
               conf['experiment']['agent']['exporter']['file'] = "{}-{}_elements".format(fname, str_o)
               conf['experiment']['agent']['exporter']['enabled'] = 0
+              
+            conf['experiment']['load_file'] = "gamma_dat/{}-{}".format(fname, str_o)
 
             conf = remove_viz(conf)
             write_cfg(list_of_new_cfgs[-1], conf)

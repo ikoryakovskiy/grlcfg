@@ -87,8 +87,8 @@ experiment:
             type: mapping/policy/post/noise
             sigma: [0.005]
             theta: [0.5]
-            output_min: [ -0.19, -0.19, -0.19, -0.19 ]
-            output_max: [ 0.19, 0.19, 0.19, 0.19 ]
+            output_min: [-0.19, -0.19, -0.19, -0.19]
+            output_max: [0.19, 0.19, 0.19, 0.19]
             policy: 
               type: mapping/policy/action
               sigma: []
@@ -178,4 +178,5 @@ experiment:
     exporter: experiment/agent/exporter
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
+  load_file: file
   save_every: run
