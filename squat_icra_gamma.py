@@ -195,7 +195,7 @@ def rl_run_param2(args, list_of_cfgs, options):
               conf['experiment']['agent']['exporter']['file'] = "{}-{}_elements".format(fname, str_o)
               conf['experiment']['agent']['exporter']['enabled'] = 0
               
-            conf['experiment']['load_file'] = "gamma_dat/{}-{}".format(fname, str_o)
+            conf['experiment']['load_file'] = "gamma_dat/{}-{}-run0".format(fname, str_o)
 
             conf = remove_viz(conf)
             write_cfg(list_of_new_cfgs[-1], conf)
