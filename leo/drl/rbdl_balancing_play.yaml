@@ -20,12 +20,14 @@ experiment:
         auxiliary: ptpos, ptvel, com
       animation: full
       mode: vc
+      knee_mode: punish_and_continue
     task: 
       type: task/leo_balancing
       timeout: 20
       randomize: 0
       measurement_noise: 0
-      knee_mode: fail_and_restart
+      rwForward: 0
+      knee_mode: experiment/environment/model/knee_mode
   agent: 
     type: agent/communicator/ext_state_provider
     communicator: 
