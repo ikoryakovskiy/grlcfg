@@ -178,4 +178,4 @@ experiment:
     exporter: experiment/agent/exporter
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
-  save_every: never
+  save_every: run

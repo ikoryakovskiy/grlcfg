@@ -40,7 +40,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(10)
+    runs = range(3)
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
@@ -49,7 +49,7 @@ def main():
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97, 0.00]
     model_types = [3] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
-    stiffness = [22] # turned out to be pretty good!
+    stiffness = [14, 18, 22, 26] # turned out to be pretty good!
     
     # Spring at the hip
     options = []
@@ -57,9 +57,8 @@ def main():
     options = [flatten(tupl) for tupl in options]
 
     configs = [
-#                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_spring.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_spring.yaml",
               ]
-
     
     L1 = rl_run_param1(args, configs, options)
     
@@ -83,8 +82,8 @@ def main():
     configs = [ "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_all_019.yaml" ]
     L3 = rl_run_param2(args, configs, options)
     
-    L = L2 + L3
-    #do_multiprocessing_pool(args, L)
+    #L = L2 + L3
+    do_multiprocessing_pool(args, L1)
 
 ######################################################################################
 def rl_run_param1(args, list_of_cfgs, options):
