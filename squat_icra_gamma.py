@@ -48,8 +48,8 @@ def main():
     weight_shaping = [0]
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97, 0.00]
-    model_types = [3] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
-    stiffness = [342, 494, 646, 798, 950] # [14, 18, 22, 26, 30] # turned out to be pretty good!
+    model_types = [3, 4] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
+    stiffness = [10, 30, 50, 70, 90] # [14, 18, 22, 26, 30] # turned out to be pretty good!
     
     # Spring at the hip
     options = []
@@ -110,7 +110,7 @@ def rl_run_param1(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 1250000
+            conf['experiment']['steps'] = 1000000
             conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
@@ -130,6 +130,8 @@ def rl_run_param1(args, list_of_cfgs, options):
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
             elif o[7] == 3:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_spring_{}.lua".format(o[8])
+            elif o[7] == 4:
+                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_springB_{}.lua".format(o[8])
                 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
