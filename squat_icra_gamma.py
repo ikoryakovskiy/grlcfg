@@ -40,7 +40,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(1)
+    runs = range(1, 10)
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
@@ -48,8 +48,8 @@ def main():
     weight_shaping = [0]
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97, 0.00]
-    model_types = [3, 4] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
-    stiffness = [10, 30, 50, 70, 90] # [14, 18, 22, 26, 30] # turned out to be pretty good!
+    model_types = [3] #, 4] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
+    stiffness = [10] #, 30, 50, 70, 90] # [14, 18, 22, 26, 30] # turned out to be pretty good!
     
     # Spring at the hip
     options = []
