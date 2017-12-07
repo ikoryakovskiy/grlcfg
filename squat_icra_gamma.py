@@ -49,7 +49,7 @@ def main():
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97, 0.00]
     model_types = [3] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
-    stiffness = [70, 100, 130, 160, 190] # [14, 18, 22, 26, 30] # turned out to be pretty good!
+    stiffness = [342, 494, 646, 798, 950] # [14, 18, 22, 26, 30] # turned out to be pretty good!
     
     # Spring at the hip
     options = []
@@ -110,7 +110,7 @@ def rl_run_param1(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 1000000
+            conf['experiment']['steps'] = 1250000
             conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
