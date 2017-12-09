@@ -40,7 +40,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(1, 10)
+    runs = range(6, 11)
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
@@ -49,7 +49,7 @@ def main():
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.97, 0.00]
     model_types = [3] #, 4] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
-    stiffness = [10] #, 30, 50, 70, 90] # [14, 18, 22, 26, 30] # turned out to be pretty good!
+    stiffness = [7] #, 30, 50, 70, 90] # [14, 18, 22, 26, 30] # turned out to be pretty good!
     
     # Spring at the hip
     options = []
@@ -140,6 +140,8 @@ def rl_run_param1(args, list_of_cfgs, options):
             if "exporter" in conf['experiment']['agent']:
               conf['experiment']['agent']['exporter']['file'] = "{}-{}_elements".format(fname, str_o)
               conf['experiment']['agent']['exporter']['enabled'] = 0
+              
+              conf['experiment']['load_file'] = "gamma_dat_spring/{}-{}-run0".format(fname, str_o)
               
             conf = remove_viz(conf)
             write_cfg(list_of_new_cfgs[-1], conf)

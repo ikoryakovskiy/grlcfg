@@ -2,9 +2,9 @@ experiment:
   type: experiment/leo/online_learning/squatting
   runs: 1
   trials: 0
-  steps: 1000000
+  steps: 200000000
   rate: 0
-  test_interval: 10
+  test_interval: 1000
   output: rbdl_2dpg_ou_squat_fb_sl_vc
   environment: 
     type: environment/sandbox
@@ -43,14 +43,7 @@ experiment:
       lower_height: experiment/environment/model/lower_height
       upper_height: experiment/environment/model/upper_height
       friction_compensation: 0
-    exporter: 
-      type: exporter/csv
-      file: rbdl_nmpc_2dpg_ou_squat_fb_sl_vc
-      style: meshup
-      variant: all
-      precision: 6
-      enabled: 1
-  agent: 
+  agent:
     type: agent/master/selective
     agent1: 
       type: agent/sub/compartmentalized
