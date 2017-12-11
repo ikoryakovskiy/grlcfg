@@ -40,16 +40,16 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-    runs = range(6, 11)
+    runs = range(0, 3)
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
     weight_nmpc_qd = [1.0]
     weight_shaping = [0]
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
-    gamma = [0.97, 0.00]
+    gamma = [0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.97]
     model_types = [3] #, 4] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
-    stiffness = [7] #, 30, 50, 70, 90] # [14, 18, 22, 26, 30] # turned out to be pretty good!
+    stiffness = [7]
     
     # Spring at the hip
     options = []
@@ -85,6 +85,7 @@ def main():
     '''
     
     #L = L2 + L3
+    shuffle(L1)
     do_multiprocessing_pool(args, L1)
 
 ######################################################################################
@@ -110,7 +111,7 @@ def rl_run_param1(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 1000000
+            conf['experiment']['steps'] = 2000000
             conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
@@ -130,8 +131,6 @@ def rl_run_param1(args, list_of_cfgs, options):
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_coulomb.lua"
             elif o[7] == 3:
                 conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_spring_{}.lua".format(o[8])
-            elif o[7] == 4:
-                conf['experiment']['environment']['model']['dynamics']['file'] = "leo_vc/leo_fb_sl_springB_{}.lua".format(o[8])
                 
             conf['experiment']['output'] = "{}-{}".format(fname, str_o)
             if "exporter" in conf['experiment']['environment']:
@@ -141,7 +140,7 @@ def rl_run_param1(args, list_of_cfgs, options):
               conf['experiment']['agent']['exporter']['file'] = "{}-{}_elements".format(fname, str_o)
               conf['experiment']['agent']['exporter']['enabled'] = 0
               
-              conf['experiment']['load_file'] = "gamma_dat_spring/{}-{}-run0".format(fname, str_o)
+            #conf['experiment']['load_file'] = "gamma_dat_spring/{}-{}-run0".format(fname, str_o)
               
             conf = remove_viz(conf)
             write_cfg(list_of_new_cfgs[-1], conf)
