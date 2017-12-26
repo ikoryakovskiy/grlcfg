@@ -20,13 +20,14 @@ experiment:
         auxiliary: ptpos, ptvel, com
       animation: nope
       mode: vc
+      knee_mode: punish_and_continue
     task: 
       type: task/leo_walking
       timeout: 20
-      randomize: 1
+      randomize: 5
       measurement_noise: 0
-      knee_mode: punish_and_continue
       rwForward: 300
+      knee_mode: experiment/environment/model/knee_mode
   agent: 
     type: agent/communicator/ext_state_provider
     communicator: 

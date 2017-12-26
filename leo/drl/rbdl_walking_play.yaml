@@ -50,5 +50,5 @@ experiment:
     action_min: experiment/environment/task/action_min
     action_max: experiment/environment/task/action_max
     test: 1
-  load_file: leo_drl_rbdl_walking-mp4-best
+  load_file: rbdl_walking-best
   save_every: never

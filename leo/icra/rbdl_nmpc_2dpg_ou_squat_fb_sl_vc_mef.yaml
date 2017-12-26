@@ -58,7 +58,7 @@ experiment:
       style: meshup
       variant: all
       precision: 6
-      enabled: 1
+      enabled: 0
   agent: 
     type: agent/master/sequential/additive
     agent1: 
@@ -148,7 +148,7 @@ experiment:
       style: meshup
       variant: all
       precision: 6
-      enabled: 1
+      enabled: 0
     output_min: experiment/environment/task/action_min
     output_max: experiment/environment/task/action_max
   test_agent: 
