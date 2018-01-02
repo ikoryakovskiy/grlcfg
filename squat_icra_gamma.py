@@ -40,7 +40,11 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
+<<<<<<< HEAD
     runs = range(0, 5)
+=======
+    runs = range(3, 5)
+>>>>>>> spring_7
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
