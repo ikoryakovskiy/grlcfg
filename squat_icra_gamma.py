@@ -40,11 +40,7 @@ def main():
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
     # Parameters
-<<<<<<< HEAD
-    runs = range(0, 5)
-=======
     runs = range(3, 5)
->>>>>>> spring_7
     power = [2]
     weight_nmpc = [0.001]
     weight_nmpc_aux = [1]
@@ -52,15 +48,16 @@ def main():
     weight_shaping = [0]
     sim_filtered = [0] # 0 - simulate normal, 1 - simulated filtered velocities
     gamma = [0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.97]
-    model_types = [2] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
+    model_types = [3] #, 4] #[0, 2, 3] # 0 -ideal, 1 - real, 2 - coulomb, 3 - torso torsion spring
+    stiffness = [7]
     
     # Spring at the hip
     options = []
-    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, runs): options.append(r)
+    for r in itertools.product(power, weight_nmpc, weight_nmpc_aux, weight_nmpc_qd, weight_shaping, sim_filtered, gamma, model_types, stiffness, runs): options.append(r)
     options = [flatten(tupl) for tupl in options]
 
     configs = [
-                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef.yaml",
+                "leo/icra/rbdl_nmpc_2dpg_ou_squat_fb_sl_vc_mef_spring.yaml",
               ]
     
     L1 = rl_run_param1(args, configs, options)
@@ -114,7 +111,7 @@ def rl_run_param1(args, list_of_cfgs, options):
             list_of_new_cfgs.append( "{}/{}-{}{}".format(loc, fname, str_o, fext) )
 
             # modify options
-            conf['experiment']['steps'] = 1000000
+            conf['experiment']['steps'] = 2000000
             conf['experiment']['test_interval'] = 30
             conf['experiment']['environment']['task']['power'] = o[0]
             conf['experiment']['environment']['task']['weight_nmpc'] = o[1]
